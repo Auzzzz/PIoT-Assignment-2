@@ -38,7 +38,7 @@ class DatabaseUtils:
     def insertUser(self, fname, lname, email, password):
         with self.connection.cursor() as cursor:
             insert = [fname, lname, email, password]
-            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s,%s%s%s)", insert)
+            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s,%s,%s,%s)", insert)
         self.connection.commit()
 
         return cursor.rowcount == 1
