@@ -85,11 +85,11 @@ class Menu:
 
         #Generate salt here 
         salt = os.urandom(32)
-        #Send to get hashed
-        password = DatabaseUtils.hashpass(salt, pass_to_hash)
 
         #DB insert check
         with DatabaseUtils() as db:
+            password = db.hashpass(salt, pass_to_hash)
+
             if(db.insertUser(fname, lname, email, password, salt)):
                 print("{} inserted successfully.".format(fname, lname, email, password, salt))
             else:

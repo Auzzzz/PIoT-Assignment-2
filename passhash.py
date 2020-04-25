@@ -1,3 +1,4 @@
+from DatabaseUtils import DatabaseUtils
 import os
 import hashlib
 
@@ -26,6 +27,15 @@ if new_key == key:
 else:
     print("Password is incorrect")
 
-class Hash:
-    def hash(self):
+def insertUser(self):
+        print("--- Insert New User ---")
+        fname = input("Enter the users first name: ")
+        lname = input("Enter the users last name: ")
+        email = input("Enter the users email address: ")
+        pass_to_hash = input ("Enter the users password - NEEDS TO BE HASHED: ")
+
+        #Generate salt here 
+        salt = os.urandom(32)
+        #Send to get hashed
         
+        password = DatabaseUtils.hashpass(salt, pass_to_hash)
