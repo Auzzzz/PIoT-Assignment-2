@@ -1,4 +1,6 @@
 import MySQLdb 
+import hashlib
+
 ## Modified from W7 Prac
 class DatabaseUtils:
     HOST = "34.87.245.145"
@@ -31,14 +33,15 @@ class DatabaseUtils:
                     Last_Name VARCHAR(50) not null,
                     Email VARCHAR(320) not null,
                     Password CHAR(40), 
+                    Salt CHAR(32),
                     constraint PK_User primary key (UserID)
                 )""")
         self.connection.commit()
 
-    def insertUser(self, fname, lname, email, password):
+    def insertUser(self, fname, lname, email, password, salt):
         with self.connection.cursor() as cursor:
-            insert = [fname, lname, email, password]
-            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s,%s,%s,%s)", insert)
+            insert = [fname, lname, email, password, salt]
+            cursor.execute("insert into User (First_Name, Last_Name, Email, Password, Salt) values (%s,%s,%s,%s,%s)", insert)
         self.connection.commit()
 
         return cursor.rowcount == 1
@@ -52,3 +55,12 @@ class DatabaseUtils:
             # Note there is an intentionally placed bug here: != should be =
             cursor.execute("delete from User where UserID != %s", (userid,))
         self.connection.commit()
+
+
+    def hashpass(self, salt, pass_to_hash):
+        hashlib.pbkdf2_hmac(
+        'sha256',
+        pass_to_hash.encode('utf-8'),
+        salt,
+        100000
+        )

@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "carshare",
+            "dialect": "MySQL",
+            "name": "carshare",
+            "password": "banana192",
+            "port": 3306,
+            "server": "34.87.245.145",
+            "username": "root"
+        }
+    ]
+}
