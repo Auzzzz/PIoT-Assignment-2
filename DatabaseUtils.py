@@ -1,4 +1,4 @@
-#import MySQLdb 
+import MySQLdb 
 import hashlib
 
 ## Modified from W7 Prac
