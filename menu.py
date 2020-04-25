@@ -31,3 +31,8 @@ class Menu:
         with DatabaseUtils() as db:
             for person in db.getPeople():
                 print("{:<15} {}".format(person[0], person[1]))
+
+
+if __name__ == "__main__":
+    Menu().main()
+

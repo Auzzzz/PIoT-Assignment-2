@@ -4,7 +4,7 @@ class DatabaseUtils:
     HOST = "34.87.245.145"
     USER = "root"
     PASSWORD = "banana192"
-    DATABASE = "carshare"
+    DATABASE = "User"
 
     def __init__(self, connection = None):
         if(connection == None):
