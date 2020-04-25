@@ -22,14 +22,14 @@ class DatabaseUtils:
         self.close()
 
     #add in password not null when hashing added
-    def createPersonTable(self):
+    def createUserTable(self):
         with self.connection.cursor() as cursor:
             cursor.execute("""
                 create table if not exists User (
                     UserID int not null auto_increment,
                     First_Name VARCHAR(50) not null,
-                    Last_Name, VARCHAR(50) not null,
-                    Email, VARCHAR(320) not null
+                    Last_Name VARCHAR(50) not null,
+                    Email VARCHAR(320) not null,
                     Password CHAR(40), 
                     constraint PK_User primary key (UserID)
                 )""")
@@ -37,7 +37,8 @@ class DatabaseUtils:
 
     def insertUser(self, fname, lname, email, password):
         with self.connection.cursor() as cursor:
-            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s)", (fname, lname, email, password))
+		insert = [fname, lname, email, password]
+            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s,%s%s%s)", insert))
         self.connection.commit()
 
         return cursor.rowcount == 1

@@ -3,8 +3,8 @@ from DatabaseUtils import DatabaseUtils
 class Menu:
     def main(self):
         with DatabaseUtils() as db:
-            db.createPersonTable()
-        self.runMenu()
+            db.createUserTable()
+        self.mainMenu()
 
     def mainMenu(self):
         while(True):
@@ -37,7 +37,7 @@ class Menu:
             if(selection == "1"):
                 self.listPeople()
             elif(selection == "2"):
-                self.insertPerson()
+                self.insertUser()
             elif(selection == "3"):
                 self.mainMenu()
             elif(selection == "4"):
@@ -75,18 +75,18 @@ class Menu:
             for user in db.getUser():
                 print("{:<15} {}".format(user[0], user[1]))
 
-    def insertPerson(self):
+    def insertUser(self):
         print("--- Insert New User ---")
         fname = input("Enter the users first name: ")
         lname = input("Enter the users last name: ")
-        email = input("Enter the users email address")
-        password = input ("Enter the users password - NEEDS TO BE HASHED")
+        email = input("Enter the users email address: ")
+        password = input ("Enter the users password - NEEDS TO BE HASHED: ")
         with DatabaseUtils() as db:
-            if(db.insertPerson(fname, lname, email, password)):
+            if(db.insertUser(fname, lname, email, password)):
                 print("{} inserted successfully.".format(fname, lname, email, password))
             else:
                 print("{} failed to be inserted.".format(fname, lname))
 
 
 if __name__ == "__main__":
-    Menu().mainMenu()
+    Menu().main()
