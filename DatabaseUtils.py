@@ -58,6 +58,7 @@ class DatabaseUtils:
 
 
     def hashpass(self, salt, pass_to_hash):
+        print("Hello")
         hashlib.pbkdf2_hmac(
         'sha256',
         pass_to_hash.encode('utf-8'),

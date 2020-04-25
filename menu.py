@@ -81,14 +81,13 @@ class Menu:
         name = input("Enter the users name: ")
         email = input("Enter the users email address: ")
         pass_to_hash = input ("Enter the users password - NEEDS TO BE HASHED: ")
+        
 
         #Generate salt here 
         salt = os.urandom(32)
-
+        password = DatabaseUtils.hashpass(salt, pass_to_hash)
         #DB insert check
         with DatabaseUtils() as db:
-            password = db.hashpass(salt, pass_to_hash)
-
             if(db.insertUser(name, email, password, salt)):
                 print("{} inserted successfully.".format(name, email, password, salt))
             else:
