@@ -4,7 +4,7 @@ class DatabaseUtils:
     HOST = "34.87.245.145"
     USER = "root"
     PASSWORD = "banana192"
-    DATABASE = "User"
+    DATABASE = "carshare"
 
     def __init__(self, connection = None):
         if(connection == None):
@@ -31,9 +31,9 @@ class DatabaseUtils:
                 )""")
         self.connection.commit()
 
-    def insertUser(self, fname,):
+    def insertUser(self, fname):
         with self.connection.cursor() as cursor:
-            cursor.execute("insert into User (FName) values (%s)", (fname,))
+            cursor.execute("insert into User (First_Name) values (%s)", (fname,))
         self.connection.commit()
 
         return cursor.rowcount == 1
