@@ -42,7 +42,6 @@ class DatabaseUtils:
 
         return cursor.rowcount == 1
 
-    def getUser(self):
         with self.connection.cursor() as cursor:
             cursor.execute("select UserID, Name from User")
             return cursor.fetchall()
