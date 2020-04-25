@@ -1,4 +1,4 @@
-import 
+import MySQLdb 
 ## Modified from W7 Prac
 class DatabaseUtils:
     HOST = "34.87.245.145"

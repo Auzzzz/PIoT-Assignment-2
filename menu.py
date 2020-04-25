@@ -1,4 +1,4 @@
-#from DatabaseUtils import DatabaseUtils
+from DatabaseUtils import DatabaseUtils
 # from W7 Prac
 class Menu:
     def main(self):
@@ -13,7 +13,7 @@ class Menu:
             print("2. Car Menu")
             print("3. Quit")
             selection = input("Select an option: ")
-            print()
+            print(selection)
             if(selection == "1"):
                 self.userMenu()
             elif(selection == "2"):
@@ -23,9 +23,6 @@ class Menu:
                 break
             else:
                 print("Invalid input - please try again.")
-
-
-
 
     def userMenu(self):
         while(True):
