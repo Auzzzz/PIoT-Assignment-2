@@ -50,6 +50,11 @@ class DatabaseUtils:
             cursor.execute("select UserID, Name from User")
             return cursor.fetchall()
 
+    def getUser(self):
+        with self.connection.cursor() as cursor:
+            cursor.execute("select UserID, Name from User")
+            return cursor.fetchall()
+
     def deletePerson(self, userid):
         with self.connection.cursor() as cursor:
             # Note there is an intentionally placed bug here: != should be =
