@@ -29,8 +29,7 @@ class DatabaseUtils:
             cursor.execute("""
                 create table if not exists User (
                     UserID int not null auto_increment,
-                    First_Name VARCHAR(50) not null,
-                    Last_Name VARCHAR(50) not null,
+                    Name VARCHAR(100) not null,
                     Email VARCHAR(320) not null,
                     Password CHAR(40), 
                     Salt CHAR(32),
@@ -38,17 +37,13 @@ class DatabaseUtils:
                 )""")
         self.connection.commit()
 
-    def insertUser(self, fname, lname, email, password, salt):
+    def insertUser(self, name, email, password, salt):
         with self.connection.cursor() as cursor:
-            insert = [fname, lname, email, password, salt]
-            cursor.execute("insert into User (First_Name, Last_Name, Email, Password, Salt) values (%s,%s,%s,%s,%s)", insert)
+            insert = [name, email, password, salt]
+            cursor.execute("insert into User (Name, Email, Password, Salt) values (%s,%s,%s,%s)", insert)
         self.connection.commit()
 
         return cursor.rowcount == 1
-
-        with self.connection.cursor() as cursor:
-            cursor.execute("select UserID, Name from User")
-            return cursor.fetchall()
 
     def getUser(self):
         with self.connection.cursor() as cursor:

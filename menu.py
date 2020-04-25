@@ -78,8 +78,7 @@ class Menu:
 
     def insertUser(self):
         print("--- Insert New User ---")
-        fname = input("Enter the users first name: ")
-        lname = input("Enter the users last name: ")
+        name = input("Enter the users name: ")
         email = input("Enter the users email address: ")
         pass_to_hash = input ("Enter the users password - NEEDS TO BE HASHED: ")
 
@@ -90,10 +89,10 @@ class Menu:
         with DatabaseUtils() as db:
             password = db.hashpass(salt, pass_to_hash)
 
-            if(db.insertUser(fname, lname, email, password, salt)):
-                print("{} inserted successfully.".format(fname, lname, email, password, salt))
+            if(db.insertUser(name, email, password, salt)):
+                print("{} inserted successfully.".format(name, email, password, salt))
             else:
-                print("{} failed to be inserted.".format(fname, lname))
+                print("{} failed to be inserted.".format(name))
 
 
 if __name__ == "__main__":
