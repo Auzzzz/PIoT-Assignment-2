@@ -1,4 +1,4 @@
-import MySQLdb
+import 
 ## Modified from W7 Prac
 class DatabaseUtils:
     HOST = "34.87.245.145"
@@ -21,19 +21,23 @@ class DatabaseUtils:
     def __exit__(self, type, value, traceback):
         self.close()
 
+    #add in password not null when hashing added
     def createPersonTable(self):
         with self.connection.cursor() as cursor:
             cursor.execute("""
                 create table if not exists User (
                     UserID int not null auto_increment,
-                    First_Name text not null,
+                    First_Name VARCHAR(50) not null,
+                    Last_Name, VARCHAR(50) not null,
+                    Email, VARCHAR(320) not null
+                    Password CHAR(40), 
                     constraint PK_User primary key (UserID)
                 )""")
         self.connection.commit()
 
-    def insertUser(self, fname):
+    def insertUser(self, fname, lname, email, password):
         with self.connection.cursor() as cursor:
-            cursor.execute("insert into User (First_Name) values (%s)", (fname,))
+            cursor.execute("insert into User (First_Name, Last_Name, Email, Password) values (%s)", (fname, lname, email, password))
         self.connection.commit()
 
         return cursor.rowcount == 1
