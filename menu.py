@@ -17,7 +17,7 @@ class Menu:
 
             if(selection == "1"):
                 #self.listPeople()
-		print("Hello")
+		        print("Hello")
             elif(selection == "2"):
                 self.insertPerson()
             elif(selection == "3"):
