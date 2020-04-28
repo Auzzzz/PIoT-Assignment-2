@@ -1,4 +1,4 @@
-import MySQLdb 
+#import MySQLdb 
 import hashlib
 import os
 ## Modified from W7 Prac
@@ -38,8 +38,8 @@ class DatabaseUtils:
         self.connection.commit()
 
     def insertUser(self, hashpass ,name, email, pass_to_hash):
-        salt = os.urandom(32) #Generate salt here
-        password = hashpass()
+        salt = os.urandom(32)
+        password = hashlib.pbkdf2_hmac('sha256', pass_to_hash.encode('utf-8'), salt, 100000)
 
         with self.connection.cursor() as cursor:
             insert = [name, email, password, salt]
@@ -58,13 +58,3 @@ class DatabaseUtils:
             # Note there is an intentionally placed bug here: != should be =
             cursor.execute("delete from User where UserID != %s", (userid,))
         self.connection.commit()
-
-
-    def hashpass(self, salt, pass_to_hash): 
-        print("Hello") #Test
-        hashlib.pbkdf2_hmac(
-        'sha256',
-        pass_to_hash.encode('utf-8'),
-        salt,
-        100000
-        )
