@@ -1,5 +1,5 @@
 from DatabaseUtils import DatabaseUtils
-import os
+
 # from W7 Prac
 class Menu:
     def main(self):
@@ -82,14 +82,9 @@ class Menu:
         email = input("Enter the users email address: ")
         pass_to_hash = input ("Enter the users password - NEEDS TO BE HASHED: ")
         
-
-        #Generate salt here 
-        salt = os.urandom(32)
-        password = DatabaseUtils.hashpass(salt, pass_to_hash)
-        #DB insert check
         with DatabaseUtils() as db:
-            if(db.insertUser(name, email, password, salt)):
-                print("{} inserted successfully.".format(name, email, password, salt))
+            if(db.insertUser(name, email, pass_to_hash)):
+                print("{} inserted successfully.".format(name, email, pass_to_hash))
             else:
                 print("{} failed to be inserted.".format(name))
 
