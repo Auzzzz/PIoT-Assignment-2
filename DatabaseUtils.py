@@ -37,10 +37,11 @@ class DatabaseUtils:
                 )""")
         self.connection.commit()
 
-    def insertUser(self, name, email, pass_to_hash):
+    def insertUser(self, hashpass ,name, email, pass_to_hash):
+        salt = os.urandom(32) #Generate salt here
+        password = hashpass()
+
         with self.connection.cursor() as cursor:
-            salt = os.urandom(32) #Generate salt here
-            password = hashpass(pass_to_hash, salt)
             insert = [name, email, password, salt]
             cursor.execute("insert into User (Name, Email, Password, Salt) values (%s,%s,%s,%s)", insert)
         self.connection.commit()
