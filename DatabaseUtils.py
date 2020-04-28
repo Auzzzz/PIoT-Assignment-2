@@ -1,6 +1,6 @@
 import MySQLdb 
 import hashlib
-
+import os
 ## Modified from W7 Prac
 class DatabaseUtils:
     HOST = "34.87.245.145"
@@ -37,8 +37,10 @@ class DatabaseUtils:
                 )""")
         self.connection.commit()
 
-    def insertUser(self, name, email, password, salt):
+    def insertUser(self, name, email, pass_to_hash):
         with self.connection.cursor() as cursor:
+            salt = os.urandom(32) #Generate salt here
+            password = hashpass(pass_to_hash, salt)
             insert = [name, email, password, salt]
             cursor.execute("insert into User (Name, Email, Password, Salt) values (%s,%s,%s,%s)", insert)
         self.connection.commit()
@@ -57,8 +59,8 @@ class DatabaseUtils:
         self.connection.commit()
 
 
-    def hashpass(self, salt, pass_to_hash):
-        print("Hello")
+    def hashpass(self, salt, pass_to_hash): 
+        print("Hello") #Test
         hashlib.pbkdf2_hmac(
         'sha256',
         pass_to_hash.encode('utf-8'),
