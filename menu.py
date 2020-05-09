@@ -121,7 +121,7 @@ class Menu:
         cph = input("What is the cost to hire car eg. 7.5")
         
         with DatabaseUtils() as db:
-            if(db.insertUser(colour, makeid, typeid, seats, location, cph)):
+            if(db.insertCar(colour, makeid, typeid, seats, location, cph)):
                 print("{} inserted successfully.")
             else:
                 print("{} failed to be inserted.")
