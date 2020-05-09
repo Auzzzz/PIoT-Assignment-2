@@ -82,4 +82,5 @@ class DatabaseUtils:
         with self.connection.cursor() as cursor:
             cursor.execute("select typeid, type from car_type")
             return cursor.fetchall()
+            #test
 
