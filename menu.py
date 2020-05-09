@@ -56,7 +56,7 @@ class Menu:
             print()
 
             if(selection == "1"):
-                self.listPeople()
+                self.listCar()
             elif(selection == "2"):
                 self.insertPerson()
             elif(selection == "3"):
@@ -94,10 +94,37 @@ class Menu:
         with DatabaseUtils() as db:
             for make in db.getCarMake():
                 print("{:<15} {}".format(make[0], make[1]))
+    
+    def listCarType(self):
+        print("--- Car Makes ---")
+        print("{:<15} {}".format("TypeID", "Type"))
+        with DatabaseUtils() as db:
+            for typec in db.getCarType():
+                print("{:<15} {}".format(typec[0], typec[1]))
 
     def listCar(self):
         print("--- All Cars ---")
-        print("{:<15} {}".format("CarID", "Make", "Model", "Colour", "Seats", "Location", "Cost Per Hour"))
+        print("{:<15} {}".format("CarID", "Colour", "Make", "Type", "Seats", "Location", "Cost Per Hour"))
+        with DatabaseUtils() as db:
+            for car in db.getCar():
+                 print("{:<15} {}".format(car[0], car[1]))
+
+    def insertCar(self):
+        print("--- Insert New Car ---")
+        print("Available Makes: ", self.listCarMake())
+        makeid = input("Choose the Makeid of the car ")
+        print("Available Types: ", self.listCarType())
+        typeid = input("Choose the Typeid of the car")
+        colour = input("Colour of the car")
+        seats = input("How many seats are in the car")
+        location = input("Current location")
+        cph = input("What is the cost to hire car eg. 7.5")
+        
+        with DatabaseUtils() as db:
+            if(db.insertUser(colour, makeid, typeid, seats, location, cph)):
+                print("{} inserted successfully.")
+            else:
+                print("{} failed to be inserted.")
 
 
 
