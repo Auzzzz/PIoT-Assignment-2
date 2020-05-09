@@ -112,13 +112,13 @@ class Menu:
     def insertCar(self):
         print("--- Insert New Car ---")
         print("Available Makes: ", self.listCarMake())
-        makeid = input("Choose the Makeid of the car ")
+        makeid = input("Choose the Makeid of the car: ")
         print("Available Types: ", self.listCarType())
-        typeid = input("Choose the Typeid of the car")
-        colour = input("Colour of the car")
-        seats = input("How many seats are in the car")
-        location = input("Current location")
-        cph = input("What is the cost to hire car eg. 7.5")
+        typeid = input("Choose the Typeid of the car: ")
+        colour = input("Colour of the car: ")
+        seats = input("How many seats are in the car: ")
+        location = input("Current location: ")
+        cph = input("What is the cost to hire car eg. 7.5: ")
         
         with DatabaseUtils() as db:
             if(db.insertCar(colour, makeid, typeid, seats, location, cph)):
