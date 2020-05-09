@@ -4,7 +4,7 @@ from DatabaseUtils import DatabaseUtils
 class Menu:
     def main(self):
         self.mainMenu()
-
+#Main Menu
     def mainMenu(self):
         while(True):
             print("==Main Menu==")
@@ -22,7 +22,7 @@ class Menu:
                 break
             else:
                 print("Invalid input - please try again.")
-
+#User Menu
     def userMenu(self):
         while(True):
             print("==User Menu==")
@@ -32,7 +32,7 @@ class Menu:
             print("3. Quit")
             selection = input("Select an option: ")
             print()
-#test
+
             if(selection == "1"):
                 self.listPeople()
             elif(selection == "2"):
@@ -44,7 +44,7 @@ class Menu:
                 break
             else:
                 print("Invalid input - please try again.")
-
+#Car Menu
     def carMenu(self):
         while(True):
             print("==Car Menu==")
