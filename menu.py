@@ -66,10 +66,10 @@ class Menu:
                 break
             else:
                 print("Invalid input - please try again.")
-
+#####User#####
     def listPeople(self):
         print("--- People ---")
-        print("{:<15} {}".format("UserID", "Name"))
+        print("{:<15} {}".format("UserID", "Name", "Email"))
         with DatabaseUtils() as db:
             for user in db.getUser():
                 print("{:<15} {}".format(user[0], user[1]))
@@ -85,6 +85,19 @@ class Menu:
                 print("{} inserted successfully.".format(name, email, pass_to_hash))
             else:
                 print("{} failed to be inserted.".format(name))
+
+#####Car#####
+    def listCarMake(self):
+        print("--- Car Makes ---")
+        print("{:<15} {}".format("MakeID", "Make"))
+        with DatabaseUtils() as db:
+            for make in db.getCarMake():
+                print("{:<15} {}".format(make[0], make[1]))
+
+    def listCar(self):
+        print("--- All Cars ---")
+        print("{:<15} {}".format("CarID", "Make", "Model", "Colour", "Seats", "Location", "Cost Per Hour"))
+
 
 
 if __name__ == "__main__":
