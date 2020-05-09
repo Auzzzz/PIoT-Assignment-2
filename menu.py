@@ -62,8 +62,9 @@ class Menu:
             elif(selection == "3"):
                 self.mainMenu()
             elif(selection == "4"):
-                print("Goodbye!")
-                break
+                self.listCarMake()
+                #print("Goodbye!")
+                #break
             else:
                 print("Invalid input - please try again.")
 #####User#####
