@@ -53,7 +53,7 @@ class DatabaseUtils:
 #Insert a car into the DB, pulled from menu.py
     def insertCar(self, colour , makeid , typeid , seats, location, cph):
         with self.connection.cursor() as cursor:
-            cursor.execute("insert into cars (colur, seats, location, cph, makeid, typeid) values (%s,%s,%s,%s,%s,%s)")
+            cursor.execute("insert into cars (colour, seats, location, cph, makeid, typeid) values (%s,%s,%s,%s,%s,%s)")
         self.connection.commit()
 
         #INSERT INTO `cars` (`carid`, `colour`, `seats`, `location`, `cph`, `car_make_makeid`, `car_type_typeid`) VALUES ('1', 'Black', '4', 'Melbourne', '7.5', '5', '3');
