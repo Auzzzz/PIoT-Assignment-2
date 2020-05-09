@@ -3,8 +3,6 @@ from DatabaseUtils import DatabaseUtils
 # from W7 Prac
 class Menu:
     def main(self):
-        with DatabaseUtils() as db:
-            db.createUserTable()
         self.mainMenu()
 
     def mainMenu(self):
