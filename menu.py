@@ -58,7 +58,7 @@ class Menu:
             if(selection == "1"):
                 self.listCar()
             elif(selection == "2"):
-                self.insertPerson()
+                self.insertCar()
             elif(selection == "3"):
                 self.mainMenu()
             elif(selection == "4"):
@@ -107,7 +107,7 @@ class Menu:
         print("{:<15} {}".format("CarID", "Colour", "Make", "Type", "Seats", "Location", "Cost Per Hour"))
         with DatabaseUtils() as db:
             for car in db.getCar():
-                 print("{:<15} {}".format(car[0], car[1]))
+                 print("{:<15} {}".format(car[0], car[1], car[3], car[4], car[5], car[6]))
 
     def insertCar(self):
         print("--- Insert New Car ---")
