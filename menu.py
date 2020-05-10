@@ -153,7 +153,9 @@ class Menu:
                 print("Username Or Password Incorrect")
                 self.main()
             else:
+                
                 currentuser = user
+                return currentuser
                 self.mainMenu()
                 
 
