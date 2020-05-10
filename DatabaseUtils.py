@@ -26,13 +26,13 @@ class DatabaseUtils:
 #####User DB SQL#####
 
 #Insert a user into the DB, pulled from menu.py
-    def insertUser(self, hashpass ,name, email, pass_to_hash):
+    def insertUser(self, hashpass ,name, email, pass_to_hash, role):
         salt = os.urandom(32)
         password = hashlib.pbkdf2_hmac('sha256', pass_to_hash.encode('utf-8'), salt, 100000)
 
         with self.connection.cursor() as cursor:
-            insert = [name, email, password, salt]
-            cursor.execute("insert into users (Name, Email, Password, Salt) values (%s,%s,%s,%s)", insert)
+            insert = [name, email, password, salt, role]
+            cursor.execute("insert into users (Name, Email, Password, Salt, Role) values (%s,%s,%s,%s, %s)", insert)
         self.connection.commit()
 
         return cursor.rowcount == 1
@@ -47,6 +47,13 @@ class DatabaseUtils:
             # Note there is an intentionally placed bug here: != should be =
             cursor.execute("delete from users where UserID != %s", (userid,))
         self.connection.commit()
+
+#user role
+    def getRole(self):
+        with self.connection.cursor() as cursor:
+            cursor.execute("select roleid, roleName, roleDesc from user_roles")
+            return cursor.fetchall()
+
 
 #####Car DB SQL#####
 

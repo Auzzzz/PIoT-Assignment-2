@@ -1,8 +1,18 @@
 from DatabaseUtils import DatabaseUtils
+import getpass #used to hide password input
 
 # from W7 Prac
+#keeps track of the current user
+currentuser
+
 class Menu:
     def main(self):
+        print("==Login==")
+        user = input("Enter Username: ")
+        password = getpass.getpass("Password: ")
+
+        print(user, password)
+
         self.mainMenu()
 #Main Menu
     def mainMenu(self):
@@ -75,17 +85,26 @@ class Menu:
             for user in db.getUser():
                 print("{:<15} {}".format(user[0], user[1]))
 
+    def listroles(self):
+        print("--- Avaliable Roles ---")
+        print("{:<15} {}".format("RoleID", "Role Name", "Role Desc"))
+        with DatabaseUtils() as db:
+            for role in db.getRole():
+                print("{:<15} {}".format(role[0], role[1], role[2]))
+
     def insertUser(self):
         print("--- Insert New User ---")
         name = input("Enter the users name: ")
         email = input("Enter the users email address: ")
+        role = input("Enter the roleID to assign role: ")
         pass_to_hash = input ("Enter the users password - NEEDS TO BE HASHED: ")
         
         with DatabaseUtils() as db:
             if(db.insertUser(name, email, pass_to_hash)):
-                print("{} inserted successfully.".format(name, email, pass_to_hash))
+                print("{} inserted successfully.".format(name, email, pass_to_hash, role))
             else:
                 print("{} failed to be inserted.".format(name))
+
 
 #####Car#####
     def listCarMake(self):
