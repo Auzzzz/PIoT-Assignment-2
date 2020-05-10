@@ -30,13 +30,8 @@ app.config['MYSQL_DB'] = 'carshare'
 mysql = MySQL(app)
 
 
-
-### All routes ###
-@app.route('/login', methods=['GET', 'POST'])
-@app.route('/logout')
-
-
 ### Login ###
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     #error message
     msg = ''
@@ -64,8 +59,8 @@ def login():
     #dispay the login form and any message
     return render_template('index.html', msg=msg)
 
-
 ### Logout ###
+@app.route('/logout')
 def logout():
     #remove all session data to log the user out
     session.pop('loggedin', None)
@@ -73,3 +68,18 @@ def logout():
     session.pop('username', None)
     #move to login page
     return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+     #error message
+    msg = ''
+    #checking to see if the user has pressed the submit button by looking at POST request
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+    #Capture the form data
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+    elif request.method == 'POST':
+            #error message
+            msg = 'Fill the form out you ido*'
+    return render_template('register.html', msg=msg)
