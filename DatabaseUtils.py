@@ -54,6 +54,12 @@ class DatabaseUtils:
             cursor.execute("select roleid, roleName, roleDesc from user_roles")
             return cursor.fetchall()
 
+#user Login ##To Be replaced when password hasshing comes in
+
+    def getUserP(self, user, password):
+        with self.connection.cursor() as cursor:
+            cursor.execute("select * from user where name = %s and password = %s", (user, password))
+            return cursor.fetchall() 
 
 #####Car DB SQL#####
 

@@ -7,9 +7,8 @@ currentuser
 
 class Menu:
     def main(self):
-        print("==Login==")
-        user = input("Enter Username: ")
-        password = getpass.getpass("Password: ")
+        
+
 
         print(user, password)
 
@@ -145,7 +144,19 @@ class Menu:
             else:
                 print("{} failed to be inserted.")
 
+    def userlogin(self):
+        print("==Login==")
+        user = input("Enter Username: ")
+        password = getpass.getpass("Password: ")
+        ##TODO: call in password check
 
+        with DatabaseUtils() as db:
+            if db.getUserP > 0:
+                currentuser = user
+            else:
+                print("Username Or Password Incorrect")
+                self.main()
+                
 
 if __name__ == "__main__":
     Menu().main()
