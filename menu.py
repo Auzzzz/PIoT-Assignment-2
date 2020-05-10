@@ -3,20 +3,17 @@ import getpass #used to hide password input
 
 # from W7 Prac
 #keeps track of the current user
-currentuser
+
 
 class Menu:
     def main(self):
-        
+        self.userlogin()
 
-
-        print(user, password)
-
-        self.mainMenu()
 #Main Menu
     def mainMenu(self):
         while(True):
             print("==Main Menu==")
+            print("Welcome ", self.userlogin.currentuser)
             print("1. User Menu")
             print("2. Car Menu")
             print("3. Quit")
