@@ -148,7 +148,7 @@ class Menu:
         ##TODO: call in password check
 
         with DatabaseUtils() as db:
-            if db.getUserP > 0:
+            if db.getUserP == None:
                 currentuser = user
             else:
                 print("Username Or Password Incorrect")
