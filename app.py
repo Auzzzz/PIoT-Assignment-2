@@ -29,8 +29,14 @@ app.config['MYSQL_DB'] = 'carshare'
 # Intialize MySQL
 mysql = MySQL(app)
 
-### Login ###
+
+
+### All routes ###
 @app.route('/login', methods=['GET', 'POST'])
+@app.route('/logout')
+
+
+### Login ###
 def login():
     #error message
     msg = ''
@@ -57,3 +63,13 @@ def login():
             msg = 'Incorrect username/password!'
     #dispay the login form and any message
     return render_template('index.html', msg=msg)
+
+
+### Logout ###
+def logout():
+    #remove all session data to log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    #move to login page
+    return redirect(url_for('login'))
