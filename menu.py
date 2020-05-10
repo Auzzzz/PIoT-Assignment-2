@@ -150,9 +150,11 @@ class Menu:
         with DatabaseUtils() as db:
             if db.getUserP == None:
                 currentuser = user
-            else:
                 print("Username Or Password Incorrect")
                 self.main()
+            else:
+                currentuser = user
+                self.mainMenu()
                 
 
 if __name__ == "__main__":
