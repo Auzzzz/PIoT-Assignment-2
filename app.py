@@ -71,14 +71,29 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-     #error message
+    #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+    if request.method == 'POST' and 'name' in request.form and 'username' in request.form and 'password' in request.form and 'email' in request.form:
     #Capture the form data
+        name = request.form['name']
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+
+        #check the DB if the user exsits
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('select * from users where username = %s', (username,))
+        account = cursor.fetchone()
+
+        #if the account exsists
+        if account:
+            msg = 'Oh knows what on earth are you going to do..... that username is already taken'
+        else:
+            #Add account into the DB
+            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, password,)) ##TODO: add password hashing
+            mysql.connection.commit()
+            msg = 'Congratz You have been registered......'
     elif request.method == 'POST':
             #error message
             msg = 'Fill the form out you ido*'
