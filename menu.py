@@ -13,7 +13,7 @@ class Menu:
     def mainMenu(self):
         while(True):
             print("==Main Menu==")
-            print("Welcome ", Menu.userlogin.currentuser)
+            print("Welcome " + Menu.userlogin.currentuser)
             print("1. User Menu")
             print("2. Car Menu")
             print("3. Quit")
@@ -153,9 +153,7 @@ class Menu:
                 print("Username Or Password Incorrect")
                 self.main()
             else:
-                
                 currentuser = user
-                return currentuser
                 self.mainMenu()
                 
 
