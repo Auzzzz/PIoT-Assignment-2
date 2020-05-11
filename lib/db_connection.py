@@ -39,6 +39,9 @@ class DB:
             cursor.execute("select * from users where name = %s and password = %s", (user, password))
             return cursor.fetchone() 
 
-
+    def accountUser(self, id):
+        with self.connection.cursor() as cursor:
+            cursor.execute('select * from users where id = %s', (id,))
+            return cursor.fetchone()
 
         

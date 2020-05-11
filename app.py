@@ -40,7 +40,7 @@ def login():
                 session['id'] = account[0]
                 session['username'] = account[2]
                 # move user to home page 
-                return 'Logged in successfully 23!' #currently testing'
+                return redirect(url_for('home'))
             else:
                 msg='Password or Username incorrect'
     #dispay the login form and any message
@@ -91,3 +91,16 @@ def home():
     #If not bye bye
     return redirect(url_for('login'))
 
+### Profile Page ###
+@app.route('/profile')
+def profile():
+    # check if the user is logged in
+    if 'loggedin' in session:
+        # get account info
+        with DB() as db:
+            account = db.accountUser(id = session['id'])
+        
+        # Show the profile page with account info
+        return render_template('profile.html', account=account)
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))
