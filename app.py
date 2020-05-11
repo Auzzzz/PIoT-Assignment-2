@@ -14,6 +14,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+import os
+import hashlib
 
 app = Flask(__name__)
 
@@ -40,11 +42,22 @@ def login():
         #Capture the form data
         username = request.form['username']
         password = request.form['password']
-        
+
+        #get database for salt
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('select password from users where username = %s', (username,))
+        passFromDB = cursor.fetchone()
+        cursor.close()
+
+        #hash password entered to check with database
+        saltUsed = passFromDB[:32]
+        hashedPass = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), saltUsed, 100000)
+
         #Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('select * from users where username = %s and password = %s', (username, password,))
+        cursor.execute('select * from users where username = %s and password = %s', (username, hashedPass,))
         account = cursor.fetchone()
+        cursor.close()
         # If account exists in database
         if account:
             # Create session data to keep track of user 
@@ -86,15 +99,18 @@ def register():
         cursor.execute('select * from users where username = %s', (username,))
         account = cursor.fetchone()
 
-        #if the account exsists
+        #if the account exists
         if account:
-            msg = 'Oh knows what on earth are you going to do..... that username is already taken'
+            msg = 'Username is already taken'
         else:
             #Add account into the DB
-            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, password,)) ##TODO: add password hashing
+            salt = os.urandom(32)
+            key = hashlib.pbkdf2_hmac('sha56', password.encode('utf-8'), salt, 100000)
+            hashedPass = salt + key
+            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, hashedPass,)) ##TODO: add password hashing
             mysql.connection.commit()
-            msg = 'Congratz You have been registered......'
+            msg = 'Registration successful!'
     elif request.method == 'POST':
             #error message
-            msg = 'Fill the form out you ido*'
+            msg = 'Please fill out the form correctly'
     return render_template('register.html', msg=msg)
