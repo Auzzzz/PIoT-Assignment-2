@@ -99,7 +99,7 @@ def profile():
         # get account info
         with DB() as db:
             account = db.accountUser(id = session['id'])
-        
+            print(account)
         # Show the profile page with account info
         return render_template('profile.html', account=account)
     # User is not loggedin redirect to login page
