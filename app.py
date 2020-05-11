@@ -11,24 +11,12 @@
 
 #https://flask.palletsprojects.com/en/1.1.x/quickstart/
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
 import re
-
+from lib.db_connection import DB
 app = Flask(__name__)
 
 # Secrect key for sec
 app.secret_key = 'your secret key'
-
-### Database Conn ###
-app.config['MYSQL_HOST'] = '34.87.245.145'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'banana192'
-app.config['MYSQL_DB'] = 'carshare'
-
-# Intialize MySQL
-mysql = MySQL(app)
-
 
 ### Login ###
 @app.route('/login', methods=['GET', 'POST'])
@@ -42,20 +30,19 @@ def login():
         password = request.form['password']
         
         #Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('select * from users where username = %s and password = %s', (username, password,))
-        account = cursor.fetchone()
-        # If account exists in database
-        if account:
-            # Create session data to keep track of user 
-            session['loggedin'] = True
-            session['id'] = account['id']
-            session['username'] = account['username']
-            # move user to home page 
-            return 'Logged in successfully!' #currently testing
-        else:
-            #error message
-            msg = 'Incorrect username/password!'
+        with DB() as db:
+            account = db.loginUser(username,password)
+            
+            if account:
+                # If account exists in database
+                # Create session data to keep track of user 
+                session['loggedin'] = True
+                session['id'] = account[0]
+                session['username'] = account[2]
+                # move user to home page 
+                return 'Logged in successfully 23!' #currently testing'
+            else:
+                msg='Password or Username incorrect'
     #dispay the login form and any message
     return render_template('index.html', msg=msg)
 
@@ -69,6 +56,8 @@ def logout():
     #move to login page
     return redirect(url_for('login'))
 
+
+### Register ###
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     #error message
@@ -81,20 +70,24 @@ def register():
         password = request.form['password']
         email = request.form['email']
 
-        #check the DB if the user exsits
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('select * from users where username = %s', (username,))
-        account = cursor.fetchone()
-
-        #if the account exsists
-        if account:
-            msg = 'Oh knows what on earth are you going to do..... that username is already taken'
-        else:
-            #Add account into the DB
-            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, password,)) ##TODO: add password hashing
-            mysql.connection.commit()
-            msg = 'Congratz You have been registered......'
+        #check the DB if the user exsits // Add here if we need
+        #Add account into the DB
+        with DB() as db:
+            if(db.insertUser(name, username, email, password)):
+                msg = 'Error.... Oh Well'
+            else:
+                msg = 'Congratz You have been registered......'
     elif request.method == 'POST':
             #error message
             msg = 'Fill the form out you ido*'
     return render_template('register.html', msg=msg)
+
+### Home Page ###
+@app.route('/home')
+def home():
+    if 'loggedin' in session:
+        #When the user is logged in show them this top secret page
+        return render_template('home.html', username=session['username'])
+    #If not bye bye
+    return redirect(url_for('login'))
+
