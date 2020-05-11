@@ -105,7 +105,7 @@ def register():
         else:
             #Add account into the DB
             salt = os.urandom(32)
-            key = hashlib.pbkdf2_hmac('sha56', password.encode('utf-8'), salt, 100000)
+            key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
             hashedPass = salt + key
             cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, hashedPass,)) ##TODO: add password hashing
             mysql.connection.commit()
