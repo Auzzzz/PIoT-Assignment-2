@@ -60,11 +60,11 @@ def login():
         cursor.close()
         # If account exists in database
         if account:
-            # Create session data to keep track of user 
+            # Create session data to keep track of user
             session['loggedin'] = True
             session['id'] = account['id']
             session['username'] = account['username']
-            # move user to home page 
+            # move user to home page
             return 'Logged in successfully!' #currently testing
         else:
             #error message
@@ -92,6 +92,7 @@ def register():
         name = request.form['name']
         username = request.form['username']
         password = request.form['password']
+        confirmPass = request.form['confirmPass']
         email = request.form['email']
 
         #check the DB if the user exsits
@@ -102,12 +103,14 @@ def register():
         #if the account exists
         if account:
             msg = 'Username is already taken'
+        elif password != confirmPass:
+            msg = 'Passwords do not match'
         else:
             #Add account into the DB
             salt = os.urandom(32)
             key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
             hashedPass = salt + key
-            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, hashedPass,)) ##TODO: add password hashing
+            cursor.execute("insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)", (name, username, email, hashedPass,)) ##TODO: add password hashing
             mysql.connection.commit()
             msg = 'Registration successful!'
     elif request.method == 'POST':
