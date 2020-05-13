@@ -109,27 +109,26 @@ def profile():
 # insert car #
 @app.route('/newcar', methods=['GET', 'POST'])
 def newcar():
-    carmake = DB().getCarMake()
-    cartype = DB().getCarType()
+    carmake = DB().getCarMake() ##calls the db to display carmakes in dropdown
+    cartype = DB().getCarType() ##calls the db to display cartypes in dropdown
     #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST': #and 'colour' in request.form and 'seats' in request.form and 'cph' in request.form and 'email' in request.form:
-    #Capture the form data
+    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post requet for all inputs
+        #Capture the form data
         colour = request.form['colour']
         seats = request.form['seats']
         location = request.form['location']
         cph = request.form['cph']
         cmake = request.form['cmake']
         ctype = request.form['ctype']
-        #check the DB if the user exsits // Add here if we need
         #Add account into the DB
         with DB() as db:
             if(db.insertNewCar(colour, seats, location, cph, cmake, ctype)):
                 msg = 'Error.... Oh Well'
             else:
                 msg = 'Congratz You have been registered......'
-    elif request.method == 'POST':
+    elif request.method == 'POST': #if no post request is made
             #error message
             msg = 'Fill the form out you ido*'
     return render_template('newcar.html', carmake=carmake, cartype=cartype, msg=msg)

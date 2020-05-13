@@ -5,11 +5,13 @@
 	<input type="text" name="location" placeholder="Melbourne" id="locaiton">
     <input type="number" name="cph" placeholder="Cost Per Hour (7 or 7.5)" id="cph" step=".1" >
     <select id = "cmake" name = "cmake">
+      <option selected disabled>Choose here</option>
         {% for each in carmake %}
           <option value='{{each.0}}'>{{each.1}}</option>
         {% endfor %}
     </select>
     <select id = "ctype" name = "ctype">
+      <option selected disabled>Choose here</option>
         {% for each in cartype %}
           <option value='{{each.0}}'>{{each.1}}</option>
         {% endfor %}
