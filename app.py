@@ -17,8 +17,8 @@ app = Flask(__name__)
 
 # Secrect key for sec
 app.secret_key = 'your secret key'
-
-### Login ###
+### User ###
+# Login #
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     #error message
@@ -46,7 +46,7 @@ def login():
     #dispay the login form and any message
     return render_template('index.html', msg=msg)
 
-### Logout ###
+# Logout #
 @app.route('/logout')
 def logout():
     #remove all session data to log the user out
@@ -57,7 +57,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-### Register ###
+##Register #
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     #error message
@@ -82,7 +82,7 @@ def register():
             msg = 'Fill the form out you ido*'
     return render_template('register.html', msg=msg)
 
-### Home Page ###
+# Home Page #
 @app.route('/home')
 def home():
     if 'loggedin' in session:
@@ -91,7 +91,7 @@ def home():
     #If not bye bye
     return redirect(url_for('login'))
 
-### Profile Page ###
+# Profile Page #
 @app.route('/profile')
 def profile():
     # check if the user is logged in
@@ -104,3 +104,32 @@ def profile():
         return render_template('profile.html', account=account)
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
+
+### Cars ###
+# insert car #
+@app.route('/newcar', methods=['GET', 'POST'])
+def newcar():
+    carmake = DB().getCarMake()
+    cartype = DB().getCarType()
+    #error message
+    msg = ''
+    #checking to see if the user has pressed the submit button by looking at POST request
+    if request.method == 'POST': #and 'colour' in request.form and 'seats' in request.form and 'cph' in request.form and 'email' in request.form:
+    #Capture the form data
+        colour = request.form['colour']
+        seats = request.form['seats']
+        location = request.form['location']
+        cph = request.form['cph']
+        cmake = request.form['cmake']
+        ctype = request.form['ctype']
+        #check the DB if the user exsits // Add here if we need
+        #Add account into the DB
+        with DB() as db:
+            if(db.insertNewCar(colour, seats, location, cph, cmake, ctype)):
+                msg = 'Error.... Oh Well'
+            else:
+                msg = 'Congratz You have been registered......'
+    elif request.method == 'POST':
+            #error message
+            msg = 'Fill the form out you ido*'
+    return render_template('newcar.html', carmake=carmake, cartype=cartype, msg=msg)

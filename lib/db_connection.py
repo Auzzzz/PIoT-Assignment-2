@@ -22,7 +22,7 @@ class DB:
     def __exit__(self, type, value, traceback):
         self.close()
     
-### User DB ###
+### User DB Qureys ###
 
     def insertUser(self, name, username, email, password):
         with self.connection.cursor() as cursor:
@@ -44,4 +44,20 @@ class DB:
             cursor.execute('select * from users where id = %s', (id,))
             return cursor.fetchone()
 
-        
+
+### Car DB Qureys ####
+# get avaliable car makes #
+    def getCarMake(self):
+        with self.connection.cursor() as cursor:
+            cursor.execute('select * from car_make')
+            return cursor.fetchall()
+
+    def getCarType(self):
+        with self.connection.cursor() as cursor:
+            cursor.execute('select * from car_type')
+            return cursor.fetchall()
+    
+    def insertNewCar(self, colour, seats, location, cph, cmake, ctype):
+        with self.connection.cursor() as cursor:
+            cursor.execute('insert into cars values (NULL, %s, %s, %s, %s, %s, %s)', (colour, seats, location, cph, cmake, ctype,))
+        self.connection.commit()

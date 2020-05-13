@@ -1,0 +1,19 @@
+<h1>Register a new car </h1>
+<form action="{{ url_for('newcar') }}" method="post" autocomplete="off">
+    <input type="text" name="colour" placeholder="Red" id="colour">
+	<input type="number" name="seats" placeholder="No. Seats" id="seats">
+	<input type="text" name="location" placeholder="Melbourne" id="locaiton">
+    <input type="number" name="cph" placeholder="Cost Per Hour (7 or 7.5)" id="cph" step=".1" >
+    <select id = "cmake" name = "cmake">
+        {% for each in carmake %}
+          <option value='{{each.0}}'>{{each.1}}</option>
+        {% endfor %}
+    </select>
+    <select id = "ctype" name = "ctype">
+        {% for each in cartype %}
+          <option value='{{each.0}}'>{{each.1}}</option>
+        {% endfor %}
+    </select>
+	<div class="msg">{{ msg }}</div>
+	<input type="submit" value="Register">
+</form>
