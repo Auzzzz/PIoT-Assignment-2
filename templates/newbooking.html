@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+  <h1>Book a car </h1>
+  <form action="{{ url_for('newbooking') }}" method="post" autocomplete="off">
+      <input type="date" name = "date" id="date">
+    <input type="time" name = "stime" step = "60" id="stime">
+    <input type="time" name = "etime" id="etime">
+
+      <select id = "carid" name = "carid">
+        <option selected disabled>Choose here</option>
+          {% for each in cars %}
+            <option value='{{each.0}}'>{{each.0}}</option>
+          {% endfor %}
+      </select>
+    <div class="msg">{{ msg }}</div>
+    <input type="submit" value="Book">
+
+  </form>
+
+  <table>
+    <tr>
+      <th>CarID</th>
+      <th>Colour</th>
+      <th>No. of seats</th>
+      <th>Location</th>
+      <th>Cost Per Hour</th>
+
+    </tr>
+    
+      {% for each in cars %}
+        <tr>
+          <th>{{ each.0 }}</th>
+          <th>{{ each.1 }}</th>
+          <th>{{ each.2 }}</th>
+          <th>{{ each.3 }}</th>
+          <th>{{ each.4 }}</th>
+        </tr>
+      {% endfor %}
+
+{% endblock %}
+  

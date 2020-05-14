@@ -61,3 +61,13 @@ class DB:
         with self.connection.cursor() as cursor:
             cursor.execute('insert into cars values (NULL, %s, %s, %s, %s, %s, %s)', (colour, seats, location, cph, cmake, ctype,))
         self.connection.commit()
+
+    def getCars(self):
+        with self.connection.cursor() as cursor:
+            cursor.execute('select * from cars')
+            return cursor.fetchall()
+
+    def bookCars(self, userid, carid, bdate, stime, etime):
+        with self.connection.cursor() as cursor:
+            cursor.execute('insert into booking values (NULL, %s, %s, %s, %s, %s)', (userid, carid, bdate, stime, etime,))
+        self.connection.commit()

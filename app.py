@@ -1,22 +1,10 @@
-#from flask import Flask
-#
-#app = Flask(__name__)
-#
-#@app.route('/')
-#def index():
-#	return "Hello World"
-#
-#if __name__ == "__main__":
-#	app.run(debug=True)
-
-#https://flask.palletsprojects.com/en/1.1.x/quickstart/
 from flask import Flask, render_template, request, redirect, url_for, session
 import re
 from lib.db_connection import DB
 app = Flask(__name__)
 
 # Secrect key for sec
-app.secret_key = 'your secret key'
+app.secret_key = 'top secret key'
 ### User ###
 # Login #
 @app.route('/login', methods=['GET', 'POST'])
@@ -132,3 +120,34 @@ def newcar():
             #error message
             msg = 'Fill the form out you ido*'
     return render_template('newcar.html', carmake=carmake, cartype=cartype, msg=msg)
+
+
+@app.route('/newbooking', methods=['GET', 'POST'])
+def newbooking():
+    cars = DB().getCars() ##calls the db to display carmakes in dropdown
+    #error message
+    msg = ''
+    #check to see if logged in
+    if 'loggedin' in session:
+        # get account info
+        with DB() as db:
+            account = db.accountUser(id = session['id'])
+    #checking to see if the user has pressed the submit button by looking at POST request
+    if request.method == 'POST' and 'date' in request.form and 'stime' in request.form and 'etime' in request.form and 'carid' in request.form: #Get contents of post data
+        userid = session['id']
+        #Capture the form data
+        bdate = request.form['date']
+        stime = request.form['stime']
+        etime = request.form['etime']
+        carid = request.form['carid']
+
+        #Add account into the DB
+        with DB() as db:
+            if(db.bookCars(userid, carid, bdate, stime, etime)):
+                msg = 'Error.... Oh Well'
+            else:
+                msg = 'Congratz You have been registered......'
+    elif request.method == 'POST': #if no post request is made
+            #error message
+            msg = 'Fill the form out you ido*'
+    return render_template('newbooking.html', cars=cars, msg=msg)
