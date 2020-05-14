@@ -14,8 +14,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
-import os
-import hashlib
+from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
 
@@ -43,15 +42,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        #get database for salt
+        #get password from database
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('select password from users where username = %s', (username,))
         passFromDB = cursor.fetchone()
         cursor.close()
+        hashedPass = ""
 
-        #hash password entered to check with database
-        saltUsed = passFromDB[:32]
-        hashedPass = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), saltUsed, 100000)
+        #check if password matches
+        if sha256_crypt.verify(password, passFromDB['password']):
+            hashedPass = passFromDB['password']
 
         #Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -107,9 +107,7 @@ def register():
             msg = 'Passwords do not match'
         else:
             #Add account into the DB
-            salt = os.urandom(32)
-            key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-            hashedPass = salt + key
+            hashedPass = sha256_crypt.hash(password)
             cursor.execute("insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)", (name, username, email, hashedPass,)) ##TODO: add password hashing
             mysql.connection.commit()
             msg = 'Registration successful!'
