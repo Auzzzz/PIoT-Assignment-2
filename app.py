@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import re
 from lib.db_connection import DB
 app = Flask(__name__)
+from passlib.hash import sha256_crypt
 
 # Secrect key for sec
 app.secret_key = 'top secret key'
@@ -16,21 +17,33 @@ def login():
         #Capture the form data
         username = request.form['username']
         password = request.form['password']
-        
-        #Check if account exists using MySQL
+        hashedPass = ''
+
+        #get password from Database
         with DB() as db:
-            account = db.loginUser(username,password)
-            
-            if account:
-                # If account exists in database
-                # Create session data to keep track of user 
-                session['loggedin'] = True
-                session['id'] = account[0]
-                session['username'] = account[2]
-                # move user to home page 
-                return redirect(url_for('home'))
+            passFromDB = db.getPasswordWithUser(username)
+
+            #if username exists
+            if passFromDB:
+                #if password matches hash
+                if sha256_crypt.verify(password, passFromDB[0]):
+                    hashedPass = passFromDB[0]
+
+                    #Check if account exists using MySQL
+                    with DB() as db:
+                        account = db.loginUser(username,hashedPass)
+                        if account:
+                            # If account exists in database
+                            # Create session data to keep track of user
+                            session['loggedin'] = True
+                            session['id'] = account[0]
+                            session['username'] = account[2]
+                            # move user to home page
+                            return redirect(url_for('home'))
+                else:
+                    msg = 'Password is incorrect'
             else:
-                msg='Password or Username incorrect'
+                msg = 'User is incorrect'
     #dispay the login form and any message
     return render_template('index.html', msg=msg)
 
@@ -56,15 +69,23 @@ def register():
         name = request.form['name']
         username = request.form['username']
         password = request.form['password']
+        confirmPass = request.form['confirmPass']
         email = request.form['email']
 
-        #check the DB if the user exsits // Add here if we need
-        #Add account into the DB
-        with DB() as db:
-            if(db.insertUser(name, username, email, password)):
-                msg = 'Error.... Oh Well'
-            else:
-                msg = 'Congratz You have been registered......'
+        #validate if password matches with confirmPass
+        if password == confirmPass:
+            #hash the Password
+            hashedPass = sha256_crypt.hash(password)
+
+            #check the DB if the user exsits // Add here if we need
+            #Add account into the DB
+            with DB() as db:
+                if(db.insertUser(name, username, email, hashedPass)):
+                    msg = 'Error.... Oh Well'
+                else:
+                    msg = 'Congratz You have been registered......'
+        else:
+            msg = "Passwords do not match"
     elif request.method == 'POST':
             #error message
             msg = 'Fill the form out you ido*'

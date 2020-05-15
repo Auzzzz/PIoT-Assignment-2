@@ -1,4 +1,4 @@
-import MySQLdb 
+import MySQLdb
 
 class DB:
     ### Database Conn ###
@@ -21,27 +21,32 @@ class DB:
 
     def __exit__(self, type, value, traceback):
         self.close()
-    
+
 ### User DB Qureys ###
 
     def insertUser(self, name, username, email, password):
         with self.connection.cursor() as cursor:
-            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, password,)) ##TODO: add password hashing
+            cursor.execute('insert into users values (NULL, %s, %s, %s, %s, NULL, NULL)', (name, username, email, password,))
         self.connection.commit()
 
     def checkUser(self, username):
         with self.connection.cursor() as cursor:
             cursor.execute('select * from users where username = %s', (username,))
-        self.cursor.fetchone()  
-    
+        self.cursor.fetchone()
+
     def loginUser(self, user, password):
         with self.connection.cursor() as cursor:
             cursor.execute("select * from users where name = %s and password = %s", (user, password))
-            return cursor.fetchone() 
+            return cursor.fetchone()
 
     def accountUser(self, id):
         with self.connection.cursor() as cursor:
             cursor.execute('select * from users where id = %s', (id,))
+            return cursor.fetchone()
+
+    def getPasswordWithUser(self, username):
+        with self.connection.cursor() as cursor:
+            cursor.execute('select password from users where username = %s', (username,))
             return cursor.fetchone()
 
 
@@ -56,7 +61,7 @@ class DB:
         with self.connection.cursor() as cursor:
             cursor.execute('select * from car_type')
             return cursor.fetchall()
-    
+
     def insertNewCar(self, colour, seats, location, cph, cmake, ctype):
         with self.connection.cursor() as cursor:
             cursor.execute('insert into cars values (NULL, %s, %s, %s, %s, %s, %s)', (colour, seats, location, cph, cmake, ctype,))
