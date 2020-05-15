@@ -1,6 +1,5 @@
 #from consoleAP import console
 import socket
-from passlib.hash import sha256_crypt
 
 HOST = input("Enter IP address of server: ")
 
@@ -19,29 +18,24 @@ def selectOptions():
     print("2. Return Car")
     print("3. Log Out")
 
-def checkSelectOption(option):
-    if option == "1":
-        data = "Implement unlock car method"
-    elif option == "2":
-        data = "Implement return car method"
-    elif option == "3":
-        data ="Exiting right now!"
-    
-    return data
-
 def login(s):
     sent = True
-    username = input("Please enter username: ")
-    password = input("Please enter password: ")
-    
-    hashedPassword = sha256_crypt.hash(password)
+    username = "username:" + input("Please enter username: ")
+    password = "password:" + input("Please enter password: ")
 
     s.sendall(username.encode())
-    s.sendall(hashedPassword.encode())
+    s.sendall(password.encode())
 
     data = s.recv(4096)
+    decodedData = data.decode()
+    print(decodedData)
 
     if not data:
+        sent = False
+
+    if decodedData == "Login successfull":
+        sent = True
+    else:
         sent = False
 
     return sent
@@ -52,32 +46,37 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect(ADDRESS)
     print("Connected.")
 
-    while True:
-        printMenu()
-        message = input("Enter your choice: ")
-        if message == "1":
-            if login(s):
-                loggedIn = True
-            else:
-                print("Login failed")
-        elif message == "2":
-            print("Exiting now!")
-            break
-        else:
-            print("Invalid Input")
-        
-        if loggedIn:
-            while True:
-                selectOptions()
-                option = input("Enter Option: ")
-                data = checkSelectOption(option)
-                if data == "Exiting right now!":
-                    break
-                else:
-                    print(data)
+    isLoggedIn = False
 
+    #endless loop for menu until exit 
+    while True:
+        if not isLoggedIn:
+            printMenu()
+            response = input("\nResponse: ")
+            
+            if response == "1":
+                if login(s):
+                    isLoggedIn = True
+                else:
+                    print("\nLogin failed")
+            elif response == "2":
+                print("\nShutting down...")
+                break
+            else:
+                print("\nError: Invalid Input")
         else:
-            print("Log In failed!")
+            selectOptions()
+            response = input("\nResponse: ")
+
+            if response == "1":
+                print("\nUnlocking car...")
+            elif response == "2":
+                print("\nReturning car...")
+            elif response == "3":
+                print("\nLogging out...")
+                isLoggedIn = False
+            else:
+                print("\nError: Invalid Input")
 
     
     print("Disconnecting from server.")
