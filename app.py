@@ -30,16 +30,16 @@ def login():
                     hashedPass = passFromDB[0]
 
                     #Check if account exists using MySQL
-                    with DB() as db:
-                        account = db.loginUser(username,hashedPass)
-                        if account:
-                            # If account exists in database
-                            # Create session data to keep track of user
-                            session['loggedin'] = True
-                            session['id'] = account[0]
-                            session['username'] = account[2]
-                            # move user to home page
-                            return redirect(url_for('home'))
+
+                    account = db.loginUser(username,hashedPass)
+                    if account:
+                        # If account exists in database
+                        # Create session data to keep track of user
+                        session['loggedin'] = True
+                        session['id'] = account[0]
+                        session['username'] = account[2]
+                        # move user to home page
+                        return redirect(url_for('home'))
                 else:
                     msg = 'Password is incorrect'
             else:
@@ -167,7 +167,7 @@ def newbooking():
             if(db.bookCars(userid, carid, bdate, stime, etime)):
                 msg = 'Error.... Oh Well'
             else:
-                msg = 'Congratz You have been registered......'
+                msg = 'Congratz You have been registered.....'
     elif request.method == 'POST': #if no post request is made
             #error message
             msg = 'Fill the form out you ido*'
