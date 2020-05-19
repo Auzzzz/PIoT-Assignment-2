@@ -35,8 +35,9 @@ def register():
 
             #check the DB if the user exsits // Add here if we need
             #Add account into the DB
-            requests.post('http://192.168.0.199/person', json={"name":name, "username":username, "password":password, "email":email})
-            
+            payload = {"email":email, "name":name, "password":password, "username":username}
+            r = requests.post('http://192.168.0.199:5000/person', json=payload)
+            print(r.text)
         else:
             msg = "Passwords do not match"
     elif request.method == 'POST':

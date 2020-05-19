@@ -18,17 +18,17 @@ class Person(db.Model):
     email = db.Column(db.VARCHAR(320))
     password = db.Column(db.VARCHAR(200))
 
-    def __init__(self, name, userid, username, email = None):
-        self.userid = Userid
-        self.name = Name
-        self.username = Username
-        self.email = Email
-        self.password = Password
+    def __init__(self, name, userid, username, email, password):
+        self.userid = userid
+        self.name = name
+        self.username = username
+        self.email = email
+        self.password = password
 
 class PersonSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("userid", "name", "username", "email")
+        fields = ("userid", "name", "username", "email", "password")
 
 personSchema = PersonSchema()
 personsSchema = PersonSchema(many = True)
@@ -38,8 +38,8 @@ personsSchema = PersonSchema(many = True)
 def getPeople():
     people = Person.query.all()
     result = personsSchema.dump(people)
-
-    return jsonify(result.data)
+    print(result)
+    return jsonify(result)
 
 # Endpoint to get person by id.
 @api.route("/person/<id>", methods = ["GET"])
@@ -56,7 +56,7 @@ def addPerson():
     email = request.json["email"]
     password = request.json["password"]
 
-    newPerson = Person(Name = name, Username = username, Email = email, password = password)
+    newPerson = Person(name = name, username = username, email = email, password = "hello")
 
     db.session.add(newPerson)
     db.session.commit()
