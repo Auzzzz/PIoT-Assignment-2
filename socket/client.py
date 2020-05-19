@@ -21,9 +21,9 @@ def selectOptions():
 def login(s):
     sent = True
     username = "username:" + input("Please enter username: ")
-    password = "password:" + input("Please enter password: ")
-
     s.sendall(username.encode())
+
+    password = "password:" + input("Please enter password: ")
     s.sendall(password.encode())
 
     data = s.recv(4096)
