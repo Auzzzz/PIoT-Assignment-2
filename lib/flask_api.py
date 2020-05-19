@@ -18,8 +18,7 @@ class Person(db.Model):
     email = db.Column(db.VARCHAR(320))
     password = db.Column(db.VARCHAR(200))
 
-    def __init__(self, name, userid, username, email, password):
-        self.userid = userid
+    def __init__(self, name, username, email, password):
         self.name = name
         self.username = username
         self.email = email
