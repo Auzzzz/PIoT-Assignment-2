@@ -18,6 +18,7 @@ DATABASE = "carshare"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSWORD, HOST, DATABASE)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config['SECRET_KEY'] = '8sOGgEM1Ie2gFer4wMlYbSahMeuf0cki'
 
 db.init_app(app)
 
@@ -25,4 +26,4 @@ app.register_blueprint(api)
 app.register_blueprint(site)
 
 if __name__ == "__main__":
-    app.run(host = "192.168.0.199")
+    app.run(host = "192.168.0.199",debug=True)
