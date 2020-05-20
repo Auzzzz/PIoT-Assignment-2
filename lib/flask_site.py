@@ -10,7 +10,7 @@ site = Blueprint("site", __name__)
 @site.route("/")
 def index():
     # Use REST API.
-    response = requests.get("http://192.168.0.199:5000/person/")
+    response = requests.get("http://127.0.0.1:5000/person/")
     data = json.loads(response.text)
 
     return render_template("index.html", people = data)
@@ -33,7 +33,7 @@ def register():
         if password == confirmPass:
             #Add account into the DB
             payload = {"email":email, "name":name, "password":password, "username":username}
-            r = requests.post('http://192.168.0.199:5000/api/person', json=payload)
+            r = requests.post('http://127.0.0.1:5000/api/person', json=payload)
             print(r.text)
         else:
             msg = "Passwords do not match"
@@ -53,12 +53,12 @@ def login():
             msg = "Username or Password empty"
         else:
             #send user details of
-            response = requests.get('http://192.168.0.199:5000/api/token', auth=(username, password))
+            response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
             #make response into json format
             data = json.loads(response.text)
             #take token out of json and submit it for access to user info
             token = data['token']
-            response = requests.get('http://192.168.0.199:5000/api/login', auth=(token, 'unused'))
+            response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
             #format the response in json
             data = json.loads(response.text)
 
