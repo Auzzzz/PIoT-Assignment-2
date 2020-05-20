@@ -78,11 +78,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen()
 
     while True:
+        try:
+            print("Listening on {}...".format(ADDRESS))
+            conn, addr = s.accept()
+            start_new_thread(addClient, (conn, addr,))
+        except KeyboardInterrupt:
+            break
 
-        print("Listening on {}...".format(ADDRESS))
-        conn, addr = s.accept()
-        start_new_thread(addClient, (conn, addr,))
-
-    print("Closing listening socket...")
+    s.shutdown(socket.SHUT_RDWR)
+    s.close()
+    print("\nClosing listening socket...")
 print("Done!")
             
