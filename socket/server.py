@@ -50,7 +50,8 @@ def login(username, password, s):
 def addClient(conn, addr):
     with conn:
         print("Connected to {}".format(addr))
-
+        print("Press control C to quit")
+        
         sessionUser = ''
 
         while True:

@@ -1,5 +1,6 @@
 #from consoleAP import console
 import socket
+from getpass import getpass
 
 HOST = input("Enter IP address of server: ")
 
@@ -23,8 +24,9 @@ def login(s):
     username = "username:" + input("Please enter username: ")
     s.sendall(username.encode())
 
-    password = "password:" + input("Please enter password: ")
-    s.sendall(password.encode())
+    password = getpass('Password: ')
+    passToSend = "password:" + password
+    s.sendall(passToSend.encode())
 
     data = s.recv(4096)
     decodedData = data.decode()
