@@ -1,10 +1,11 @@
 #from consoleAP import console
 import socket
+from getpass import getpass
 
 HOST = input("Enter IP address of server: ")
 
 # HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5000         # The port used by the server.
+PORT = 5004        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 def printMenu():
@@ -23,8 +24,9 @@ def login(s):
     username = "username:" + input("Please enter username: ")
     s.sendall(username.encode())
 
-    password = "password:" + input("Please enter password: ")
-    s.sendall(password.encode())
+    password = getpass('Password: ')
+    passToSend = "password:" + password
+    s.sendall(passToSend.encode())
 
     data = s.recv(4096)
     decodedData = data.decode()
@@ -33,7 +35,7 @@ def login(s):
     if not data:
         sent = False
 
-    if decodedData == "Login successfull":
+    if decodedData == "Login successful":
         sent = True
     else:
         sent = False
