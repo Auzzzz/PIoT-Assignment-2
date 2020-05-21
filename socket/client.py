@@ -30,7 +30,6 @@ def login(s):
 
     data = s.recv(4096)
     decodedData = data.decode()
-    print(decodedData)
 
     if not data:
         sent = False
@@ -59,6 +58,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if response == "1":
                 if login(s):
                     isLoggedIn = True
+                    print("\nLogin successful!")
                 else:
                     print("\nLogin failed")
             elif response == "2":

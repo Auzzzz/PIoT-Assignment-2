@@ -23,19 +23,12 @@ def login(username, password, s):
         s.sendAll(msg.encode())
     else:
         response = requests.get('http://127.0.0.1:5000/api/token', auth=(loginUser, loginPass))
-        print("Response from request is - " + str(response))
-        print("Text from response is - " + str(response.text))
         
         #Login failed
         if str(response) == "<Response [401]>":
             msg = 'Unauthorized Access'
             s.sendall(msg.encode())
-            print("<Response [401]> pathway")
-
-        elif str(response.text) == "Unauthorized Access":
-            msg = 'Unauthorized Access'
-            s.sendall(msg.encode())
-            print("Unauthorized Access pathway")
+            
         #Login success
         else:
             data = json.loads(response.text)
@@ -50,7 +43,7 @@ def login(username, password, s):
 def addClient(conn, addr):
     with conn:
         print("Connected to {}".format(addr))
-        print("Press control C to quit")
+        print("( -- Press CTRL+C to Quit -- )")
         
         sessionUser = ''
 
