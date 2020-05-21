@@ -28,17 +28,15 @@ def login(username, password, s):
         if str(response) == "<Response [401]>":
             msg = 'Unauthorized Access'
             s.sendall(msg.encode())
-            
+
         #Login success
         else:
             data = json.loads(response.text)
-            print(str(data))
             token = data['token']
             response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
             data = json.loads(response.text)
             msg = 'Login successful'
             s.sendall(msg.encode())
-            print("login success")
 
 def addClient(conn, addr):
     with conn:
