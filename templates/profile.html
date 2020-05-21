@@ -8,20 +8,41 @@
     <p>Your account details are below:</p>
     <table>
         <tr>
-            <td>Name:</td>
-            <td>{{ account[1] }}</td>
+            <td>ID:</td>
+            <td>{{ session['userid'] }}</td>
         </tr>
         <tr>
             <td>Username:</td>
-            <td>{{ account[2] }}</td>
+            <td>{{ session['username'] }}</td>
         </tr>
         <tr>
-            <td>Password:</td>
-            <td>{{ account[4] }}</td>
+            <td>Name:</td>
+            <td>{{ session['name'] }}</td>
         </tr>
         <tr>
             <td>Email:</td>
-            <td>{{ account[3] }}</td>
+            <td>{{ session['email'] }}</td>
+        </tr>
+    </table>
+</div>
+<h2> Up Comming Bookings</h2>
+<div>
+    <table>
+        <tr>
+            <td>Booking Date</td>
+            <td>{{ session['userid'] }}</td>
+        </tr>
+        <tr>
+            <td>Booking </td>
+            <td>{{ session['username'] }}</td>
+        </tr>
+        <tr>
+            <td>Name:</td>
+            <td>{{ session['name'] }}</td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>{{ session['email'] }}</td>
         </tr>
     </table>
 </div>

@@ -1,5 +1,5 @@
 <h1>Register a new car </h1>
-<form action="{{ url_for('newcar') }}" method="post" autocomplete="off">
+<form action="{{ url_for('site.newcar') }}" method="post" autocomplete="off">
     <input type="text" name="colour" placeholder="Red" id="colour">
 	<input type="number" name="seats" placeholder="No. Seats" id="seats">
 	<input type="text" name="location" placeholder="Melbourne" id="locaiton">
@@ -7,13 +7,13 @@
     <select id = "cmake" name = "cmake">
       <option selected disabled>Choose here</option>
         {% for each in carmake %}
-          <option value='{{each.0}}'>{{each.1}}</option>
+          <option value='{{each.makeid}}'>{{each.make}}</option>
         {% endfor %}
     </select>
     <select id = "ctype" name = "ctype">
       <option selected disabled>Choose here</option>
         {% for each in cartype %}
-          <option value='{{each.0}}'>{{each.1}}</option>
+          <option value='{{each.typeid}}'>{{each.type}}</option>
         {% endfor %}
     </select>
 	<div class="msg">{{ msg }}</div>
