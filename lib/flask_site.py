@@ -4,7 +4,9 @@ from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
 import os, time, requests, json
 
+
 site = Blueprint("site", __name__)
+
 ### User ###
 # Client webpage.
 @site.route("/")
@@ -158,7 +160,7 @@ def newbooking():
     
         #checking to see if the user has pressed the submit button by looking at POST request
         if request.method == 'POST' and 'date' in request.form and 'stime' in request.form and 'etime' in request.form and 'carid' in request.form: #Get contents of post data
-            userid = session['id']
+            userid = session['userid']
             #Capture the form data
             bdate = request.form['date']
             stime = request.form['stime']
@@ -170,7 +172,7 @@ def newbooking():
                 msg = 'Error.... Oh Well'
             else:
                 payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus}
-                r = requests.post('http://192.168.0.199:5000/api/carbooking', json=payload)
+                r = requests.post('http://192.168.0.199:5000/api/car/booking', json=payload)
                 msg = 'Congratz You have been registered.....'
         elif request.method == 'POST': #if no post request is made
                 #error message

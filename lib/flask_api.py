@@ -207,7 +207,7 @@ cartypesSchema = CarTypeSchema(many = True)
 class Booking(db.Model):
     __tablename__ = "booking"
     bookingid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    userid = db.Column(db.Integer, db.ForeignKey('users.usersid'))
+    userid = db.Column(db.Integer, db.ForeignKey('users.userid'))
     carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
     bdate = db.Column(db.DATE)
     stime = db.Column(db.TIME)
@@ -282,9 +282,9 @@ def addCarBooking():
     carid = request.json["carid"]
     bookingstatus = request.json["bookingstatus"]
 
-    newCarBooking = Car(userid = userid, bdate = bdate, stime = stime, etime = etime, carid = carid, bookingstatus = bookingstatus)
+    newCarBooking = Booking(userid = userid, bdate = bdate, stime = stime, etime = etime, carid = carid, bookingstatus = bookingstatus)
 
-    db.session.add(newCarBookin)
+    db.session.add(newCarBooking)
     db.session.commit()
 
     return personSchema.jsonify(newCarBooking)

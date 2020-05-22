@@ -12,7 +12,7 @@
       <select id = "carid" name = "carid">
         <option selected disabled>Choose here</option>
           {% for each in cars %}
-            <option value='{{each.0}}'>{{each.0}}</option>
+            <option value='{{each.carid}}'>{{each.carid}}</option>
           {% endfor %}
       </select>
     <div class="msg">{{ msg }}</div>
