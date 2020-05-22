@@ -213,14 +213,16 @@ class Booking(db.Model):
     stime = db.Column(db.TIME)
     etime = db.Column(db.TIME)
     bookingstatus = db.Column(db.Integer)
+    bookingcode = db.Column(db.Integer)
 
-def __init__(self, userid, carid, bdate, stime, etime, bookingstatus ):
+def __init__(self, userid, carid, bdate, stime, etime, bookingstatus, bookingcode):
         self.userid = userid
         self.carid = carid
         self.bdate = bdate
         self.stime = stime
         self.etime = etime
         self.bookingstatus = bookingstatus
+        self.bookingcode = bookingcode
 
 class BookingSchema(ma.Schema):    
     class Meta:
@@ -235,7 +237,6 @@ bookingsSchema = BookingSchema(many = True)
 def getCar():
     car = Car.query.all()
     result = carsSchema.dump(car)
-    print(result)
     return jsonify(result)
 
 # Get all car makes
@@ -243,7 +244,6 @@ def getCar():
 def getMake():
     make = CarMake.query.all()
     result = carmakesSchema.dump(make)
-    print(result)
     return jsonify(result)
 
 # Get all car types
@@ -251,7 +251,6 @@ def getMake():
 def getType():
     type = CarType.query.all()
     result = cartypesSchema.dump(type)
-    print(result)
     return jsonify(result)
 
 
@@ -281,10 +280,20 @@ def addCarBooking():
     etime = request.json["etime"]
     carid = request.json["carid"]
     bookingstatus = request.json["bookingstatus"]
+    bookingcode = request.json["bookingcode"]
 
-    newCarBooking = Booking(userid = userid, bdate = bdate, stime = stime, etime = etime, carid = carid, bookingstatus = bookingstatus)
+    newCarBooking = Booking(userid = userid, bdate = bdate, stime = stime, etime = etime, carid = carid, bookingstatus = bookingstatus, bookingcode = bookingcode)
 
     db.session.add(newCarBooking)
     db.session.commit()
 
     return personSchema.jsonify(newCarBooking)
+
+#check booking code and return booking data
+@api.route("/api/car/booking/code", methods = ['POST','GET'])
+def checkbookingcode():
+    bookingcode = request.json['bookingcode']
+    bc = Booking.query.filter_by(bookingcode = bookingcode)
+    result = bookingsSchema.dump(bc)
+    print('result',result)
+    return jsonify(result)

@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, render_template, session, 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
-import os, time, requests, json
+import os, time, requests, json, random
 
 
 site = Blueprint("site", __name__)
@@ -58,7 +58,7 @@ def login():
             response = requests.get('http://192.168.0.199:5000/api/token', auth=(username, password))
             #make response into json format
             data = json.loads(response.text)
-            print(response.status_code)
+            print(response.status_code, 'hello')
             #take token out of json and submit it for access to user info
             token = data['token']
             response = requests.get('http://192.168.0.199:5000/api/login', auth=(token, 'unused'))
@@ -148,11 +148,21 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
+    #bookingcode = 90419
+    #p = {'bookingcode':bookingcode}
+    #response = requests.post('http://192.168.0.199:5000/api/car/booking/code', json=p)
+    #if response.ok:
+    #    response_json = response.json()
+    #    print(response_json)
+    #else:
+    #    print('Something went wrong, server sent code {}'.format(response.status_code))
+    
+
+
     #Get cars for list
     response = requests.get('http://192.168.0.199:5000/api/car')
     #format the response in json
     cars = json.loads(response.text)
-
     #error message
     msg = ''
     #check to see if logged in
@@ -167,14 +177,17 @@ def newbooking():
             etime = request.form['etime']
             carid = request.form['carid']
             bookingstatus = 1
+            bookingcode = random.randint(11111, 99999)
             #Add account into the DB
             if userid is None or bdate is None or stime is None or etime is None or carid is None:
                 msg = 'Error.... Oh Well'
             else:
-                payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus}
+                payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
                 r = requests.post('http://192.168.0.199:5000/api/car/booking', json=payload)
                 msg = 'Congratz You have been registered.....'
         elif request.method == 'POST': #if no post request is made
                 #error message
                 msg = 'Fill the form out you ido*'
     return render_template('newbooking.html', cars=cars, msg=msg)
+
+
