@@ -9,7 +9,7 @@ import os, requests, json
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
-PORT = 5004 # Port to listen on (non-privileged ports are > 1023).
+PORT = 5001 # Port to listen on (non-privileged ports are > 1023).
 ADDRESS = (HOST, PORT)
 
 
@@ -39,6 +39,24 @@ class Functions:
                 msg = 'Login successful'
                 s.sendall(msg.encode())
 
+    def unlockCar(s, bookingCode):
+        p = {'bookingcode':bookingCode}
+        response = requests.post('http://127.0.0.1:5000/api/car/booking/code', json=p)
+        print(str(response))
+        msg = ''
+
+        if response.ok:
+            response_json = response.json()
+            if str(response_json) != '[]':  
+                msg = 'Car Unlocked'
+            else:
+                msg = 'Error'
+        else:
+            print('Error')
+            msg = 'Error'
+        
+        s.sendall(msg.encode())
+
 
 class Main:
     def addClient(conn, addr):
@@ -47,7 +65,7 @@ class Main:
             print("( -- Press CTRL+C to Quit -- )")
         
             sessionUser = ''
-            sessionCarID = ''
+            sessionBookingCode = ''
 
             while True:
                 data = conn.recv(2048)
@@ -61,13 +79,10 @@ class Main:
                     sessionUser = info
                 elif instruct == "password":
                     Functions.login(sessionUser, info, conn)
-                elif instruct == "carid":
-                    sessionCarID = info
-                elif instruct == "unlockcode":
-                    msg = 'need to implement'
-                    conn.sendall(msg.encode())
-                    
-
+                elif instruct == "bookingcode":
+                    sessionBookingCode = info
+                    Functions.unlockCar(conn, sessionBookingCode)
+                
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
 
@@ -84,7 +99,7 @@ class Main:
                 try:
                     print("Listening on {}...".format(ADDRESS))
                     conn, addr = s.accept()
-                    start_new_thread(Main.addClient(conn, addr))
+                    start_new_thread(Main.addClient, (conn, addr,))
                 except KeyboardInterrupt:
                     break
 

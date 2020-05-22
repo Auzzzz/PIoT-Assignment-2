@@ -183,8 +183,8 @@ def newbooking():
                 msg = 'Error.... Oh Well'
             else:
                 payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
-                r = requests.post('http://192.168.0.199:5000/api/car/booking', json=payload)
-                msg = 'Congratz You have been registered.....'
+                r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
+                msg = 'Congratz You have been registered..... your booking code is:' + str(bookingcode)
         elif request.method == 'POST': #if no post request is made
                 #error message
                 msg = 'Fill the form out you ido*'

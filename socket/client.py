@@ -6,7 +6,7 @@ from getpass import getpass
 HOST = input("Enter IP address of server: ")
 
 # HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5004        # The port used by the server.
+PORT = 5001        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 class Menu:
@@ -47,13 +47,12 @@ class Functions:
 
     def unlockCar(s):
         unlocked = False
-        carID = "carid:" + input("Car ID: ")
-        s.sendall(carID.encode())
-        unlockCode = "unlockcode:" + input("Unlock Code: ")
-        s.sendall(unlockCode.encode())
+        bookingCode = "bookingcode:" + input("Unlock Code: ")
+        s.sendall(bookingCode.encode())
 
         data = s.recv(4096)
         decodedData = data.decode()
+        print(str(decodedData))
 
         if not data:
             unlocked = False
