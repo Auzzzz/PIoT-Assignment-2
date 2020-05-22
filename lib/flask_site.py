@@ -12,7 +12,7 @@ site = Blueprint("site", __name__)
 @site.route("/")
 def index():
     # Use REST API.
-    response = requests.get("http://192.168.0.199:5000/person/")
+    response = requests.get("http://127.0.0.1:5000/person/")
     data = json.loads(response.text)
 
     return render_template("index.html", people = data)
@@ -35,7 +35,7 @@ def register():
         if password == confirmPass:
             #Add account into the DB
             payload = {"email":email, "name":name, "password":password, "username":username}
-            r = requests.post('http://192.168.0.199:5000/api/person', json=payload)
+            r = requests.post('http://127.0.0.1:5000/api/person', json=payload)
             msg = 'Congratz You have been registered......'
         else:
             msg = "Passwords do not match"
@@ -55,13 +55,13 @@ def login():
             msg = "Username or Password empty"
         else:
             #send user details of
-            response = requests.get('http://192.168.0.199:5000/api/token', auth=(username, password))
+            response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
             #make response into json format
             data = json.loads(response.text)
             print(response.status_code)
             #take token out of json and submit it for access to user info
             token = data['token']
-            response = requests.get('http://192.168.0.199:5000/api/login', auth=(token, 'unused'))
+            response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
             #format the response in json
             data = json.loads(response.text)
 
@@ -113,12 +113,12 @@ def profile():
 @site.route('/newcar', methods=['GET', 'POST'])
 def newcar():
     #Get car make for list
-    response = requests.get('http://192.168.0.199:5000/api/car/make')
+    response = requests.get('http://127.0.0.1:5000/api/car/make')
     #format the response in json
     carmake = json.loads(response.text)
 
     #Get car type for list
-    response = requests.get('http://192.168.0.199:5000/api/car/type')
+    response = requests.get('http://127.0.0.1:5000/api/car/type')
     #format the response in json
     cartype = json.loads(response.text)
 
@@ -138,7 +138,7 @@ def newcar():
             msg = 'Error.... Oh Well'
         else:
             payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":cmake, "car_type_typeid":ctype}
-            r = requests.post('http://192.168.0.199:5000/api/car', json=payload)
+            r = requests.post('http://127.0.0.1:5000/api/car', json=payload)
             msg = 'Congratz You have been registered......'
     elif request.method == 'POST': #if no post request is made
             #error message
@@ -149,7 +149,7 @@ def newcar():
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
     #Get cars for list
-    response = requests.get('http://192.168.0.199:5000/api/car')
+    response = requests.get('http://127.0.0.1:5000/api/car')
     #format the response in json
     cars = json.loads(response.text)
 
@@ -172,7 +172,7 @@ def newbooking():
                 msg = 'Error.... Oh Well'
             else:
                 payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus}
-                r = requests.post('http://192.168.0.199:5000/api/car/booking', json=payload)
+                r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
                 msg = 'Congratz You have been registered.....'
         elif request.method == 'POST': #if no post request is made
                 #error message

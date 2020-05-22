@@ -82,7 +82,7 @@ class Main:
                     response = input("\nResponse: ")
             
                     if response == "1":
-                        if login(s):
+                        if Functions.login(s):
                             isLoggedIn = True
                             print("\nLogin successful!")
                         else:
@@ -97,10 +97,10 @@ class Main:
                     response = input("\nResponse: ")
 
                     if response == "1":
-                        if unlockCar(s):
+                        if Functions.unlockCar(s):
                             print("\nCar Unlocked")
                         else:
-                            print("\nInvalid credentials")
+                            print("\nInvalid credentials or car already unlocked by user...")
                     elif response == "2":
                         print("\nReturning car...")
                     elif response == "3":

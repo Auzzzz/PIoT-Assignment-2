@@ -47,6 +47,7 @@ class Main:
             print("( -- Press CTRL+C to Quit -- )")
         
             sessionUser = ''
+            sessionCarID = ''
 
             while True:
                 data = conn.recv(2048)
@@ -59,7 +60,13 @@ class Main:
                 if instruct == "username":
                     sessionUser = info
                 elif instruct == "password":
-                    login(sessionUser, info, conn)
+                    Functions.login(sessionUser, info, conn)
+                elif instruct == "carid":
+                    sessionCarID = info
+                elif instruct == "unlockcode":
+                    msg = 'need to implement'
+                    conn.sendall(msg.encode())
+                    
 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
@@ -77,7 +84,7 @@ class Main:
                 try:
                     print("Listening on {}...".format(ADDRESS))
                     conn, addr = s.accept()
-                    start_new_thread(addClient, (conn, addr,))
+                    start_new_thread(Main.addClient(conn, addr))
                 except KeyboardInterrupt:
                     break
 
