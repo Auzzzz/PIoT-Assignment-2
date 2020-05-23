@@ -23,7 +23,6 @@ class Menu:
 
 class Functions:
     def login(s):
-        sent = True
         username = "username:" + input("Please enter username: ")
         s.sendall(username.encode())
         outcome = False
@@ -50,7 +49,7 @@ class Functions:
 
 
     def unlockCar(s):
-        unlocked = False
+        outcome = False
         bookingCode = "bookingcode:" + input("Unlock Code: ")
         s.sendall(bookingCode.encode())
 
@@ -58,10 +57,11 @@ class Functions:
         decodedData = data.decode()
 
         if not data:
-            return
+            return False
     
         if decodedData == "Car Unlocked":
             print('\nCar Unlocked')
+            outcome = True
     
         elif decodedData == 'Not your booking':
             print('\nError: Not your booking')
@@ -71,13 +71,17 @@ class Functions:
 
         elif decodedData == 'Car already returned':
             print('\nError: Car has already been returned')
+        
+        elif decodedData == 'Wrong time':
+            print('\nError: Your booking is not for the current time')
 
         else:
             print('\nError: Invalid booking code')
 
+        return outcome
 
     def returnCar(s):
-        returned = False
+        outcome = False
         x = input('Are you sure you want to return the car? (Y/N): ')
         userInput = x.upper()
         msg = "returncar:" + userInput
@@ -88,13 +92,19 @@ class Functions:
             decodedData = data.decode()
 
             if not data:
-                return
-            elif decodedData == 'Car Unlocked':
+                return False
+
+            if decodedData == 'Car Unlocked':
                 print('\nCar Returned')
+                outcome = True
+
             elif decodedData == 'Rejected':
                 print('\nReturning car cancelled...')
+
             else:
                 print('\nError while returning car')
+                
+        return outcome
 
 
 class Main:
@@ -131,13 +141,13 @@ class Main:
                         if hasUnlocked:
                             print('You have already unlocked a car')
                         else:
-                            Functions.unlockCar(s)
-                            hasUnlocked = True
+                            if Functions.unlockCar(s):
+                                hasUnlocked = True
 
                     elif response == "2":
                         if hasUnlocked:
-                            Functions.returnCar(s)
-                            hasUnlocked = False
+                            if Functions.returnCar(s):
+                                hasUnlocked = False
                         else:
                             print('\nYou have not unlocked a car to return')
 

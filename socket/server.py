@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from getpass import getpass
 import os, requests, json
+from datetime import datetime
+from datetime import date
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
@@ -57,13 +59,22 @@ class Functions:
                 bookingUserID = bookingDetails['userid']
                 bookingID = bookingDetails['bookingid']
                 bookingStatus = bookingDetails['bookingstatus']
+                startTime = bookingDetails['stime']
+                endTime = bookingDetails['etime']
+                bookingDate = bookingDetails['bdate']
+                currentDate = date.today()
+                now = datetime.now()
+                timeNow = now.strftime("%H:%M:%S")
                 if str(bookingUserID) == str(userID):
                     if bookingStatus == 1:
-                        msg = 'Car Unlocked' 
-                        j = {'bookingid':bookingID,'bookingstatus':str(2)}
-                        response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
-                        s.sendall(msg.encode())
-                        outcome = str(bookingID)
+                        if str(startTime) < str(timeNow) and str(timeNow) < str(endTime) and str(bookingDate) == str(currentDate):
+                            msg = 'Car Unlocked' 
+                            j = {'bookingid':bookingID,'bookingstatus':str(2)}
+                            response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
+                            s.sendall(msg.encode())
+                            outcome = str(bookingID)
+                        else:
+                            msg = 'Wrong time'
                     elif bookingStatus == 2:
                         msg = 'Already Unlocked'
                     elif bookingStatus == 3:
@@ -83,8 +94,6 @@ class Functions:
     def returnCar(s, bookingID):
         p = {'bookingid':bookingID,'bookingstatus':str(3)}
         response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
-        msg = 'Car Returned'
-        s.sendall(msg.encode())
         
 
 
