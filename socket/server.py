@@ -14,7 +14,7 @@ ADDRESS = (HOST, PORT)
 
 
 class Functions:
-    def login(username, password, s, userID):
+    def login(username, password, s):
         loginUser = username
         loginPass = password
         msg = ''
@@ -29,6 +29,7 @@ class Functions:
             if str(response) == "<Response [401]>":
                 msg = 'Unauthorized Access'
                 s.sendall(msg.encode())
+                return ''
 
             #Login success
             else:
@@ -39,17 +40,22 @@ class Functions:
                 userID = data['userid']
                 msg = 'Login successful'
                 s.sendall(msg.encode())
+                return str(userID)
 
-    def unlockCar(s, bookingCode):
+    def unlockCar(s, bookingCode, userID):
         p = {'bookingcode':bookingCode}
         response = requests.post('http://127.0.0.1:5000/api/car/booking/code', json=p)
-        print(str(response))
         msg = ''
 
         if response.ok:
             response_json = response.json()
             if str(response_json) != '[]':  
-                msg = 'Car Unlocked'
+                bookingDetails = response_json[0]
+                bookingUserID = bookingDetails['userid']
+                if str(bookingUserID) == str(userID):
+                    msg = 'Car Unlocked' 
+                else:
+                    msg = 'Not your booking' 
             else:
                 msg = 'Error'
         else:
@@ -80,10 +86,10 @@ class Main:
                 if instruct == "username":
                     sessionUser = info
                 elif instruct == "password":
-                    Functions.login(sessionUser, info, conn, sessionUserID)
+                    sessionUserID = Functions.login(sessionUser, info, conn)
                 elif instruct == "bookingcode":
                     sessionBookingCode = info
-                    Functions.unlockCar(conn, sessionBookingCode)
+                    Functions.unlockCar(conn, sessionBookingCode, sessionUserID)
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()

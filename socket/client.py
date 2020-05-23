@@ -59,6 +59,9 @@ class Functions:
     
         if decodedData == "Car Unlocked":
             unlocked = True
+        elif decodedData == 'Not your booking':
+            print('\nError: Not your booking')
+            unlocked = False
         else:
             unlocked = False
 
