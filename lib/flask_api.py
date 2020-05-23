@@ -327,7 +327,7 @@ def bookingUpdate():
 
     return bookingSchema.jsonify(booking)
 
-# Endpoint to get booing by userid.
+# Endpoint to get booking by userid.
 @api.route("/api/booking/<userid>", methods = ["GET", "POST"])
 def checkUsersBooking():
     userid = 29#request.json['userid']

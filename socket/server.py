@@ -18,6 +18,7 @@ class Functions:
         loginUser = username
         loginPass = password
         msg = ''
+        outcome = ''
 
         if loginUser is None or loginPass is None:
             msg = 'Username or Password is empty'
@@ -29,7 +30,6 @@ class Functions:
             if str(response) == "<Response [401]>":
                 msg = 'Unauthorized Access'
                 s.sendall(msg.encode())
-                return ''
 
             #Login success
             else:
@@ -40,29 +40,52 @@ class Functions:
                 userID = data['userid']
                 msg = 'Login successful'
                 s.sendall(msg.encode())
-                return str(userID)
+                outcome = str(userID)
+
+        return outcome
 
     def unlockCar(s, bookingCode, userID):
         p = {'bookingcode':bookingCode}
-        response = requests.post('http://127.0.0.1:5000/api/car/booking/code', json=p)
+        response = requests.post('http://127.0.0.1:5000/api/booking/code', json=p)
         msg = ''
+        outcome = ''
 
         if response.ok:
             response_json = response.json()
             if str(response_json) != '[]':  
                 bookingDetails = response_json[0]
                 bookingUserID = bookingDetails['userid']
+                bookingID = bookingDetails['bookingid']
+                bookingStatus = bookingDetails['bookingstatus']
                 if str(bookingUserID) == str(userID):
-                    msg = 'Car Unlocked' 
+                    if bookingStatus == 1:
+                        msg = 'Car Unlocked' 
+                        j = {'bookingid':bookingID,'bookingstatus':str(2)}
+                        response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
+                        s.sendall(msg.encode())
+                        outcome = str(bookingID)
+                    elif bookingStatus == 2:
+                        msg = 'Already Unlocked'
+                    elif bookingStatus == 3:
+                        msg = 'Car already returned'
+                    else:
+                        msg = 'Error'
                 else:
                     msg = 'Not your booking' 
             else:
                 msg = 'Error'
         else:
-            print('Error')
             msg = 'Error'
         
         s.sendall(msg.encode())
+        return outcome
+
+    def returnCar(s, bookingID):
+        p = {'bookingid':bookingID,'bookingstatus':str(3)}
+        response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
+        msg = 'Car Returned'
+        s.sendall(msg.encode())
+        
 
 
 class Main:
@@ -72,12 +95,16 @@ class Main:
             print("( -- Press CTRL+C to Quit -- )")
         
             sessionUser = ''
-            sessionBookingCode = ''
+            sessionBookingID = ''
             sessionUserID = ''
 
             while True:
-                data = conn.recv(2048)
-                decodedData = data.decode()
+                try:
+                    data = conn.recv(2048)
+                    decodedData = data.decode()
+                except ConnectionResetError:
+                    print('Disconnected from ' + str(addr))
+
                 if(not data):
                     break
 
@@ -88,8 +115,13 @@ class Main:
                 elif instruct == "password":
                     sessionUserID = Functions.login(sessionUser, info, conn)
                 elif instruct == "bookingcode":
-                    sessionBookingCode = info
-                    Functions.unlockCar(conn, sessionBookingCode, sessionUserID)
+                    sessionBookingID = Functions.unlockCar(conn, info, sessionUserID)
+                elif instruct == "returncar":
+                    if info == 'Y':
+                        Functions.returnCar(conn, sessionBookingID)
+                    else:
+                        msg = 'Rejected'
+                        conn.sendall(msg.encode())
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
