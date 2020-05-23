@@ -11,11 +11,7 @@ site = Blueprint("site", __name__)
 # Client webpage.
 @site.route("/")
 def index():
-    # Use REST API.
-    response = requests.get("http://127.0.0.1:5000/person/")
-    data = json.loads(response.text)
-
-    return render_template("index.html", people = data)
+    return redirect('login')
 
 #Register
 @site.route('/register', methods=['GET', 'POST'])
@@ -102,6 +98,15 @@ def logout():
 def profile():
     # check if the user is logged in
     if 'loggedin' in session:
+        #Get all car bookings
+        userid = session['userid']
+        p = {'userid':userid}
+        r = requests.get('http://127.0.0.1:5000/api/booking/')
+        bookings = json.loads(r.text)
+        if bookings == None:
+            print(bookings)
+        else:
+            print(bookings)
         # Show the profile page with account info
         return render_template('profile.html')
     # User is not loggedin redirect to login page
@@ -148,6 +153,10 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
+    #Get cars for list
+    response = requests.get('http://127.0.0.1:5000/api/car')
+    #format the response in json
+    cars = json.loads(response.text)
     #error message
     msg = ''
     #check to see if logged in
@@ -186,22 +195,6 @@ def searchcar():
         #error message
         msg = ''
         
-        bookingcode = 68430
-        a = {'bookingcode':bookingcode}
-        response = requests.post('http://127.0.0.1:5000/api/booking/code', json=a)
-        print("Booking code Res: ",json.loads(response.text))
-
-
-        bookingid = 5
-        bookingstatus = 2
-        p = {'bookingstatus':bookingstatus, 'bookingid':bookingid}
-        response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
-        print(response)
-        if response.ok:
-            response_json = response.json()
-            print(response_json)
-        else:
-            print('Something went wrong, server sent code {}'.format(response.status_code))
 
         return render_template('newbooking.html', cars=cars, msg=msg)
     else:

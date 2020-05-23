@@ -307,7 +307,7 @@ def checkbookingcode():
     return jsonify(result)
 
 
-    # Endpoint to get booking by id. #ADMIN
+    # Endpoint to get booking by id.
 @api.route("/api/booking/<bookingid>", methods = ["GET"])
 def getBooking(bookingid):
     booking = Booking.query.get(bookingid)
@@ -326,3 +326,12 @@ def bookingUpdate():
     db.session.commit()
 
     return bookingSchema.jsonify(booking)
+
+# Endpoint to get booing by userid.
+@api.route("/api/booking/<userid>", methods = ["GET", "POST"])
+def checkUsersBooking():
+    userid = 29#request.json['userid']
+    bc = Booking.query.filter_by(userid = userid)
+    result = bookingsSchema.dump(bc)
+    print('result',result)
+    return jsonify(result)
