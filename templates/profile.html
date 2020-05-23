@@ -27,23 +27,31 @@
 </div>
 <h2> Up Comming Bookings</h2>
 <div>
+    {% for each in bookings %}
     <table>
         <tr>
-            <td>Booking Date</td>
-            <td>{{ session['userid'] }}</td>
+            <td>Booking Date: </td>
+            <td>{{ each.bdate }}</td>
         </tr>
         <tr>
-            <td>Booking </td>
-            <td>{{ session['username'] }}</td>
+            <td>Booked Car: </td>
+            <td>{{ each.carid}}</td>
         </tr>
         <tr>
-            <td>Name:</td>
-            <td>{{ session['name'] }}</td>
+            <td>Start Time: </td>
+            <td>{{ each.stime}}</td>
         </tr>
         <tr>
-            <td>Email:</td>
-            <td>{{ session['email'] }}</td>
+            <td>End Time: </td>
+            <td>{{ each.etime}}</td>
+        </tr>
+        <tr>
+            <td>Booking Unlock Code:  </td>
+            <td>{{ each.bookingcode }}</td>
         </tr>
     </table>
+    <br>
+    {% endfor %}
 </div>
+
 {% endblock %}

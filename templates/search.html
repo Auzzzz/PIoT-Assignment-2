@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+
+<div>  
+    <input type="text" name="search" id="search" class="form-control" />  
+</div> 
+<br />
+
+<div>
+    
+    <table id="cars">
+        <tr>
+            <th width="10%">CarID</th>
+            <th width="10%">Colour</th>
+            <th width="10%">No. Of Seats</th>
+            <th width="10%">Location</th>
+            <th width="10%">Cost Per Hour</th>
+            <th width="10%">Book this car</th>
+        </tr>
+        {% for each in cars %}
+            <form method="POST" action="{{ url_for('site.newbooking') }}">
+                <tr>
+                <th>{{ each.carid }}</th><input type="hidden" name="carid" value="{{ each.carid }}">
+                <th>{{ each.colour }}</th>
+                <th>{{ each.seat }}</th>
+                <th>{{ each.location }}</th>
+                <th>{{ each.cph }}</th>
+                <th><input type="submit" value="This Car"></th>
+                </tr>
+            </form>
+        {% endfor %}
+    </table>
+
+</div>
+
+{% endblock %}

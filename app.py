@@ -7,6 +7,7 @@ import os, requests, json
 from lib.flask_api import api, db
 from lib.flask_site import site
 
+
 app = Flask(__name__, template_folder='templates')
 basedir = os.path.abspath(os.path.dirname(__file__))
 

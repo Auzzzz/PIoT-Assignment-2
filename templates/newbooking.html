@@ -3,7 +3,7 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
-  <h1>Book a car </h1>
+  <h1>Book the car </h1>
   <form action="{{ url_for('site.newbooking') }}" method="post" autocomplete="off">
       <input type="date" name = "date" id="date">
     <input type="time" name = "stime" step = "60" id="stime">

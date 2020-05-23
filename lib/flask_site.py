@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, render_template, session, 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
-import os, time, requests, json, random
+import os, time, requests, json, random, datetime
 
 
 site = Blueprint("site", __name__)
@@ -101,14 +101,11 @@ def profile():
         #Get all car bookings
         userid = session['userid']
         p = {'userid':userid}
-        r = requests.get('http://127.0.0.1:5000/api/booking/')
-        bookings = json.loads(r.text)
-        if bookings == None:
-            print(bookings)
-        else:
-            print(bookings)
+        response = requests.post('http://127.0.0.1:5000/api/booking/list', json=p)
+        bookings = json.loads(response.text)
+        
         # Show the profile page with account info
-        return render_template('profile.html')
+        return render_template('profile.html', bookings = bookings)
     # User is not loggedin redirect to login page
     return redirect('login') 
 
@@ -153,10 +150,8 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
-    #Get cars for list
-    response = requests.get('http://127.0.0.1:5000/api/car')
-    #format the response in json
-    cars = json.loads(response.text)
+    text = request.form['carid']
+    print(text)
     #error message
     msg = ''
     #check to see if logged in
@@ -181,7 +176,7 @@ def newbooking():
         elif request.method == 'POST': #if no post request is made
                 #error message
                 msg = 'Fill the form out you ido*'
-        return render_template('newbooking.html', cars=cars, msg=msg)
+        return render_template('newbooking.html', msg=msg)
     else:
         return redirect('login') 
 
@@ -194,9 +189,8 @@ def searchcar():
         cars = json.loads(response.text)
         #error message
         msg = ''
-        
 
-        return render_template('newbooking.html', cars=cars, msg=msg)
+        return render_template('search.html', cars=cars, msg=msg)
     else:
         return redirect('login')
 
