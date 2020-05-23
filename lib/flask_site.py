@@ -150,8 +150,13 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
-    text = request.form['carid']
-    print(text)
+    #Get cars for list
+    response = requests.get('http://127.0.0.1:5000/api/car')
+    #format the response in json
+    cars = json.loads(response.text)
+
+    #text = request.form['carid']
+    #print(text)
     #error message
     msg = ''
     #check to see if logged in
@@ -176,7 +181,7 @@ def newbooking():
         elif request.method == 'POST': #if no post request is made
                 #error message
                 msg = 'Fill the form out you ido*'
-        return render_template('newbooking.html', msg=msg)
+        return render_template('newbooking.html', msg=msg, cars = cars)
     else:
         return redirect('login') 
 
