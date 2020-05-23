@@ -14,7 +14,7 @@ ADDRESS = (HOST, PORT)
 
 
 class Functions:
-    def login(username, password, s):
+    def login(username, password, s, userID):
         loginUser = username
         loginPass = password
         msg = ''
@@ -36,7 +36,7 @@ class Functions:
                 token = data['token']
                 response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
                 data = json.loads(response.text)
-                userid = data['userid']
+                userID = data['userid']
                 msg = 'Login successful'
                 s.sendall(msg.encode())
 
@@ -67,6 +67,7 @@ class Main:
         
             sessionUser = ''
             sessionBookingCode = ''
+            sessionUserID = ''
 
             while True:
                 data = conn.recv(2048)
@@ -79,7 +80,7 @@ class Main:
                 if instruct == "username":
                     sessionUser = info
                 elif instruct == "password":
-                    Functions.login(sessionUser, info, conn)
+                    Functions.login(sessionUser, info, conn, sessionUserID)
                 elif instruct == "bookingcode":
                     sessionBookingCode = info
                     Functions.unlockCar(conn, sessionBookingCode)
