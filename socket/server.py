@@ -36,6 +36,7 @@ class Functions:
                 token = data['token']
                 response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
                 data = json.loads(response.text)
+                userid = data['userid']
                 msg = 'Login successful'
                 s.sendall(msg.encode())
 
