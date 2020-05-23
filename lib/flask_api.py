@@ -75,6 +75,14 @@ def getPerson(id):
 
     return personSchema.jsonify(person)
 
+# Endpoint to get person by username. #ADMIN
+@api.route("/api/person", methods = ["POST"])
+def getUsername():
+    username = request.json["username"]
+    result = Person.qurey.get(username)
+
+    return personSchema.jsonify(result)
+
 # Endpoint to create new person.
 @api.route("/api/person", methods = ["POST"])
 def addPerson():
@@ -227,7 +235,7 @@ def __init__(self, userid, carid, bdate, stime, etime, bookingstatus, bookingcod
 class BookingSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("bookingid", "userid", "carid", "bdate", "stime", "etime", "bookingstatus" )
+        fields = ("bookingid", "userid", "carid", "bdate", "stime", "etime", "bookingstatus", "bookingcode" )
 
 bookingSchema = BookingSchema()
 bookingsSchema = BookingSchema(many = True)
@@ -290,10 +298,31 @@ def addCarBooking():
     return personSchema.jsonify(newCarBooking)
 
 #check booking code and return booking data
-@api.route("/api/car/booking/code", methods = ['POST','GET'])
+@api.route("/api/booking/code", methods = ['POST','GET'])
 def checkbookingcode():
     bookingcode = request.json['bookingcode']
     bc = Booking.query.filter_by(bookingcode = bookingcode)
     result = bookingsSchema.dump(bc)
     print('result',result)
     return jsonify(result)
+
+
+    # Endpoint to get booking by id. #ADMIN
+@api.route("/api/booking/<bookingid>", methods = ["GET"])
+def getBooking(bookingid):
+    booking = Booking.query.get(bookingid)
+
+    return bookingSchema.jsonify(booking)
+
+# Endpoint to update person.
+@api.route("/api/booking", methods = ["PUT", "POST"])
+def bookingUpdate():
+    bookingid = request.json["bookingid"]
+    bookingstatus = request.json["bookingstatus"]
+
+    booking = Booking.query.get(bookingid)
+    booking.bookingstatus = bookingstatus
+
+    db.session.commit()
+
+    return bookingSchema.jsonify(booking)

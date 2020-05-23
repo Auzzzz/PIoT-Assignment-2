@@ -148,26 +148,10 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
-    #bookingcode = 90419
-    #p = {'bookingcode':bookingcode}
-    #response = requests.post('http://192.168.0.199:5000/api/car/booking/code', json=p)
-    #if response.ok:
-    #    response_json = response.json()
-    #    print(response_json)
-    #else:
-    #    print('Something went wrong, server sent code {}'.format(response.status_code))
-    
-
-
-    #Get cars for list
-    response = requests.get('http://127.0.0.1:5000/api/car')
-    #format the response in json
-    cars = json.loads(response.text)
     #error message
     msg = ''
     #check to see if logged in
     if 'loggedin' in session:
-    
         #checking to see if the user has pressed the submit button by looking at POST request
         if request.method == 'POST' and 'date' in request.form and 'stime' in request.form and 'etime' in request.form and 'carid' in request.form: #Get contents of post data
             userid = session['userid']
@@ -188,6 +172,42 @@ def newbooking():
         elif request.method == 'POST': #if no post request is made
                 #error message
                 msg = 'Fill the form out you ido*'
-    return render_template('newbooking.html', cars=cars, msg=msg)
+        return render_template('newbooking.html', cars=cars, msg=msg)
+    else:
+        return redirect('login') 
+
+@site.route('/searchcar', methods=['GET', 'POST'])
+def searchcar():
+    if 'loggedin' in session:
+        #Get cars for list
+        response = requests.get('http://127.0.0.1:5000/api/car')
+        #format the response in json
+        cars = json.loads(response.text)
+        #error message
+        msg = ''
+        
+        bookingcode = 68430
+        a = {'bookingcode':bookingcode}
+        response = requests.post('http://127.0.0.1:5000/api/booking/code', json=a)
+        print("Booking code Res: ",json.loads(response.text))
 
 
+        bookingid = 5
+        bookingstatus = 2
+        p = {'bookingstatus':bookingstatus, 'bookingid':bookingid}
+        response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
+        print(response)
+        if response.ok:
+            response_json = response.json()
+            print(response_json)
+        else:
+            print('Something went wrong, server sent code {}'.format(response.status_code))
+
+        return render_template('newbooking.html', cars=cars, msg=msg)
+    else:
+        return redirect('login')
+
+    
+
+
+    
