@@ -138,6 +138,8 @@ class Functions:
         else:
             msg = 'Not your booking' 
 
+        s.sendall(msg.encode())
+        return outcome
             
         
 
@@ -179,8 +181,14 @@ class Main:
                         conn.sendall(msg.encode())
                 elif instruct == "facebookingcode":
                     sessionBookingDetails = Functions.checkBookingCode(conn, info)
-                        if str(sessionBookingDetails) != '':
-                            
+                    if str(sessionBookingDetails) != '':
+                        msg = 'Valid'
+                        conn.sendall(msg.encode())
+                    else:
+                        msg = 'Invalid'
+                        conn.sendall(msg.encode())
+                elif instruct == 'userid':
+                    sessionBOokingID = unlockCarWithFace(conn, sessionBookingDetails, info)
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()

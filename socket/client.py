@@ -124,7 +124,7 @@ class Functions:
         if not data:
             return False
         
-        if decodedData == 'Valid Booking':
+        if decodedData == 'Valid':
             outcome = True
         else:
             outcome = False
@@ -132,7 +132,7 @@ class Functions:
         return outcome
 
 
-    def recogniseFace(s):
+    def recogniseFace():
         foundUser = ''
         # construct the argument parser and parse the arguments
         ap = argparse.ArgumentParser()
@@ -205,6 +205,29 @@ class Functions:
         vs.stop()
         return foundUser
 
+    def sendUserDetails(s, user):
+        msg = 'userid:' + str(user)
+        s.sendall(msg.encode())
+        s.sendall(msg.encode())
+        data = s.recv(2048)
+        decodedData = data.decode()
+
+        if not data:
+            return False
+        
+        if decodedData == 'Car Unlocked':
+            print('\nCar Returned')
+            outcome = True
+
+        elif decodedData == 'Rejected':
+            print('\nReturning car cancelled...')
+
+        else:
+            print('\nError while returning car')
+        
+        return outcome
+
+
 
 class Main:
     def run():
@@ -228,11 +251,13 @@ class Main:
                         else:
                             isLoggedIn = False
                     elif response == "2":
-                        if bookingCode(s):
-                            Functions.recogniseFace(s)
-                        else:
-                            print('\nInvalid booking code')
-                            
+                        if Functions.bookingCode(s):
+                            user = Functions.recogniseFace()
+                            if user != '':
+                                Functions.sendUserDetails(s, user)
+                                isLoggedIn = True
+                                hasUnlocked = True
+
                     elif response == "3":
                         print("\nShutting down...")
                         break
