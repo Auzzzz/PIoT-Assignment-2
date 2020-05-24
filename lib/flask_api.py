@@ -334,4 +334,11 @@ def userbookinglist():
     result = bookingsSchema.dump(bc)
     return jsonify(result)
 
+@api.route("/api/car/checkavailability", methods = ['POST','GET'])
+def checkavailability():
+    carid = request.json["carid"]
+    bc = Booking.query.filter_by(carid = carid)
+    result = bookingsSchema.dump(bc)
+    return jsonify(result)
+
     

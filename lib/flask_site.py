@@ -2,8 +2,8 @@ from flask import Flask, Blueprint, request, jsonify, render_template, session, 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
-import os, time, requests, json, random, datetime
-
+import os, time, requests, json, random
+from datetime import datetime
 
 site = Blueprint("site", __name__)
 
@@ -43,6 +43,7 @@ def register():
 @site.route('/login', methods=['GET','POST'])
 def login():
     msg = ''
+    session['loggedin'] = True
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         #Capture the form data
         username = request.form['username']
@@ -54,7 +55,6 @@ def login():
             response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
             #make response into json format
             data = json.loads(response.text)
-            print(response.status_code, 'hello')
             #take token out of json and submit it for access to user info
             token = data['token']
             response = requests.get('http://127.0.0.1:5000/api/login', auth=(token, 'unused'))
@@ -79,7 +79,7 @@ def home():
         #When the user is logged in show them this top secret page
         return render_template('home.html', username=session['username'])
     #If not bye bye
-    return redirect(url_for('login'))
+    return redirect('login')
 
 # Logout #
 @site.route('/logout')
@@ -118,7 +118,7 @@ def newcar():
     response = requests.get('http://127.0.0.1:5000/api/car/make')
     #format the response in json
     carmake = json.loads(response.text)
-
+    
     #Get car type for list
     response = requests.get('http://127.0.0.1:5000/api/car/type')
     #format the response in json
@@ -150,40 +150,58 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
-    #Get cars for list
-    response = requests.get('http://127.0.0.1:5000/api/car')
-    #format the response in json
-    cars = json.loads(response.text)
-
-    #text = request.form['carid']
-    #print(text)
+    #get current date for date check
+    current = datetime.today().strftime('%Y-%m-%d')
     #error message
     msg = ''
     #check to see if logged in
     if 'loggedin' in session:
-        #checking to see if the user has pressed the submit button by looking at POST request
-        if request.method == 'POST' and 'date' in request.form and 'stime' in request.form and 'etime' in request.form and 'carid' in request.form: #Get contents of post data
-            userid = session['userid']
-            #Capture the form data
-            bdate = request.form['date']
-            stime = request.form['stime']
-            etime = request.form['etime']
+        if request.method == 'POST' and 'carid' in request.form and 'date' in request.form:
             carid = request.form['carid']
-            bookingstatus = 1
-            bookingcode = random.randint(11111, 99999)
-            #Add account into the DB
-            if userid is None or bdate is None or stime is None or etime is None or carid is None:
-                msg = 'Error.... Oh Well'
-            else:
-                payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
-                r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
-                msg = 'Congratz You have been registered..... your booking code is:' + str(bookingcode)
-        elif request.method == 'POST': #if no post request is made
-                #error message
-                msg = 'Fill the form out you ido*'
-        return render_template('newbooking.html', msg=msg, cars = cars)
+            bdate = request.form['date']
+            #get car bookings
+            payload = {'carid':carid}
+            response = requests.post('http://127.0.0.1:5000/api/car/checkavailability', json=payload)
+            #format the response in json
+            cars = json.loads(response.text)
+            #get current date for date check
+            current = datetime.today().strftime('%Y-%m-%d')
+            #get the cars bookings for the day and record time
+            for cars in cars:
+                if cars["bdate"] == bdate:
+                    msg = 'car is booked for that day, please choose another'
+
+        else:
+            return redirect('searchcar')
     else:
         return redirect('login') 
+    return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
+@site.route('/bookingconfirm', methods=['POST'])
+def bookingConfirm():
+    #checking to see if the user has pressed the submit button by looking at POST request
+    if request.method == 'POST' and 'stime' in request.form and 'etime' in request.form: #Get contents of post data
+        userid = session['userid']
+        #Capture the form data
+        carid = request.form['carid']
+        bdate = request.form['bdate']
+        stime = request.form['stime']
+        etime = request.form['etime']
+        bookingstatus = 1
+        bookingcode = random.randint(11111, 99999)
+        
+        #Add account into the DB
+        if userid is None or bdate is None or stime is None or etime is None or carid is None:
+            msg = 'Error.... Oh Well'
+        else:
+            payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
+            r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
+            msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
+            
+            
+    elif request.method == 'POST': #if no post request is made
+        #error message
+        msg = 'Fill the form out you ido*'
+    return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
 
 @site.route('/searchcar', methods=['GET', 'POST'])
 def searchcar():
@@ -193,13 +211,30 @@ def searchcar():
         #format the response in json
         cars = json.loads(response.text)
         #error message
-        msg = ''
-
-        return render_template('search.html', cars=cars, msg=msg)
+  
+        return render_template('search.html', cars=cars)
     else:
         return redirect('login')
-
-    
+        
+@site.route('/test', methods=['GET', 'POST'])
+def test():
+    carid = 109
+    payload = {'carid':carid}
+    response = requests.post('http://127.0.0.1:5000/api/car/checkavailability', json=payload)
+    #format the response in json
+    cars = json.loads(response.text)
+    #get current date for date check
+    current = datetime.today().strftime('%Y-%m-%d')
+    #get the cars bookings for the day and record time
+    for cars in cars:
+        if cars["bdate"] >= current:
+            print(cars['bdate'])
+            print(cars['stime'])
+            print(cars['etime'])
+        
+        #check if the form import is less then todays
+        
+    return render_template('test.html')
 
 
     

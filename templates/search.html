@@ -19,6 +19,7 @@
             <th width="10%">No. Of Seats</th>
             <th width="10%">Location</th>
             <th width="10%">Cost Per Hour</th>
+            <th width="10%">Date</th>
             <th width="10%">Book this car</th>
         </tr>
         {% for each in cars %}
@@ -29,7 +30,8 @@
                 <th>{{ each.seat }}</th>
                 <th>{{ each.location }}</th>
                 <th>{{ each.cph }}</th>
-                <th><input type="submit" value="This Car"></th>
+                <th><input type="date" name = "date" id="date" required></th>
+                <th><input type="submit" value="add" name="transfer"></th>
                 </tr>
             </form>
         {% endfor %}

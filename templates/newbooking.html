@@ -4,41 +4,16 @@
 
 {% block content %}
   <h1>Book the car </h1>
-  <form action="{{ url_for('site.newbooking') }}" method="post" autocomplete="off">
-      <input type="date" name = "date" id="date">
+  <p>Car you wish to book: {{ carid }} </p>
+  <form action="{{ url_for('site.bookingConfirm') }}" method="post" autocomplete="off">
     <input type="time" name = "stime" step = "60" id="stime">
     <input type="time" name = "etime" id="etime">
-
-      <select id = "carid" name = "carid">
-        <option selected disabled>Choose here</option>
-          {% for each in cars %}
-            <option value='{{each.carid}}'>{{each.carid}}</option>
-          {% endfor %}
-      </select>
+    <input type="date" name = "bdate" id="date" value = '{{ bdate }}'>
+    <input type="hidden" name="carid" value="{{ carid }}">
+    
     <div class="msg">{{ msg }}</div>
     <input type="submit" value="Book">
 
   </form>
-
-  <table>
-    <tr>
-      <th>CarID</th>
-      <th>Colour</th>
-      <th>No. of seats</th>
-      <th>Location</th>
-      <th>Cost Per Hour</th>
-
-    </tr>
-    
-      {% for each in cars %}
-        <tr>
-          <th>{{ each.carid }}</th>
-          <th>{{ each.colour }}</th>
-          <th>{{ each.seats }}</th>
-          <th>{{ each.location }}</th>
-          <th>{{ each.cph }}</th>
-        </tr>
-      {% endfor %}
-
 {% endblock %}
   
