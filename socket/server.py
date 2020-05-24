@@ -94,6 +94,51 @@ class Functions:
     def returnCar(s, bookingID):
         p = {'bookingid':bookingID,'bookingstatus':str(3)}
         response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
+
+
+    def checkBookingCode(s, bookingCode):
+        p = {'bookingcode':bookingCode}
+        response = requests.post('http://127.0.0.1:5000/api/booking/code', json=p)
+        msg = ''
+        outcome = ''
+
+        if response.ok:
+            outcome = response.json()
+
+        return outcome 
+
+    def unlockCarWithFace(s, booking, userID):
+        bookingDetails = booking[0]
+        bookingUserID = bookingDetails['userid']
+        bookingID = bookingDetails['bookingid']
+        bookingStatus = bookingDetails['bookingstatus']
+        startTime = bookingDetails['stime']
+        endTime = bookingDetails['etime']
+        bookingDate = bookingDetails['bdate']
+        currentDate = date.today()
+        now = datetime.now()
+        timeNow = now.strftime("%H:%M:%S")
+
+        if str(bookingUserID) == str(userID):
+            if bookingStatus == 1:
+                if str(startTime) < str(timeNow) and str(timeNow) < str(endTime) and str(bookingDate) == str(currentDate):
+                    msg = 'Car Unlocked' 
+                    j = {'bookingid':bookingID,'bookingstatus':str(2)}
+                    response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
+                    s.sendall(msg.encode())
+                    outcome = str(bookingID)
+                else:
+                    msg = 'Wrong time'
+            elif bookingStatus == 2:
+                msg = 'Already Unlocked'
+            elif bookingStatus == 3:
+                msg = 'Car already returned'
+            else:
+                msg = 'Error'
+        else:
+            msg = 'Not your booking' 
+
+            
         
 
 
@@ -106,6 +151,7 @@ class Main:
             sessionUser = ''
             sessionBookingID = ''
             sessionUserID = ''
+            sessionBookingDetails = ''
 
             while True:
                 try:
@@ -131,6 +177,10 @@ class Main:
                     else:
                         msg = 'Rejected'
                         conn.sendall(msg.encode())
+                elif instruct == "facebookingcode":
+                    sessionBookingDetails = Functions.checkBookingCode(conn, info)
+                        if str(sessionBookingDetails) != '':
+                            
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()

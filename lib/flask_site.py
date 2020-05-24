@@ -197,7 +197,24 @@ def bookingConfirm():
             r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
             msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
 
-            
+        
+        # creates one hour event tomorrow 10 AM IST
+        service = get_calendar_service()
+        event_result = service.events().insert(calendarId='primary',
+            body={ 
+                "summary": 'Your Car App', 
+                "description": {'Calander Event for the booking you have made for car: ':carid},
+                "start": {"dateTime": stime, "timeZone": 'Australia/Melbourne'}, 
+                "end": {"dateTime": etime, "timeZone": 'Australia/Melbourne'},
+            }
+        ).execute()
+
+        print("created event")
+        print("id: ", event_result['id'])
+        print("summary: ", event_result['summary'])
+        print("starts at: ", event_result['start']['dateTime'])
+        print("ends at: ", event_result['end']['dateTime'])
+
     elif request.method == 'POST': #if no post request is made
         #error message
         msg = 'Fill the form out you ido*'
@@ -218,23 +235,21 @@ def searchcar():
         
 @site.route('/test', methods=['GET', 'POST'])
 def test():
-    carid = 109
-    payload = {'carid':carid}
-    response = requests.post('http://127.0.0.1:5000/api/car/checkavailability', json=payload)
-    #format the response in json
-    cars = json.loads(response.text)
-    #get current date for date check
-    current = datetime.today().strftime('%Y-%m-%d')
-    #get the cars bookings for the day and record time
-    for cars in cars:
-        if cars["bdate"] >= current:
-            print(cars['bdate'])
-            print(cars['stime'])
-            print(cars['etime'])
-        
-        #check if the form import is less then todays
+    
+    service = get_calendar_service()
+    event_result = service.events().insert(calendarId='primary',
+            body={ 
+                "summary": 'Your Car App', 
+                "description": {'Calander Event for the booking you have made for car: ':carid},
+                "start": {"dateTime": stime, "timeZone": 'Australia/Melbourne'}, 
+                "end": {"dateTime": etime, "timeZone": 'Australia/Melbourne'},
+            }
+        ).execute()
+
+    print("created event")
+    print("id: ", event_result['id'])
+    print("summary: ", event_result['summary'])
+    print("starts at: ", event_result['start']['dateTime'])
+    print("ends at: ", event_result['end']['dateTime'])
         
     return render_template('test.html')
-
-
-    
