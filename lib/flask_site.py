@@ -4,7 +4,7 @@ from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
 import os, time, requests, json, random
 from datetime import datetime
-
+from lib.cal.cal import get_calendar_service
 site = Blueprint("site", __name__)
 
 ### User ###
@@ -196,7 +196,7 @@ def bookingConfirm():
             payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
             r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
             msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
-            
+
             
     elif request.method == 'POST': #if no post request is made
         #error message
