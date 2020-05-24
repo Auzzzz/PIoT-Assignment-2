@@ -188,7 +188,7 @@ class Main:
                         msg = 'Invalid'
                         conn.sendall(msg.encode())
                 elif instruct == 'userid':
-                    sessionBOokingID = unlockCarWithFace(conn, sessionBookingDetails, info)
+                    sessionBookingID = unlockCarWithFace(conn, sessionBookingDetails, info)
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()

@@ -208,7 +208,6 @@ class Functions:
     def sendUserDetails(s, user):
         msg = 'userid:' + str(user)
         s.sendall(msg.encode())
-        s.sendall(msg.encode())
         data = s.recv(2048)
         decodedData = data.decode()
 
