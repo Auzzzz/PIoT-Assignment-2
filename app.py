@@ -4,11 +4,11 @@ from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os, requests, json
-from lib.flask_api import api, db
-from lib.flask_site import site
+from MasterPi.lib.flask_api import api, db
+from MasterPi.lib.flask_site import site
 
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='MasterPi/lib/templates')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Update HOST and PASSWORD appropriately.

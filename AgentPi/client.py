@@ -221,8 +221,9 @@ class Functions:
                     name = max(counts, key = counts.get)
         
 
-            if counter == 20:
+            if counter == 30:
                 founderUser = ''
+                print('\nFace Recognition Timeout: Exceeded time limit...')
                 break
             if name != '':
                 # print to console, identified person

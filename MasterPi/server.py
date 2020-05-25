@@ -79,6 +79,7 @@ class Functions:
                 currentDate = date.today()
                 now = datetime.now()
                 timeNow = now.strftime("%H:%M:%S")
+                
                 if str(bookingUserID) == str(userID):
                     if bookingStatus == 1:
                         if str(startTime) <= str(timeNow) and str(timeNow) <= str(endTime) and str(bookingDate) == str(currentDate):

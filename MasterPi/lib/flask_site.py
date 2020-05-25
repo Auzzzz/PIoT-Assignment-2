@@ -201,10 +201,10 @@ def bookingConfirm():
             else:
                 
                 SCOPES = "https://www.googleapis.com/auth/calendar"
-                store = file.Storage("lib/cal/token.json")
+                store = file.Storage("MasterPi/lib/cal/token.json")
                 creds = store.get()
                 if(not creds or creds.invalid):
-                    flow = client.flow_from_clientsecrets('lib/cal/credentials.json', SCOPES)
+                    flow = client.flow_from_clientsecrets('MasterPi/lib/cal/credentials.json', SCOPES)
                     creds = tools.run_flow(flow, store)
                 service = build("calendar", "v3", http=creds.authorize(Http()))
                 
@@ -261,44 +261,6 @@ def searchcar():
 @site.route('/test', methods=['GET', 'POST'])
 def test():
 
-    SCOPES = "https://www.googleapis.com/auth/calendar"
-    store = file.Storage("lib/cal/token.json")
-    creds = store.get()
-    if(not creds or creds.invalid):
-        flow = client.flow_from_clientsecrets('lib/cal/credentials.json', SCOPES)
-        creds = tools.run_flow(flow, store)
-    service = build("calendar", "v3", http=creds.authorize(Http()))
     
-    date = datetime.now()
-    tomorrow = (date + timedelta(days = 1)).strftime("%Y-%m-%d")
-    time_start = "{}T06:00:00+10:00".format(tomorrow)
-    time_end = "{}T07:00:00+10:00".format(tomorrow)
-    event = {
-        "summary": "New Programmatic Event",
-        "location": "RMIT Building 14",
-        "description": "Adding new IoT event",
-        "start": {
-            "dateTime": time_start,
-            "timeZone": "Australia/Melbourne",
-        },
-        "end": {
-            "dateTime": time_end,
-            "timeZone": "Australia/Melbourne",
-        },
-        "attendees": [
-            { "email": "kevin@scare.you" },
-            { "email": "shekhar@wake.you" },
-        ],
-        "reminders": {
-            "useDefault": False,
-            "overrides": [
-                { "method": "email", "minutes": 5 },
-                { "method": "popup", "minutes": 10 },
-            ],
-        }
-    }
 
-    event = service.events().insert(calendarId = "primary", body = event).execute()
-    print("Event created: {}".format(event.get("htmlLink")))
-        
     return render_template('test.html')
