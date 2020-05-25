@@ -1,11 +1,17 @@
+from __future__ import print_function
 from flask import Flask, Blueprint, request, jsonify, render_template, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
 import os, time, requests, json, random
 from datetime import datetime
-from lib.cal.cal import get_calendar_service
 site = Blueprint("site", __name__)
+
+
+from datetime import timedelta
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 
 ### User ###
 # Client webpage.
@@ -69,7 +75,6 @@ def login():
             session['email'] = data['email']
             #forward the user to home page
             msg = "Successfully logged in redirecting in 3 secounds"
-            time.sleep(3)
             return redirect('home')
     return render_template('index.html', msg=msg)
 
@@ -176,49 +181,70 @@ def newbooking():
     else:
         return redirect('login') 
     return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
-@site.route('/bookingconfirm', methods=['POST'])
+@site.route('/bookingconfirm', methods=['POST', 'GET'])
 def bookingConfirm():
-    #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST' and 'stime' in request.form and 'etime' in request.form: #Get contents of post data
-        userid = session['userid']
-        #Capture the form data
-        carid = request.form['carid']
-        bdate = request.form['bdate']
-        stime = request.form['stime']
-        etime = request.form['etime']
-        bookingstatus = 1
-        bookingcode = random.randint(11111, 99999)
-        
-        #Add account into the DB
-        if userid is None or bdate is None or stime is None or etime is None or carid is None:
-            msg = 'Error.... Oh Well'
-        else:
-            payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
-            r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
-            msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
+        msg = ''
+        #checking to see if the user has pressed the submit button by looking at POST request
+        if request.method == 'POST' and 'stime' in request.form and 'etime' in request.form: #Get contents of post data
+            userid = session['userid']
+            #Capture the form data
+            carid = request.form['carid']
+            bdate = request.form['bdate']
+            stime = request.form['stime']
+            etime = request.form['etime']
+            bookingstatus = 1
+            bookingcode = random.randint(11111, 99999)
+            
+            #Add account into the DB
+            if userid is None or bdate is None or stime is None or etime is None or carid is None:
+                msg = 'Error.... Oh Well'
+            else:
+                
+                SCOPES = "https://www.googleapis.com/auth/calendar"
+                store = file.Storage("lib/cal/token.json")
+                creds = store.get()
+                if(not creds or creds.invalid):
+                    flow = client.flow_from_clientsecrets('lib/cal/credentials.json', SCOPES)
+                    creds = tools.run_flow(flow, store)
+                service = build("calendar", "v3", http=creds.authorize(Http()))
+                
+                date = datetime.now()
+                tomorrow = (date + timedelta(days = 2)).strftime("%Y-%m-%d")
+                time_start = "{}T06:00:00+10:00".format(tomorrow)
+                time_end = "{}T07:00:00+10:00".format(tomorrow)
+                event = {
+                    "summary": "Booking for car",
+                    "location": "RMIT Building 14",
+                    "description": "testing",
+                    "start": {
+                        "dateTime": time_start,
+                        "timeZone": "Australia/Melbourne",
+                    },
+                    "end": {
+                        "dateTime": time_end,
+                        "timeZone": "Australia/Melbourne",
+                    },
+                }
 
-        
-        # creates one hour event tomorrow 10 AM IST
-        service = get_calendar_service()
-        event_result = service.events().insert(calendarId='primary',
-            body={ 
-                "summary": 'Your Car App', 
-                "description": {'Calander Event for the booking you have made for car: ':carid},
-                "start": {"dateTime": stime, "timeZone": 'Australia/Melbourne'}, 
-                "end": {"dateTime": etime, "timeZone": 'Australia/Melbourne'},
-            }
-        ).execute()
+                event = service.events().insert(calendarId = "primary", body = event).execute()
+                print("Event created: {}".format(event.get("htmlLink")))
 
-        print("created event")
-        print("id: ", event_result['id'])
-        print("summary: ", event_result['summary'])
-        print("starts at: ", event_result['start']['dateTime'])
-        print("ends at: ", event_result['end']['dateTime'])
+                #inset into db through api
+                payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
+                r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
+                msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
+            
+                
 
-    elif request.method == 'POST': #if no post request is made
-        #error message
-        msg = 'Fill the form out you ido*'
-    return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
+
+            
+            # creates one hour event tomorrow 10 AM IST
+            
+
+        elif request.method == 'POST': #if no post request is made
+            #error message
+            msg = 'Fill the form out you ido*'
+        return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
 
 @site.route('/searchcar', methods=['GET', 'POST'])
 def searchcar():
@@ -228,28 +254,51 @@ def searchcar():
         #format the response in json
         cars = json.loads(response.text)
         #error message
-  
         return render_template('search.html', cars=cars)
     else:
         return redirect('login')
         
 @site.route('/test', methods=['GET', 'POST'])
 def test():
-    
-    service = get_calendar_service()
-    event_result = service.events().insert(calendarId='primary',
-            body={ 
-                "summary": 'Your Car App', 
-                "description": {'Calander Event for the booking you have made for car: ':carid},
-                "start": {"dateTime": stime, "timeZone": 'Australia/Melbourne'}, 
-                "end": {"dateTime": etime, "timeZone": 'Australia/Melbourne'},
-            }
-        ).execute()
 
-    print("created event")
-    print("id: ", event_result['id'])
-    print("summary: ", event_result['summary'])
-    print("starts at: ", event_result['start']['dateTime'])
-    print("ends at: ", event_result['end']['dateTime'])
+    SCOPES = "https://www.googleapis.com/auth/calendar"
+    store = file.Storage("lib/cal/token.json")
+    creds = store.get()
+    if(not creds or creds.invalid):
+        flow = client.flow_from_clientsecrets('lib/cal/credentials.json', SCOPES)
+        creds = tools.run_flow(flow, store)
+    service = build("calendar", "v3", http=creds.authorize(Http()))
+    
+    date = datetime.now()
+    tomorrow = (date + timedelta(days = 1)).strftime("%Y-%m-%d")
+    time_start = "{}T06:00:00+10:00".format(tomorrow)
+    time_end = "{}T07:00:00+10:00".format(tomorrow)
+    event = {
+        "summary": "New Programmatic Event",
+        "location": "RMIT Building 14",
+        "description": "Adding new IoT event",
+        "start": {
+            "dateTime": time_start,
+            "timeZone": "Australia/Melbourne",
+        },
+        "end": {
+            "dateTime": time_end,
+            "timeZone": "Australia/Melbourne",
+        },
+        "attendees": [
+            { "email": "kevin@scare.you" },
+            { "email": "shekhar@wake.you" },
+        ],
+        "reminders": {
+            "useDefault": False,
+            "overrides": [
+                { "method": "email", "minutes": 5 },
+                { "method": "popup", "minutes": 10 },
+            ],
+        }
+    }
+
+    event = service.events().insert(calendarId = "primary", body = event).execute()
+    print("Event created: {}".format(event.get("htmlLink")))
         
     return render_template('test.html')

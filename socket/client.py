@@ -13,14 +13,14 @@ import cv2
 HOST = input("Enter IP address of server: ")
 
 # HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5001        # The port used by the server.
+PORT = 5002        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 class Menu:
     def printMenu():
         print("\nWelcome to Agent Pi Console View!")
-        print("1. Login")
-        print("2. Unlock with Facial Recognition")
+        print("1. Login with Password")
+        print("2. Login with Facial Recognition")
         print("3. Exit")
 
     def selectOptions():
@@ -39,7 +39,7 @@ class Functions:
         passToSend = "password:" + password
         s.sendall(passToSend.encode())
 
-        data = s.recv(4096)
+        data = s.recv(2048)
         decodedData = data.decode()
 
         if not data:
@@ -55,6 +55,26 @@ class Functions:
 
         return outcome
 
+    def faceLogin(s, userID):
+        message = 'userid:' + str(userID)
+        s.sendall(message.encode())
+        outcome = False
+
+        data = s.recv(2048)
+        decodedData = data.decode()
+
+        if not data:
+            return
+        
+        if decodedData == "Login successful":
+            print('\nLogin Successful')
+            outcome = True
+
+        else:
+            print('\nLogin Failed')
+            outcome = False
+
+        return outcome
 
     def unlockCar(s):
         outcome = False
@@ -102,7 +122,7 @@ class Functions:
             if not data:
                 return False
 
-            if decodedData == 'Car Unlocked':
+            if decodedData == 'Car Returned':
                 print('\nCar Returned')
                 outcome = True
 
@@ -150,8 +170,11 @@ class Functions:
 
         # initialize the video stream and then allow the camera sensor to warm up
         print("[INFO] starting video stream...")
+        print('\nPlease look into the camera...')
         vs = VideoStream(src = 0).start()
         time.sleep(2.0)
+
+        counter = 0
 
         # loop over frames from the video file stream
         while True:
@@ -169,6 +192,8 @@ class Functions:
             boxes = face_recognition.face_locations(rgb, model = args["detection_method"])
             encodings = face_recognition.face_encodings(rgb, boxes)
             name = ''
+            
+            counter += 1
 
             # loop over the facial embeddings
             for encoding in encodings:
@@ -194,38 +219,20 @@ class Functions:
                     # of votes (note: in the event of an unlikely tie Python
                     # will select first entry in the dictionary)
                     name = max(counts, key = counts.get)
+        
 
+            if counter == 20:
+                founderUser = ''
+                break
             if name != '':
                 # print to console, identified person
                 print("User id: {}".format(name))
                 foundUser = name   
-                break       
+                break     
 
         # do a bit of cleanup
         vs.stop()
         return foundUser
-
-    def sendUserDetails(s, user):
-        msg = 'userid:' + str(user)
-        s.sendall(msg.encode())
-        data = s.recv(2048)
-        decodedData = data.decode()
-
-        if not data:
-            return False
-        
-        if decodedData == 'Car Unlocked':
-            print('\nCar Returned')
-            outcome = True
-
-        elif decodedData == 'Rejected':
-            print('\nReturning car cancelled...')
-
-        else:
-            print('\nError while returning car')
-        
-        return outcome
-
 
 
 class Main:
@@ -250,13 +257,13 @@ class Main:
                         else:
                             isLoggedIn = False
                     elif response == "2":
-                        if Functions.bookingCode(s):
-                            user = Functions.recogniseFace()
-                            if user != '':
-                                Functions.sendUserDetails(s, user)
+                        userID = Functions.recogniseFace()
+                        if userID != '':
+                            if Functions.faceLogin(s, userID):
                                 isLoggedIn = True
-                                hasUnlocked = True
-
+                            else:
+                                print('\nFace unrecognised')
+                                isLoggedIn = False
                     elif response == "3":
                         print("\nShutting down...")
                         break
@@ -272,15 +279,21 @@ class Main:
                         else:
                             if Functions.unlockCar(s):
                                 hasUnlocked = True
+                            else:
+                                hasUnlocked = False
 
                     elif response == "2":
                         if hasUnlocked:
                             if Functions.returnCar(s):
                                 hasUnlocked = False
+                            else:
+                                hasUnlocked = True
                         else:
                             print('\nYou have not unlocked a car to return')
 
                     elif response == "3":
+                        msg = 'logout:random'
+                        s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
                     else:

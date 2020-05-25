@@ -11,7 +11,7 @@ from datetime import date
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
-PORT = 5001 # Port to listen on (non-privileged ports are > 1023).
+PORT = 5002 # Port to listen on (non-privileged ports are > 1023).
 ADDRESS = (HOST, PORT)
 
 
@@ -31,7 +31,6 @@ class Functions:
             #Login failed
             if str(response) == "<Response [401]>":
                 msg = 'Unauthorized Access'
-                s.sendall(msg.encode())
 
             #Login success
             else:
@@ -41,10 +40,25 @@ class Functions:
                 data = json.loads(response.text)
                 userID = data['userid']
                 msg = 'Login successful'
-                s.sendall(msg.encode())
                 outcome = str(userID)
 
+        s.sendall(msg.encode())
         return outcome
+
+    def loginWithFace(userID, s):
+        msg = ''
+        response = requests.get('http://127.0.0.1:5000/api/person/' + str(userID))
+        outcome = ''
+
+        if str(response) == '<Response [401]>':
+            msg = 'Unauthorized Access'
+        else:
+            msg = 'Login successful'
+            outcome = str(userID)
+        
+        s.sendall(msg.encode())
+        return outcome
+
 
     def unlockCar(s, bookingCode, userID):
         p = {'bookingcode':bookingCode}
@@ -67,11 +81,10 @@ class Functions:
                 timeNow = now.strftime("%H:%M:%S")
                 if str(bookingUserID) == str(userID):
                     if bookingStatus == 1:
-                        if str(startTime) < str(timeNow) and str(timeNow) < str(endTime) and str(bookingDate) == str(currentDate):
+                        if str(startTime) <= str(timeNow) and str(timeNow) <= str(endTime) and str(bookingDate) == str(currentDate):
                             msg = 'Car Unlocked' 
                             j = {'bookingid':bookingID,'bookingstatus':str(2)}
                             response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
-                            s.sendall(msg.encode())
                             outcome = str(bookingID)
                         else:
                             msg = 'Wrong time'
@@ -94,54 +107,14 @@ class Functions:
     def returnCar(s, bookingID):
         p = {'bookingid':bookingID,'bookingstatus':str(3)}
         response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
-
-
-    def checkBookingCode(s, bookingCode):
-        p = {'bookingcode':bookingCode}
-        response = requests.post('http://127.0.0.1:5000/api/booking/code', json=p)
         msg = ''
-        outcome = ''
 
         if response.ok:
-            outcome = response.json()
-
-        return outcome 
-
-    def unlockCarWithFace(s, booking, userID):
-        bookingDetails = booking[0]
-        bookingUserID = bookingDetails['userid']
-        bookingID = bookingDetails['bookingid']
-        bookingStatus = bookingDetails['bookingstatus']
-        startTime = bookingDetails['stime']
-        endTime = bookingDetails['etime']
-        bookingDate = bookingDetails['bdate']
-        currentDate = date.today()
-        now = datetime.now()
-        timeNow = now.strftime("%H:%M:%S")
-
-        if str(bookingUserID) == str(userID):
-            if bookingStatus == 1:
-                if str(startTime) < str(timeNow) and str(timeNow) < str(endTime) and str(bookingDate) == str(currentDate):
-                    msg = 'Car Unlocked' 
-                    j = {'bookingid':bookingID,'bookingstatus':str(2)}
-                    response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
-                    s.sendall(msg.encode())
-                    outcome = str(bookingID)
-                else:
-                    msg = 'Wrong time'
-            elif bookingStatus == 2:
-                msg = 'Already Unlocked'
-            elif bookingStatus == 3:
-                msg = 'Car already returned'
-            else:
-                msg = 'Error'
+            msg = 'Car Returned'
         else:
-            msg = 'Not your booking' 
-
-        s.sendall(msg.encode())
-        return outcome
-            
+            msg = 'Error'
         
+        s.sendall(msg.encode())
 
 
 class Main:
@@ -171,6 +144,8 @@ class Main:
                     sessionUser = info
                 elif instruct == "password":
                     sessionUserID = Functions.login(sessionUser, info, conn)
+                elif instruct == 'userid':
+                    sessionUserID = Functions.loginWithFace(info, conn)
                 elif instruct == "bookingcode":
                     sessionBookingID = Functions.unlockCar(conn, info, sessionUserID)
                 elif instruct == "returncar":
@@ -179,16 +154,11 @@ class Main:
                     else:
                         msg = 'Rejected'
                         conn.sendall(msg.encode())
-                elif instruct == "facebookingcode":
-                    sessionBookingDetails = Functions.checkBookingCode(conn, info)
-                    if str(sessionBookingDetails) != '':
-                        msg = 'Valid'
-                        conn.sendall(msg.encode())
-                    else:
-                        msg = 'Invalid'
-                        conn.sendall(msg.encode())
-                elif instruct == 'userid':
-                    sessionBookingID = unlockCarWithFace(conn, sessionBookingDetails, info)
+                elif instruct == 'logout':
+                    sessionUser = ''
+                    sessionBookingID = ''
+                    sessionBookingDetails = ''
+                    sessionUserID = ''
                 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
