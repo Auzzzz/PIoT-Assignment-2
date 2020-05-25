@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>flask_site module &#8212; PIOT-A2-Docs 2020 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-flask_site">
+<span id="flask-site-module"></span><h1>flask_site module<a class="headerlink" href="#module-flask_site" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="flask_site.bookingConfirm">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">bookingConfirm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.bookingConfirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms booking of a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for newbooking.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.bookingcancel">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">bookingcancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.bookingcancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for cancelling a booking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for bookingcancel.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.home">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">home</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for a logged in user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns the template of home.html, or redirects to login if not logged in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.index">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main page of website, redirects to login</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>login redirection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.login">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for logging in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns the template of login.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.logout">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to log out</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Redirects to login</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.newbooking">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">newbooking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.newbooking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for making a booking for a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for newbooking.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.newcar">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">newcar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.newcar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method on site for creating a new car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for newcar.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.profile">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">profile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for the profile of a user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns the template of profile.html, or redirects to login if not logged in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.register">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for registering an account</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns the template of register.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.searchcar">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">searchcar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.searchcar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for searching a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for search.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PIOT-A2-Docs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">MasterPi</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Chris, Rodrigo Miguel, Winston , Zaed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/flask_site.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

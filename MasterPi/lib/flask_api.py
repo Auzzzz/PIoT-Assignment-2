@@ -26,16 +26,34 @@ class Person(db.Model):
 
     #generate the auth token for login
     def generate_auth_token(self, expiration=600):
+        """Generates authentication token for logging in
+
+        :param expiration: Duration of token until expiration
+        :return: Returns generated authentication token
+
+        """
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'userid': self.userid})
 
     #verify password for reg
     def verify_password(self, password):
+        """Verifies password for registration
+
+        :param password: Password used
+        :return: returns True or False depending on outcome
+
+        """
         return sha256_crypt.verify(password, self.password)
 
     #verify the auth token on retun to the web server
     @staticmethod
     def verify_auth_token(token):
+        """Verifies authentication token
+
+        :param token: Token to verify
+        :return: Returns nothing if bad, or account if good
+
+        """
         s = Serializer(app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
@@ -63,6 +81,11 @@ personsSchema = PersonSchema(many = True)
 # Endpoint to show all people. #ADMIN
 @api.route("/api/person", methods = ["GET"])
 def getPeople():
+    """Gets all people registered
+
+    :return: Returns all people registered
+   
+    """
     people = Person.query.all()
     result = personsSchema.dump(people)
     print(result)
@@ -71,21 +94,37 @@ def getPeople():
 # Endpoint to get person by id. #ADMIN
 @api.route("/api/person/<id>", methods = ["GET"])
 def getPerson(id):
+    """Gets person using their userID
+
+    :param id: ID of the target
+    :return: Returns person if found
+
+    """
     person = Person.query.get(id)
 
     return personSchema.jsonify(person)
 
 # Endpoint to get person by username. #ADMIN
-@api.route("/api/person", methods = ["POST"])
+@api.route("/api/person/u", methods = ["POST"])
 def getUsername():
+    """Gets person using their username
+
+    :return: Returns person if found
+    
+    """
     username = request.json["username"]
     result = Person.qurey.get(username)
 
     return personSchema.jsonify(result)
 
 # Endpoint to create new person.
-@api.route("/api/person", methods = ["POST"])
+@api.route("/api/person/i", methods = ["POST"])
 def addPerson():
+    """API Route for registering a user
+
+    :return: Returns new person if registration is successful
+
+    """
     name = request.json["name"]
     username = request.json["username"]
     email = request.json["email"]
@@ -102,6 +141,12 @@ def addPerson():
 # Endpoint to update person.
 @api.route("/api/person/<id>", methods = ["PUT"])
 def personUpdate(id):
+    """API Route for updating the details of a specific person
+
+    :param id: ID of targetted person
+    :return: Returns person if successful
+
+    """
     person = Person.query.get(id)
     name = request.json["name"]
 
@@ -114,6 +159,12 @@ def personUpdate(id):
 # Endpoint to delete person.
 @api.route("/api/person/<id>", methods = ["DELETE"])
 def personDelete(id):
+    """API Route for deleting a user
+
+    :param id: ID of targetted person
+    :return: Returns person if successful
+
+    """
     person = Person.query.get(id)
 
     db.session.delete(person)
@@ -124,6 +175,13 @@ def personDelete(id):
 #verify the user password then set the user
 @auth.verify_password
 def verify_password(username_or_token, password):
+    """Verifies password of the user
+
+    :param username_or_token: Username of user, or token of login
+    :param password: Password to verify
+    :return: Returns True or False depending on outcome
+
+    """
     # first try to authenticate by token
     user = Person.verify_auth_token(username_or_token)
     if not user:
@@ -138,6 +196,11 @@ def verify_password(username_or_token, password):
 @api.route('/api/token')
 @auth.login_required
 def get_auth_token():
+    """Creates token for login
+
+    :return: Returns generated token
+
+    """
     token = g.user.generate_auth_token(600)
     return jsonify({'token': token.decode('ascii'), 'duration': 10})
 
@@ -145,6 +208,11 @@ def get_auth_token():
 @api.route('/api/login')
 @auth.login_required
 def get_resource():
+    """API Route for logging in
+
+    :return: Returns user details in JSON format
+
+    """
     return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name})
     
 
@@ -243,6 +311,11 @@ bookingsSchema = BookingSchema(many = True)
 # Get all cars
 @api.route("/api/car", methods = ["GET"])
 def getCar():
+    """API Route for getting all cars
+
+    :return: Returns all cars
+
+    """
     car = Car.query.all()
     result = carsSchema.dump(car)
     return jsonify(result)
@@ -250,6 +323,11 @@ def getCar():
 # Get all car makes
 @api.route("/api/car/make", methods = ["GET"])
 def getMake():
+    """API Route for getting all car makes
+
+    :return: Return all car makes
+
+    """
     make = CarMake.query.all()
     result = carmakesSchema.dump(make)
     return jsonify(result)
@@ -257,6 +335,11 @@ def getMake():
 # Get all car types
 @api.route("/api/car/type", methods = ["GET"])
 def getType():
+    """API Route for getting all car types
+
+    :return: Returns all car types
+
+    """
     type = CarType.query.all()
     result = cartypesSchema.dump(type)
     return jsonify(result)
@@ -265,6 +348,11 @@ def getType():
 # Endpoint to create new car.
 @api.route("/api/car", methods = ["POST"])
 def addCar():
+    """API Route for creating car
+
+    :return: Returns new car in JSON format
+
+    """
     seats = request.json["seats"]
     colour = request.json["colour"]
     cph = request.json["cph"]
@@ -279,9 +367,14 @@ def addCar():
 
     return personSchema.jsonify(newCar)
     
-    # Endpoint to create new car.
+    # Endpoint to create new booking.
 @api.route("/api/car/booking", methods = ["POST"])
 def addCarBooking():
+    """API Route for creating a new booking
+
+    :return: Returns new booking in JSON format
+
+    """
     userid = request.json["userid"]
     bdate = request.json["bdate"]
     stime = request.json["stime"]
@@ -300,6 +393,11 @@ def addCarBooking():
 #check booking code and return booking data
 @api.route("/api/booking/code", methods = ['POST','GET'])
 def checkbookingcode():
+    """API Route for getting booking with booking code
+
+    :return: Returns booking details in JSON format
+
+    """
     bookingcode = request.json['bookingcode']
     bc = Booking.query.filter_by(bookingcode = bookingcode)
     result = bookingsSchema.dump(bc)
@@ -309,6 +407,12 @@ def checkbookingcode():
     # Endpoint to get booking by id.
 @api.route("/api/booking/<bookingid>", methods = ["GET"])
 def getBooking(bookingid):
+    """API Route for getting a booking with Booking ID
+
+    :param bookingid: Booking ID of booking to get
+    :return: Returns booking details in JSON format
+
+    """
     booking = Booking.query.get(bookingid)
 
     return bookingSchema.jsonify(booking)
@@ -316,9 +420,13 @@ def getBooking(bookingid):
 # Endpoint to update booking status.
 @api.route("/api/booking/s", methods = ["PUT", "POST"])
 def bookingSUpdate():
+    """API Route for updating booking status
+
+    :return: Returns booking details in JSON format
+
+    """
     bookingid = request.json["bookingid"]
     bookingstatus = request.json["bookingstatus"]
-
     booking = Booking.query.get(bookingid)
     booking.bookingstatus = bookingstatus
 
@@ -329,6 +437,11 @@ def bookingSUpdate():
 #update booking by ID
 @api.route("/api/booking", methods = ["PUT", "POST"])
 def bookingUpdate():
+    """API Route for updating booking details
+
+    :return: Returns booking details in JSON format
+
+    """
     bookingid = request.json["bookingid"]
     bdate = request.json["bdate"]
     stime = request.json["stime"]
@@ -345,9 +458,14 @@ def bookingUpdate():
 
     return bookingSchema.jsonify(booking)
 
-# Endpoint to get booing by userid.
+# Endpoint to get booking by userid.
 @api.route("/api/booking/list", methods = ['POST','GET'])
 def userbookinglist():
+    """API Route for getting booking with user ID
+
+    :return: Returns booking details in JSON format
+
+    """
     userid = request.json["userid"]
     bc = Booking.query.filter_by(userid=userid)
     result = bookingsSchema.dump(bc)
@@ -355,6 +473,11 @@ def userbookinglist():
 
 @api.route("/api/car/checkavailability", methods = ['POST','GET'])
 def checkavailability():
+    """API Route for checking car availability
+
+    :return: Returns booking details in JSON format
+
+    """
     carid = request.json["carid"]
     bc = Booking.query.filter_by(carid = carid)
     result = bookingsSchema.dump(bc)

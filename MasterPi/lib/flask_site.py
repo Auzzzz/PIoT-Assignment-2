@@ -17,11 +17,19 @@ from oauth2client import file, client, tools
 # Client webpage.
 @site.route("/")
 def index():
+    """Main page of website, redirects to login
+
+    :return: login redirection
+    """
     return redirect('login')
 
 #Register
 @site.route('/register', methods=['GET', 'POST'])
 def register():
+    """Web page for registering an account
+
+    :return: Returns the template of register.html
+    """
     #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
@@ -48,6 +56,10 @@ def register():
 
 @site.route('/login', methods=['GET','POST'])
 def login():
+    """Web page for logging in
+
+    :return: Returns the template of login.html
+    """
     msg = ''
     session['loggedin'] = True
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -80,6 +92,10 @@ def login():
 
 @site.route('/home')
 def home():
+    """Web page for a logged in user
+
+    :return: Returns the template of home.html, or redirects to login if not logged in
+    """
     if 'loggedin' in session:
         #When the user is logged in show them this top secret page
         return render_template('home.html', username=session['username'])
@@ -89,6 +105,10 @@ def home():
 # Logout #
 @site.route('/logout')
 def logout():
+    """Method to log out 
+
+    :return: Redirects to login
+    """
     #remove all session data to log the user out
     session.pop('loggedin', None)
     session.pop('userid', None)
@@ -101,6 +121,10 @@ def logout():
 # Profile Page #
 @site.route('/profile')
 def profile():
+    """Web page for the profile of a user
+
+    :return: Returns the template of profile.html, or redirects to login if not logged in
+    """
     # check if the user is logged in
     if 'loggedin' in session:
         #Get all car bookings
@@ -108,7 +132,7 @@ def profile():
         p = {'userid':userid}
         response = requests.post('http://127.0.0.1:5000/api/booking/list', json=p)
         bookings = json.loads(response.text)
-        
+
         # Show the profile page with account info
         return render_template('profile.html', bookings = bookings)
     # User is not loggedin redirect to login page
@@ -119,6 +143,10 @@ def profile():
 # insert car #
 @site.route('/newcar', methods=['GET', 'POST'])
 def newcar():
+    """Method on site for creating a new car
+
+    :return: Returns template for newcar.html
+    """
     #Get car make for list
     response = requests.get('http://127.0.0.1:5000/api/car/make')
     #format the response in json
@@ -128,7 +156,6 @@ def newcar():
     response = requests.get('http://127.0.0.1:5000/api/car/type')
     #format the response in json
     cartype = json.loads(response.text)
-
     #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
@@ -155,6 +182,10 @@ def newcar():
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
+    """Web page for making a booking for a car
+
+    :return: Returns template for newbooking.html
+    """
     #get current date for date check
     current = datetime.today().strftime('%Y-%m-%d')
     #error message
@@ -181,11 +212,16 @@ def newbooking():
     else:
         return redirect('login') 
     return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
+
 @site.route('/bookingconfirm', methods=['POST', 'GET'])
 def bookingConfirm():
-        msg = ''
+    """Confirms booking of a car
+
+    :return: Returns template for newbooking.html
+    """
+    msg = ''
         #checking to see if the user has pressed the submit button by looking at POST request
-        if request.method == 'POST' and 'stime' in request.form and 'etime' in request.form: #Get contents of post data
+    if request.method == 'POST' and 'stime' in request.form and 'etime' in request.form: #Get contents of post data
             userid = session['userid']
             #Capture the form data
             carid = request.form['carid']
@@ -241,13 +277,17 @@ def bookingConfirm():
             # creates one hour event tomorrow 10 AM IST
             
 
-        elif request.method == 'POST': #if no post request is made
+    elif request.method == 'POST': #if no post request is made
             #error message
             msg = 'Fill the form out you ido*'
-        return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
+    return render_template('newbooking.html', msg=msg, bdate=bdate, carid = carid)
 
 @site.route('/searchcar', methods=['GET', 'POST'])
 def searchcar():
+    """Web page for searching a car
+
+    :return: Returns template for search.html
+    """
     if 'loggedin' in session:
         #Get cars for list
         response = requests.get('http://127.0.0.1:5000/api/car')
@@ -260,37 +300,22 @@ def searchcar():
 
 @site.route('/bookingcancel', methods = ['GET','POST'])
 def bookingcancel():
+    """Web page for cancelling a booking
+
+    :return: Returns template for bookingcancel.html
+    """
     if 'loggedin' in session:
         msg = ''
-
-        if request.method == 'POST' and 'bookingid' in request.form:
-            #Capture the form data
+        if request.method == 'POST':
             bookingid = request.form['bookingid']
-            p = {'bookingid':bookingID,'bookingstatus':str(4)}
+            p = {'bookingid':bookingid,'bookingstatus':str(3)}
             response = requests.post('http://127.0.0.1:5000/api/booking/s', json=p)
-
             if response.ok:
-                msg = 'Car Returned'
-
+                msg = 'successful'
             else:
-                msg = 'Error'
+                msg = 'errored'
 
-                print(bookingid, bdate, stime, etime)
 
-        return render_template('bookingcancel.html')
+        return render_template('bookingcancel.html', msg = msg)
     else:
         return redirect('login')
-        
-@site.route('/test', methods=['GET', 'POST'])
-def test():
-    bookingid = '37'
-    bdate = "2021-05-26"
-    stime = "11:30:00"
-    etime = "23:45:00"
-    bookingstatus = 3
-
-    payload = {"bookingid":bookingid, "bdate":bdate, "stime":stime, "etime":etime, "bookingstatus":bookingstatus}
-    print(payload)
-    r = requests.post('http://127.0.0.1:5000/api/booking', json=payload)
-        
-    return render_template('test.html')

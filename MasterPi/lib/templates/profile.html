@@ -25,35 +25,72 @@
         </tr>
     </table>
 </div>
-<h2> Up Comming Bookings</h2>
+<br>
+<hr>
 <div>
-    {% for each in bookings %}
-    <form action="{{ url_for('site.bookingcancel') }}" method="post" autocomplete="off">
-    <table>
-        <tr>
-            <td>Booking Date: </td>
-            <td>{{ each.bdate }}</td>
-        </tr>
-        <tr>
-            <td>Booked Car: </td>
-            <td>{{ each.carid}}</td>
-        </tr>
-        <tr>
-            <td>Start Time: </td>
-            <td>{{ each.stime}}</td>
-        </tr>
-        <tr>
-            <td>End Time: </td>
-            <td>{{ each.etime}}</td>
-        </tr>
-        <tr>
-            <td>Booking Unlock Code:  </td>
-            <td>{{ each.bookingcode }}</td> <input hidden type="date" name = "bdate" id="date" value = '{{ each.bookingcode }}'>
-        </tr>
-        <input type="submit">
-    </table>
-    <br>
-    {% endfor %}
+
+            <div>
+                {% for each in bookings: %}
+                    {% if each['bookingstatus'] == 1: %}
+                    <hr>
+                    <p> Up Coming bookings</p>
+                        <form action="{{ url_for('site.bookingcancel') }}" method="post" autocomplete="off">
+                        <table>
+                            <tr>
+                                <td>Booking Date: </td>
+                                <td>{{ each.bdate }}</td>
+                            </tr>
+                            <tr>
+                                <td>Booked Car: </td>
+                                <td>{{ each.carid}}</td>
+                            </tr>
+                            <tr>
+                                <td>Start Time: </td>
+                                <td>{{ each.stime}}</td>
+                            </tr>
+                            <tr>
+                                <td>End Time: </td>
+                                <td>{{ each.etime}}</td>
+                            </tr>
+                            <tr>
+                                <td>Booking Unlock Code:  </td>
+                                <td>{{ each.bookingcode }}</td>
+                            </tr>
+                            <input hidden name ="bookingid" id="bookingid" value ='{{ each.bookingid }}'>
+                            <input type="submit" value="Book">
+                        </form>
+                        </table>
+                        
+                    {% elif each['bookingstatus'] == 3: %}
+                        <p>Previous Booking</p>
+                        <table>
+                            <tr>
+                                <td>Booking Date: </td>
+                                <td>{{ each.bdate }}</td>
+                            </tr>
+                            <tr>
+                                <td>Booked Car: </td>
+                                <td>{{ each.carid}}</td>
+                            </tr>
+                            <tr>
+                                <td>Start Time: </td>
+                                <td>{{ each.stime}}</td>
+                            </tr>
+                            <tr>
+                                <td>End Time: </td>
+                                <td>{{ each.etime}}</td>
+                            </tr>
+                            <tr>
+                                <td>Booking Unlock Code:  </td>
+                                <td>{{ each.bookingcode }}</td>
+                            </tr>
+                            </table>
+                    {% endif %}
+                <br>
+                {% endfor %}
+
+            </div>
+
 </div>
 
 {% endblock %}

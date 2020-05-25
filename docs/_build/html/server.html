@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>server module &#8212; PIOT-A2-Docs 2020 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="UnitTestingServer module" href="UnitTestingServer.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-server">
+<span id="server-module"></span><h1>server module<a class="headerlink" href="#module-server" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="server.Functions">
+<em class="property">class </em><code class="sig-prename descclassname">server.</code><code class="sig-name descname">Functions</code><a class="headerlink" href="#server.Functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="server.Functions.login">
+<code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> – username entered</p></li>
+<li><p><strong>password</strong> – password entered</p></li>
+<li><p><strong>s</strong> – socket to send data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>userID or blank</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Functions.loginWithFace">
+<code class="sig-name descname">loginWithFace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.loginWithFace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not using facial recognition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>userID</strong> – userID found from facial recognition entered</p></li>
+<li><p><strong>s</strong> – socket to send data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>userID or blank</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Functions.returnCar">
+<code class="sig-name descname">returnCar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bookingID</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.returnCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>returnCar returns the car after the user selects return car in the console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> – socket</p></li>
+<li><p><strong>bookingID</strong> – bookingID of current user being used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outcome, True if success</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Functions.unlockCar">
+<code class="sig-name descname">unlockCar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bookingCode</span></em>, <em class="sig-param"><span class="n">userID</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.unlockCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to unlock a car if the user successfully log in and entered the booking code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> – socket to send data</p></li>
+<li><p><strong>bookingCode</strong> – booking code entered by user from AP</p></li>
+<li><p><strong>userID</strong> – userID found from current user entered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outcome. bookingID in string if success, blank otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="server.Main">
+<em class="property">class </em><code class="sig-prename descclassname">server.</code><code class="sig-name descname">Main</code><a class="headerlink" href="#server.Main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="server.Main.addClient">
+<code class="sig-name descname">addClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">addr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Main.addClient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="server.Main.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.Main.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PIOT-A2-Docs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">MasterPi</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="UnitTest_PartA.html">UnitTest_PartA module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UnitTest_PartB.html">UnitTest_PartB module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UnitTest_PartB2.html">UnitTest_PartB2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UnitTestingServer.html">UnitTestingServer module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">server module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">MasterPi</a><ul>
+      <li>Previous: <a href="UnitTestingServer.html" title="previous chapter">UnitTestingServer module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Chris, Rodrigo Miguel, Winston , Zaed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

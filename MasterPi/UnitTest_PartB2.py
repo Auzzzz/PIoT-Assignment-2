@@ -8,6 +8,8 @@ ADDRESS = (HOST, PORT)
 
 class PartBTest(unittest.TestCase):
     def test_returnCar(self):
+        """ Function to test validation that return car method is working as expected
+        """
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect(ADDRESS)
             self.assertTrue(Functions.returnCar(s, '38'))

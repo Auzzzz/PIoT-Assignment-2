@@ -29,6 +29,13 @@ class Menu:
 
 class Functions:
     def login(s):
+        """Logging in checks to see if it matches any user from our database
+
+        :param s: socket
+        :type s: socket
+        :return: True if login successful, else False
+        :rtype: boolean
+        """
         username = "username:" + input("Please enter username: ")
         s.sendall(username.encode())
         outcome = False
@@ -54,6 +61,15 @@ class Functions:
         return outcome
 
     def faceLogin(s, userID):
+        """Function to login using face metrics
+
+        :param s: socket
+        :type s: socket
+        :param userID: userID of the matching face from dataset
+        :type userID: str
+        :return: outcome, True if successful login, else false
+        :rtype: boolean
+        """
         message = 'userid:' + str(userID)
         s.sendall(message.encode())
         outcome = False
@@ -75,6 +91,13 @@ class Functions:
         return outcome
 
     def unlockCar(s):
+        """Function to unlock the car
+
+        :param s: socket
+        :type s: socket
+        :return: True if unlocked, False otherwise
+        :rtype: boolean
+        """
         outcome = False
         bookingCode = "bookingcode:" + input("Unlock Code: ")
         s.sendall(bookingCode.encode())
@@ -107,6 +130,13 @@ class Functions:
         return outcome
 
     def returnCar(s):
+        """Return a car function that if user selects return car this method is called
+
+        :param s: socket
+        :type s: socket
+        :return: True if returned, else False
+        :rtype: boolean
+        """
         outcome = False
         x = input('Are you sure you want to return the car? (Y/N): ')
         userInput = x.upper()
@@ -133,6 +163,13 @@ class Functions:
         return outcome
 
     def bookingCode(s):
+        """Function to check if booking code is valid
+
+        :param s: socket
+        :type s: socket
+        :return: True if valid, else False
+        :rtype: boolean
+        """
         outcome = False
         msg = 'facebookingcode:' + input('Booking Code: ')
         s.sendall(msg.encode())
@@ -151,6 +188,11 @@ class Functions:
 
 
     def recogniseFace():
+        """Function to check if any face matches the dataset
+
+        :return: id of user if matches, else blank
+        :rtype: String
+        """
         foundUser = ''
         # construct the argument parser and parse the arguments
         ap = argparse.ArgumentParser()

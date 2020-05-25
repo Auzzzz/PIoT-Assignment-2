@@ -17,15 +17,12 @@ ADDRESS = (HOST, PORT)
 class Functions:
 
     def login(username, password, s):
-        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not
+        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not. 
     
-        Args:
-            username (str): username entered
-            password (str): password entered
-            s             : socket to send data
-
-        Returns:
-            outcome. userID in string if success, blank otherwise
+        :param username: username entered
+        :param password: password entered  
+        :param s: socket to send data
+        :returns: userID or blank
     
         """
         loginUser = username
@@ -57,14 +54,11 @@ class Functions:
         return outcome
 
     def loginWithFace(userID, s):
-        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not using facial recognition
+        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not using facial recognition.
     
-        Args:
-            userID (str): userID found from facial recognition entered
-            s           : socket to send data
-
-        Returns:
-            outcome. userID in string if success, blank otherwise
+        :param userID: userID found from facial recognition entered
+        :param s: socket to send data
+        :returns: userID or blank
     
         """
         msg = ''
@@ -84,15 +78,12 @@ class Functions:
 
 
     def unlockCar(s, bookingCode, userID):
-        """Function to unlock a car if the user successfully log in and entered the booking code
+        """Function to unlock a car if the user successfully log in and entered the booking code.
     
-        Args:
-            s                : socket to send data
-            bookingCode (str): booking code entered by user from AP
-            userID (str)     : userID found from current user entered
-
-        Returns:
-            outcome. bookingID in string if success, blank otherwise
+        :param s: socket to send data
+        :param bookingCode: booking code entered by user from AP
+        :param userID: userID found from current user entered
+        :returns: outcome. bookingID in string if success, blank otherwise
     
         """
         p = {'bookingcode':bookingCode}
@@ -146,15 +137,11 @@ class Functions:
         return outcome
 
     def returnCar(s, bookingID):
-        """Function to return a car after usage
-    
-        Args:
-            s                : socket to send data
-            bookingID (str): bookingID of the booking
+        """returnCar returns the car after the user selects return car in the console.
 
-        Returns:
-            outcome. True if success, False otherwise
-    
+        :param s: socket
+        :param bookingID: bookingID of current user being used
+        :returns: outcome, True if success
         """
         p = {'bookingid':bookingID,'bookingstatus':str(3)}
         response = requests.post('http://127.0.0.1:5000/api/booking/s', json=p)

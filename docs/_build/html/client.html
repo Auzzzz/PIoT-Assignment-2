@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>client module &#8212; PIOT-A2-Docs 2020 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-client">
+<span id="client-module"></span><h1>client module<a class="headerlink" href="#module-client" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="client.Functions">
+<em class="property">class </em><code class="sig-prename descclassname">client.</code><code class="sig-name descname">Functions</code><a class="headerlink" href="#client.Functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="client.Functions.bookingCode">
+<code class="sig-name descname">bookingCode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.bookingCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check if booking code is valid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>socket</em>) – socket</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if valid, else False</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.Functions.faceLogin">
+<code class="sig-name descname">faceLogin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">userID</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.faceLogin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to login using face metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>socket</em>) – socket</p></li>
+<li><p><strong>userID</strong> (<em>str</em>) – userID of the matching face from dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outcome, True if successful login, else false</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.Functions.login">
+<code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging in checks to see if it matches any user from our database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>socket</em>) – socket</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if login successful, else False</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.Functions.recogniseFace">
+<code class="sig-name descname">recogniseFace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.recogniseFace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check if any face matches the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>id of user if matches, else blank</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.Functions.returnCar">
+<code class="sig-name descname">returnCar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.returnCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a car function that if user selects return car this method is called</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>socket</em>) – socket</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if returned, else False</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.Functions.unlockCar">
+<code class="sig-name descname">unlockCar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Functions.unlockCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to unlock the car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>socket</em>) – socket</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if unlocked, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="client.Main">
+<em class="property">class </em><code class="sig-prename descclassname">client.</code><code class="sig-name descname">Main</code><a class="headerlink" href="#client.Main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="client.Main.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Main.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="client.Menu">
+<em class="property">class </em><code class="sig-prename descclassname">client.</code><code class="sig-name descname">Menu</code><a class="headerlink" href="#client.Menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="client.Menu.printMenu">
+<code class="sig-name descname">printMenu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Menu.printMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="client.Menu.selectOptions">
+<code class="sig-name descname">selectOptions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.Menu.selectOptions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PIOT-A2-Docs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">MasterPi</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Chris, Rodrigo Miguel, Winston , Zaed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/client.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
