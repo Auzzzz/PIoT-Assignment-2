@@ -257,10 +257,40 @@ def searchcar():
         return render_template('search.html', cars=cars)
     else:
         return redirect('login')
+
+@site.route('/bookingcancel', methods = ['GET','POST'])
+def bookingcancel():
+    if 'loggedin' in session:
+        msg = ''
+
+        if request.method == 'POST' and 'bookingid' in request.form:
+            #Capture the form data
+            bookingid = request.form['bookingid']
+            p = {'bookingid':bookingID,'bookingstatus':str(4)}
+            response = requests.post('http://127.0.0.1:5000/api/booking/s', json=p)
+
+            if response.ok:
+                msg = 'Car Returned'
+
+            else:
+                msg = 'Error'
+
+                print(bookingid, bdate, stime, etime)
+
+        return render_template('bookingcancel.html')
+    else:
+        return redirect('login')
         
 @site.route('/test', methods=['GET', 'POST'])
 def test():
+    bookingid = '37'
+    bdate = "2021-05-26"
+    stime = "11:30:00"
+    etime = "23:45:00"
+    bookingstatus = 3
 
-    
-
+    payload = {"bookingid":bookingid, "bdate":bdate, "stime":stime, "etime":etime, "bookingstatus":bookingstatus}
+    print(payload)
+    r = requests.post('http://127.0.0.1:5000/api/booking', json=payload)
+        
     return render_template('test.html')

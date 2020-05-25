@@ -10,10 +10,8 @@ import time
 import cv2
 
 
-HOST = input("Enter IP address of server: ")
-
-# HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5002        # The port used by the server.
+HOST = "127.0.0.1" # The server's hostname or IP address.
+PORT = 5001        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 class Menu:
@@ -156,7 +154,7 @@ class Functions:
         foundUser = ''
         # construct the argument parser and parse the arguments
         ap = argparse.ArgumentParser()
-        ap.add_argument("-e", "--encodings", default="pi_opencv/encodings.pickle",
+        ap.add_argument("-e", "--encodings", default="encoding/encodings.pickle",
         help="path to serialized db of facial encodings")
         ap.add_argument("-r", "--resolution", type=int, default=240,
             help="Resolution of the video feed")
@@ -233,6 +231,7 @@ class Functions:
 
         # do a bit of cleanup
         vs.stop()
+        
         return foundUser
 
 

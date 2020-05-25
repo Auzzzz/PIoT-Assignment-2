@@ -28,6 +28,7 @@
 <h2> Up Comming Bookings</h2>
 <div>
     {% for each in bookings %}
+    <form action="{{ url_for('site.bookingcancel') }}" method="post" autocomplete="off">
     <table>
         <tr>
             <td>Booking Date: </td>
@@ -47,8 +48,9 @@
         </tr>
         <tr>
             <td>Booking Unlock Code:  </td>
-            <td>{{ each.bookingcode }}</td>
+            <td>{{ each.bookingcode }}</td> <input hidden type="date" name = "bdate" id="date" value = '{{ each.bookingcode }}'>
         </tr>
+        <input type="submit">
     </table>
     <br>
     {% endfor %}

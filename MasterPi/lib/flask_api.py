@@ -313,14 +313,33 @@ def getBooking(bookingid):
 
     return bookingSchema.jsonify(booking)
 
-# Endpoint to update person.
-@api.route("/api/booking", methods = ["PUT", "POST"])
-def bookingUpdate():
+# Endpoint to update booking status.
+@api.route("/api/booking/s", methods = ["PUT", "POST"])
+def bookingSUpdate():
     bookingid = request.json["bookingid"]
     bookingstatus = request.json["bookingstatus"]
 
     booking = Booking.query.get(bookingid)
     booking.bookingstatus = bookingstatus
+
+    db.session.commit()
+
+    return bookingSchema.jsonify(booking)
+
+#update booking by ID
+@api.route("/api/booking", methods = ["PUT", "POST"])
+def bookingUpdate():
+    bookingid = request.json["bookingid"]
+    bdate = request.json["bdate"]
+    stime = request.json["stime"]
+    etime = request.json["etime"]
+    bs = request.json["bookingstatus"]
+
+    booking = Booking.query.get(bookingid)
+    booking.bdate = bdate
+    booking.stime = stime
+    booking.etime = etime
+    booking.bookingstatus = bs
 
     db.session.commit()
 
@@ -341,4 +360,3 @@ def checkavailability():
     result = bookingsSchema.dump(bc)
     return jsonify(result)
 
-    

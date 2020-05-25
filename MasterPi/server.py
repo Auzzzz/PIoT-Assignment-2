@@ -4,19 +4,30 @@ from _thread import *
 from flask import Flask, Blueprint, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from getpass import getpass
 import os, requests, json
 from datetime import datetime
 from datetime import date
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
-PORT = 5002 # Port to listen on (non-privileged ports are > 1023).
+PORT = 5001 # Port to listen on (non-privileged ports are > 1023).
 ADDRESS = (HOST, PORT)
 
 
 class Functions:
+
     def login(username, password, s):
+        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not
+    
+        Args:
+            username (str): username entered
+            password (str): password entered
+            s             : socket to send data
+
+        Returns:
+            outcome. userID in string if success, blank otherwise
+    
+        """
         loginUser = username
         loginPass = password
         msg = ''
@@ -29,7 +40,7 @@ class Functions:
             response = requests.get('http://127.0.0.1:5000/api/token', auth=(loginUser, loginPass))
         
             #Login failed
-            if str(response) == "<Response [401]>":
+            if response.status_code == 401:
                 msg = 'Unauthorized Access'
 
             #Login success
@@ -46,11 +57,23 @@ class Functions:
         return outcome
 
     def loginWithFace(userID, s):
+        """Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not using facial recognition
+    
+        Args:
+            userID (str): userID found from facial recognition entered
+            s           : socket to send data
+
+        Returns:
+            outcome. userID in string if success, blank otherwise
+    
+        """
         msg = ''
         response = requests.get('http://127.0.0.1:5000/api/person/' + str(userID))
         outcome = ''
-
-        if str(response) == '<Response [401]>':
+        result = json.loads(response.text)
+        blank = "{" + "}"
+        
+        if str(result) == blank:
             msg = 'Unauthorized Access'
         else:
             msg = 'Login successful'
@@ -61,6 +84,17 @@ class Functions:
 
 
     def unlockCar(s, bookingCode, userID):
+        """Function to unlock a car if the user successfully log in and entered the booking code
+    
+        Args:
+            s                : socket to send data
+            bookingCode (str): booking code entered by user from AP
+            userID (str)     : userID found from current user entered
+
+        Returns:
+            outcome. bookingID in string if success, blank otherwise
+    
+        """
         p = {'bookingcode':bookingCode}
         response = requests.post('http://127.0.0.1:5000/api/booking/code', json=p)
         msg = ''
@@ -85,44 +119,64 @@ class Functions:
                         if str(startTime) <= str(timeNow) and str(timeNow) <= str(endTime) and str(bookingDate) == str(currentDate):
                             msg = 'Car Unlocked' 
                             j = {'bookingid':bookingID,'bookingstatus':str(2)}
-                            response = requests.post('http://127.0.0.1:5000/api/booking', json=j)
+                            response = requests.post('http://127.0.0.1:5000/api/booking/s', json=j)
                             outcome = str(bookingID)
+                        
                         else:
                             msg = 'Wrong time'
+                          
                     elif bookingStatus == 2:
                         msg = 'Already Unlocked'
+                    
                     elif bookingStatus == 3:
                         msg = 'Car already returned'
+                       
                     else:
                         msg = 'Error'
+                 
                 else:
                     msg = 'Not your booking' 
+                    
             else:
                 msg = 'Error'
         else:
             msg = 'Error'
-        
+    
         s.sendall(msg.encode())
         return outcome
 
     def returnCar(s, bookingID):
+        """Function to return a car after usage
+    
+        Args:
+            s                : socket to send data
+            bookingID (str): bookingID of the booking
+
+        Returns:
+            outcome. True if success, False otherwise
+    
+        """
         p = {'bookingid':bookingID,'bookingstatus':str(3)}
-        response = requests.post('http://127.0.0.1:5000/api/booking', json=p)
+        response = requests.post('http://127.0.0.1:5000/api/booking/s', json=p)
         msg = ''
+        outcome = False
 
         if response.ok:
             msg = 'Car Returned'
+            outcome = True
         else:
             msg = 'Error'
+            outcome = False
         
         s.sendall(msg.encode())
+
+        return outcome
 
 
 class Main:
     def addClient(conn, addr):
         with conn:
             print("Connected to {}".format(addr))
-            print("( -- Press CTRL+C to Quit -- )")
         
             sessionUser = ''
             sessionBookingID = ''
@@ -168,6 +222,8 @@ class Main:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 s.bind(ADDRESS)
+                print('Server Running...')
+                print("\n( -- Press CTRL+C to Quit -- )\n")
             except socket.error as e:
                 print(str(e))
      
