@@ -71,6 +71,7 @@ def login():
         else:
             #send user details of
             response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
+            print("RESPONCE",response)
             #make response into json format
             data = json.loads(response.text)
             #take token out of json and submit it for access to user info
@@ -85,6 +86,7 @@ def login():
             session['username'] = data['username']
             session['name'] = data['name']
             session['email'] = data['email']
+            session['userrole'] = data['users_roles_roleid']
             #forward the user to home page
             msg = "Successfully logged in redirecting in 3 secounds"
             return redirect('home')
@@ -115,6 +117,8 @@ def logout():
     session.pop('username', None)
     session.pop('name', None)
     session.pop('email', None)
+    session.pop('userrole', None)
+
     #move to login page
     return redirect('login')
 
@@ -319,3 +323,23 @@ def bookingcancel():
         return render_template('bookingcancel.html', msg = msg)
     else:
         return redirect('login')
+
+@site.route('/test', methods = ['GET','POST'])
+def test():
+    
+    email = "test@test.com"
+    name = "TESTING1234"
+    password = "1234"
+    username = "TEST1234"
+    userrole = 1
+    payload = {"email":email, "name":name, "password":password, "username":username, "userrole":userrole}
+    r = requests.post('http://127.0.0.1:5000/api/person', json=payload)
+
+    return render_template('test.html')
+
+
+### Admin ###
+#Show all users to edit
+@site.route('/admin/user' methods = ['POST'])
+def adminUser():
+    

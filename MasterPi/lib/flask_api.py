@@ -23,6 +23,7 @@ class Person(db.Model):
     username = db.Column(db.VARCHAR(50))
     email = db.Column(db.VARCHAR(320))
     password = db.Column(db.VARCHAR(200))
+    users_roles_roleid = db.Column(db.Integer, db.ForeignKey('users_roles.roleid'))
 
     #generate the auth token for login
     def generate_auth_token(self, expiration=600):
@@ -64,19 +65,38 @@ class Person(db.Model):
         user = Person.query.get(data['userid'])
         return user
 
-    def __init__(self, name, username, email, password):
+    def __init__(self, name, username, email, password, users_roles_roleid):
         self.name = name
         self.username = username
         self.email = email
         self.password = password
+        self.users_roles_roleid = users_roles_roleid
 
 class PersonSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("userid", "name", "username", "email", "password")
+        fields = ("userid", "name", "username", "email", "password", "users_roles_roleid")
 
 personSchema = PersonSchema()
 personsSchema = PersonSchema(many = True)
+
+
+#User Role
+class UserRoles(db.Model):
+    __tablename__ ="users_roles"
+    roleid = db.Column(db.Integer, primary_key = True)
+    roleName = db.Column(db.VARCHAR(20))
+
+    def __init__(self, rolename):
+        self.rolename = rolename
+
+class UserRolesSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("roleid", "rolename")
+
+userrolesSchema = UserRolesSchema()
+userrolessSchema = UserRolesSchema(many = True)
 
 # Endpoint to show all people. #ADMIN
 @api.route("/api/person", methods = ["GET"])
@@ -129,9 +149,10 @@ def addPerson():
     username = request.json["username"]
     email = request.json["email"]
     password = request.json["password"]
+    users_roles_roleid = request.json["users_roles_roleid"]
 
     password = sha256_crypt.hash(password)
-    newPerson = Person(name = name, username = username, email = email, password = password)
+    newPerson = Person(name = name, username = username, email = email, password = password, users_roles_roleid = users_roles_roleid)
 
     db.session.add(newPerson)
     db.session.commit()
@@ -213,7 +234,7 @@ def get_resource():
     :return: Returns user details in JSON format
 
     """
-    return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name})
+    return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name, 'users_roles_roleid':g.user.users_roles_roleid})
     
 
 
