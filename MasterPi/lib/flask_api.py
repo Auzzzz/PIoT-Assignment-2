@@ -85,15 +85,17 @@ personsSchema = PersonSchema(many = True)
 class UserRoles(db.Model):
     __tablename__ ="users_roles"
     roleid = db.Column(db.Integer, primary_key = True)
-    roleName = db.Column(db.VARCHAR(20))
+    rolename = db.Column(db.VARCHAR(20))
+    roledesc = db.Column(db.VARCHAR(100))
 
-    def __init__(self, rolename):
+    def __init__(self, rolename, roledesc):
         self.rolename = rolename
+        self.roledesc = roledesc
 
 class UserRolesSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("roleid", "rolename")
+        fields = ("roleid", "rolename", "roledesc")
 
 userrolesSchema = UserRolesSchema()
 userrolessSchema = UserRolesSchema(many = True)
@@ -108,7 +110,6 @@ def getPeople():
     """
     people = Person.query.all()
     result = personsSchema.dump(people)
-    print(result)
     return jsonify(result)
 
 # Endpoint to get person by id. #ADMIN
@@ -235,7 +236,13 @@ def get_resource():
 
     """
     return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name, 'users_roles_roleid':g.user.users_roles_roleid})
-    
+
+#endpoint for user job roles
+@api.route('/api/userroles')
+def userroles():
+    userroles = UserRoles.query.all()
+    result = userrolessSchema.dump(userroles)
+    return jsonify(result)
 
 
 ### Cars ###

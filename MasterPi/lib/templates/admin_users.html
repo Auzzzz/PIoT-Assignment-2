@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+    {% for each in users: %}
+    <br><hr>
+    <form action="{{ url_for('site.user') }}" method="post" autocomplete="off">
+        <table>
+            <tr>
+                <td>User ID</td>
+                <td>{{each.userid}}</td><input type="hidden" name="userid" value="{{ each.userid }}">
+            </tr>
+            <tr>
+                <td>User Name</td>
+                <td>{{each.name}}</td><input type="hidden" name="name" value="{{ each.name }}">
+            </tr>
+            <tr>
+                <td>User Email</td>
+                <td>{{each.email}}</td><input type="hidden" name="email" value="{{ each.email }}">
+            </tr>
+            <tr>
+                <td>User Username</td>
+                <td>{{each.username}}</td><input type="hidden" name="username" value="{{ each.username }}">
+            </tr>
+            <tr>
+                <td>User Role</td>
+                <td>
+                    {% for ur in userroles: %}
+                        {% if ur.roleid == each.users_roles_roleid %}
+                            <p>{{ ur.rolename }}</p> <input type="hidden" name="roleid" value="{{ ur.roleid }}">
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Edit User {{each.userid}}"></td>
+            </tr>
+        </table>
+        </form>
+    {% endfor %}
+
+{% endblock %}

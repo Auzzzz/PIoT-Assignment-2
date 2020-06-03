@@ -326,20 +326,56 @@ def bookingcancel():
 
 @site.route('/test', methods = ['GET','POST'])
 def test():
-    
-    email = "test@test.com"
-    name = "TESTING1234"
-    password = "1234"
-    username = "TEST1234"
-    userrole = 1
-    payload = {"email":email, "name":name, "password":password, "username":username, "userrole":userrole}
-    r = requests.post('http://127.0.0.1:5000/api/person', json=payload)
+
 
     return render_template('test.html')
 
 
 ### Admin ###
 #Show all users to edit
-@site.route('/admin/user' methods = ['POST'])
+@site.route('/admin/user', methods = ['POST', 'GET'])
 def adminUser():
-    
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            #Get all users for the list
+            response = requests.get('http://127.0.0.1:5000/api/person')
+            #format the response in json
+            users = json.loads(response.text)
+
+            #get user role info
+            response = requests.get('http://127.0.0.1:5000/api/userroles')
+            #format the response in json
+            userroles = json.loads(response.text)
+
+            return render_template('admin_users.html', users = users, userroles = userroles)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+#Edit selected user
+@site.route('/admin/useredit', methods = ['POST'])
+def adminUserEdit():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = ''
+                #checking to see if the user has pressed the submit button by looking at POST request
+                if request.method == 'POST' and 'userid' in request.form and 'name' in request.form and 'email' in request.form and 'username' in request.form and 'roleid' in request.form: #Get contents of post data
+                    userid = session['userid']
+                    #Capture the form data
+                    name = request.form['name']
+                    email = request.form['email']
+                    username = request.form['username']
+                    roleid = request.form['roleid']
+
+
+            return render_template('admin_users.html', users = users, userroles = userroles)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
