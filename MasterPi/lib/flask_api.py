@@ -150,7 +150,7 @@ def addPerson():
     username = request.json["username"]
     email = request.json["email"]
     password = request.json["password"]
-    users_roles_roleid = request.json["users_roles_roleid"]
+    users_roles_roleid = 1
 
     password = sha256_crypt.hash(password)
     newPerson = Person(name = name, username = username, email = email, password = password, users_roles_roleid = users_roles_roleid)
@@ -164,15 +164,21 @@ def addPerson():
 @api.route("/api/person/<id>", methods = ["PUT"])
 def personUpdate(id):
     """API Route for updating the details of a specific person
-
     :param id: ID of targetted person
     :return: Returns person if successful
-
     """
+    #get updated user info
     person = Person.query.get(id)
     name = request.json["name"]
-
-    person.Name = name
+    email = request.json["email"]
+    username = request.json["username"]
+    users_roles_roleid = request.json["roleid"]
+    
+    #set userinfo to the given user
+    person.name = name
+    person.email = email
+    person.username = username
+    person.users_roles_roleid = users_roles_roleid
 
     db.session.commit()
 
@@ -268,7 +274,7 @@ def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typei
 class CarSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("carid", "colour", "location", "cph", "car_make_makeid", "car_type_typeid" )
+        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid" )
 
 carSchema = CarSchema()
 carsSchema = CarSchema(many = True)
@@ -395,6 +401,33 @@ def addCar():
 
     return personSchema.jsonify(newCar)
     
+# Endpoint to update car details.
+@api.route("/api/car/<id>", methods = ["PUT"])
+def carUpdate(id):
+    """API Route for updating the details of a specific person
+    :param id: ID of targetted person
+    :return: Returns person if successful
+    """
+    #get updated cae info
+    car = Car.query.get(id)
+    colour = request.json["colour"]
+    seats = request.json["seats"]
+    location = request.json["location"]
+    cph = request.json["cph"]
+    car_make_makeid = request.json["car_make_makeid"]
+    car_type_typeid = request.json["car_type_typeid"]
+
+    #set car info to the given car
+    car.colour = colour
+    car.seats = seats
+    car.location = location
+    car.cph = cph
+    car.car_make_makeid = car_make_makeid
+    car.car_type_typeid = car_type_typeid
+
+    db.session.commit()
+
+    return carSchema.jsonify(car)
     # Endpoint to create new booking.
 @api.route("/api/car/booking", methods = ["POST"])
 def addCarBooking():

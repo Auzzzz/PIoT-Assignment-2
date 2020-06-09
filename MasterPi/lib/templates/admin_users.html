@@ -6,30 +6,40 @@
 
     {% for each in users: %}
     <br><hr>
-    <form action="{{ url_for('site.user') }}" method="post" autocomplete="off">
+    <form action="{{ url_for('site.adminUserEdit') }}" method="post" autocomplete="off">
         <table>
             <tr>
+                <td></td>
+                <td>User Info</td>
+                <td>Change User Info</td>
+            </tr>
+            <tr>
                 <td>User ID</td>
-                <td>{{each.userid}}</td><input type="hidden" name="userid" value="{{ each.userid }}">
+                <td>{{each.userid}}</td>
+                <td><input readonly name="userid" value="{{ each.userid }}"></td>
             </tr>
             <tr>
                 <td>User Name</td>
-                <td>{{each.name}}</td><input type="hidden" name="name" value="{{ each.name }}">
+                <td>{{each.name}}</td>
+                <td><input name="name" value="{{ each.name }}"></td>
             </tr>
             <tr>
                 <td>User Email</td>
-                <td>{{each.email}}</td><input type="hidden" name="email" value="{{ each.email }}">
+                <td>{{each.email}}</td>
+                <td><input name="email" value="{{ each.email }}"></td>
             </tr>
             <tr>
                 <td>User Username</td>
-                <td>{{each.username}}</td><input type="hidden" name="username" value="{{ each.username }}">
+                <td>{{each.username}}</td>
+                <td><input name="username" value="{{ each.username }}"></td>
             </tr>
             <tr>
                 <td>User Role</td>
                 <td>
                     {% for ur in userroles: %}
                         {% if ur.roleid == each.users_roles_roleid %}
-                            <p>{{ ur.rolename }}</p> <input type="hidden" name="roleid" value="{{ ur.roleid }}">
+                            <p>{{ ur.rolename }}</p>
+                            <td><input name="roleid" value="{{ ur.roleid }}"></td>
                         {% endif %}
                     {% endfor %}
                 </td>

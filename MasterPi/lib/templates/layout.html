@@ -14,7 +14,8 @@
           </div>
           {% if session['userrole'] == 4: %}
                <div>
-                    <a href="{{ url_for('site.adminUser') }}">Edit Users</a>
+					<a href="{{ url_for('site.adminUser') }}">Edit Users</a>
+					<a href="{{ url_for('site.adminCar') }}">Edit Cars</a>
                </div>
           {% endif %}
 		<div>
