@@ -3,11 +3,12 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-
+        <p>{{ msg }}</p>
     {% for each in cars: %}
     <br><hr>
-    <form action="{{ url_for('site.adminCarEdit') }}" method="post" autocomplete="off">
-        <table>
+    <table>
+        <form action="{{ url_for('site.adminCarEdit') }}" method="post" autocomplete="off">
+        
             <tr>
                 <td></td>
                 <td>Car Info</td>
@@ -50,9 +51,16 @@
             </tr>
             <tr>
                 <td><input type="submit" value="Edit Car {{each.carid}}"></td>
-            </tr>
-        </table>
         </form>
+    </table>
+    <br>
+    <form action="{{ url_for('site.adminCarIssue') }}" method="post">
+        <input name="carid" value="{{ each.carid }}" hidden>
+        <input type="submit" value="Report Issue to Mechanic">
+    </form>
+    <form action="{{ url_for('site.adminCarDelete') }}" method="post" autocomplete="off">
+        <input type="submit" value="Delete Car {{each.carid}}">
+    </form>
     {% endfor %}
-
+        
 {% endblock %}

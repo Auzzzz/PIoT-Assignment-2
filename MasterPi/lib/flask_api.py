@@ -251,6 +251,17 @@ def userroles():
     return jsonify(result)
 
 
+#endpoint to return user info based off roles
+@api.route('/api/users', methods = ['POST'])
+def user():
+    users_roles_roleid = request.json['users_roles_roleid']
+
+    users = Person.query.filter_by(users_roles_roleid = users_roles_roleid )
+    result = personsSchema.dump(users)
+    return jsonify(result)
+
+
+
 ### Cars ###
 #Car
 class Car(db.Model):
@@ -312,6 +323,28 @@ class CarTypeSchema(ma.Schema):
 
 cartypeSchema = CarTypeSchema()
 cartypesSchema = CarTypeSchema(many = True)
+
+#car issues
+class CarIssues(db.Model):
+    __tablename__ = "car_issues"
+    issueid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
+    notes = db.Column(db.Text)
+    issue_status = db.Column(db.Integer)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.userid'))
+
+    def __init__(self, carid, notes, issue_status, assigned_to ):
+            self.carid = carid
+            self.notes = notes
+            self.issue_status = issue_status
+            self.assigned_to = assigned_to
+
+class CarIssuesSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("issueid", "carid", "notes", "issue_status", "assigned_to" )
+carissuesSchema = CarSchema()
+carissuessSchema = CarSchema(many = True)
 
 #Booking
 class Booking(db.Model):
@@ -544,3 +577,23 @@ def checkavailability():
     result = bookingsSchema.dump(bc)
     return jsonify(result)
 
+#Broken Car
+@api.route("/api/car/issue", methods = ["POST"])
+def addCarIssue():
+    """API Route for creating a new booking
+
+    :return: Returns new booking in JSON format
+
+    """
+    print("test")
+    carid = request.json["carid"]
+    notes = request.json["notes"]
+    issue_status = 1
+    assigned_to = request.json["assigned_to"]
+    
+    newCarIssue = CarIssues(carid = carid, notes = notes, issue_status = issue_status, assigned_to = assigned_to)
+    print(newCarIssue)
+    db.session.add(newCarIssue)
+    db.session.commit()
+
+    return carissuesSchema.jsonify(newCarIssue)

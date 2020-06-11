@@ -345,6 +345,7 @@ def adminUserEdit():
 #Show all users to edit
 @site.route('/admin/car', methods = ['POST', 'GET'])
 def adminCar():
+    msg = ''
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -364,7 +365,7 @@ def adminCar():
             #format the response in json
             cartype = json.loads(response.text)
 
-            return render_template('admin_cars.html', cars = cars, carmake = carmake, cartype = cartype)
+            return render_template('admin_cars.html', cars = cars, carmake = carmake, cartype = cartype, msg = msg)
         else:
             return redirect('/profile')
     else:
@@ -372,14 +373,14 @@ def adminCar():
 
 
 #Edit selected car
-@site.route('/admin/carsedit', methods = ['POST', 'GET', 'PUT'])
+@site.route('/admin/caredit', methods = ['POST', 'GET', 'PUT'])
 def adminCarEdit():
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
             msg = ''
-                #checking to see if the user has pressed the submit button by looking at POST request
+            #checking to see if the user has pressed the submit button by looking at POST request
             if request.method == 'POST' and 'carid' in request.form and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'car_make_makeid' in request.form and 'car_type_typeid' in request.form: #Get contents of post data
                 carid = request.form['carid']
                 #Capture the form data
@@ -390,12 +391,76 @@ def adminCarEdit():
                 car_make_makeid = request.form['car_make_makeid']
                 car_type_typeid = request.form['car_type_typeid']
 
-
                 payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":car_make_makeid, "car_type_typeid":car_type_typeid}
                 r = requests.put('http://127.0.0.1:5000/api/car/%s' % (carid,) , json=payload)
-
+            
             return render_template('admin_cars.html')
         else:
             return redirect('/profile')
     else:
         return redirect('login')
+
+
+@site.route('/admin/car/issue', methods = ['POST', 'GET', 'PUT'])
+def adminCarIssue():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
+                carid = request.form['carid']
+                #Capture the form data
+            else:
+                return redirect('/admin/car')
+
+            #Pass through all avaliable maint users
+            users_roles_roleid = 4 # usertype for maint workers is 2
+            p = {'users_roles_roleid':users_roles_roleid}
+            response = requests.post('http://127.0.0.1:5000/api/users', json=p)
+            maint = json.loads(response.text)
+
+            return render_template('admin_cars_report.html', carid = carid, maint = maint)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+@site.route('/admin/car/issue/R', methods = ['POST', 'GET'])
+def adminCarIssueReport():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:     
+            print("Test1")       
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+
+            print("Test2")
+            carid = request.form['carid']
+            report = request.form['report']
+            maintid = request.form['maintID']
+
+            p = {'carid':carid,'notes':report, 'assigned_to':maintid}
+            response = requests.post('http://127.0.0.1:5000/api/car/issue', json=p)
+            print(response)
+            if response.ok:
+                msg = 'successful'
+            else:
+                msg = 'errored'
+            
+
+            
+            return render_template('admin_cars_report.html')
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+
+@site.route('/test', methods = ['POST', 'GET', 'PUT'])
+def test():
+
+    
+    return render_template('test.html')
