@@ -47,9 +47,29 @@
                 <td><input type="submit" value="Edit User {{each.userid}}"></td>
             </tr>
         </form>
+        <form action="{{ url_for('site.adminUserEngineer') }}" method="post" autocomplete="off">
+            {% for engineer in engineer: %}
+                {% if engineer.userid == each.userid %}
+                    <tr>
+                        <td><br> Mac Address </td>
+                        <td>{{ engineer.mac_address }}</td>
+                        <td><input name="mac" value="{{ engineer.mac_address }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Pushbullet Key</td>
+                        <td>{{ engineer.pushbullet_api }}</td>
+                        <td><input name="push" value="{{ engineer.pushbullet_api }}"></td>
+                    </tr>
+                    <tr>
+                        <input hidden name='userid' value="{{each.userid}}">
+                        <td><input type="submit" value="Edit Engineer {{each.userid}}"></button></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </form>
         <form action="{{ url_for('site.adminUserDelete') }}" method="post" autocomplete="off">
-            <input hidden name='userid' value="{{each.userid}}"
-            <td><input type="submit" value="Delete User {{each.userid}}"></td>
+            <input hidden name='userid' value="{{each.userid}}">
+            <td><br><input type="submit" value="Delete User {{each.userid}}"></td>
         </form>
     </table>
     {% endfor %}

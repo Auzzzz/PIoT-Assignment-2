@@ -307,7 +307,12 @@ def adminUser():
             #format the response in json
             userroles = json.loads(response.text)
 
-            return render_template('admin_users.html', users = users, userroles = userroles)
+            #Get all engineers to check if engineer was an engineer before
+            response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+            #format the response in json
+            engineer = json.loads(response.text)
+
+            return render_template('admin_users.html', users = users, userroles = userroles, engineer = engineer )
         else:
             return redirect('/profile')
     else:
@@ -316,6 +321,10 @@ def adminUser():
 #Edit selected user
 @site.route('/admin/useredit', methods = ['POST', 'GET', 'PUT'])
 def adminUserEdit():
+    #Get all engineers to check if engineer was an engineer before
+    response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+    #format the response in json
+    engineers = json.loads(response.text)
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -329,18 +338,22 @@ def adminUserEdit():
                 email = request.form['email']
                 username = request.form['username']
                 roleid = request.form['roleid']
-                print(roleid)
                 if roleid == '2':
-                    print("HI")
-                    mac_address = "Null"
-                    pushbullet_api = "Null"
-                    payload = {"userid":userid, "mac_address":mac_address, "pushbullet_api":pushbullet_api}
-                    r = requests.post('http://127.0.0.1:5000/api/users/engineer', json=payload)
+                    for each in engineers:
+                        if each["userid"] == userid:
+                            msg = ''
+                        else:
+                            #create them in the engineer table
+                            print("make")
+                            mac_address = "Null"
+                            pushbullet_api = "Null"
+                            payload = {"userid":userid, "mac_address":mac_address, "pushbullet_api":pushbullet_api}
+                            r = requests.post('http://127.0.0.1:5000/api/users/engineer', json=payload)
 
                 payload = {"name":name, "email":email, "username":username, "roleid":roleid}
                 r = requests.put('http://127.0.0.1:5000/api/person/%s' % (userid,) , json=payload)
 
-            return render_template('admin_users.html')
+            return redirect('/admin/user')
         else:
             return redirect('/profile')
     else:
@@ -362,6 +375,24 @@ def adminUserDelete():
                     msg = 'successful'
                 else:
                     msg = 'errored'
+            return redirect(url_for('site.adminUser'))
+
+@site.route('/admin/user/engineer', methods = ['POST', 'GET'])
+def adminUserEngineer():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'mac' in request.form and 'push' in request.form:
+                #update engineers
+                userid = request.form['userid']
+                mac_address = request.form['mac']
+                pushbullet_api = request.form['push']
+                
+                payload = {"mac_address":mac_address, "pushbullet_api":pushbullet_api}
+                r = requests.put('http://127.0.0.1:5000/api/users/engineer/%s' % (userid), json=payload)
+
             return redirect(url_for('site.adminUser'))
 
 #Show all users to edit
