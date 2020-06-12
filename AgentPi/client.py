@@ -309,13 +309,17 @@ class Main:
                         response = "Engineer Detected"
 
                     else:
+                        #New thread to work on searching mac address with bluetooth
                         start_new_thread(Functions.searchBluetooth,(found_devices,))
+
                         Menu.printMenu()
                         try:
+                            #Prompt for input with a certain time limit of 20 seconds
                             response = inputimeout(prompt='\nResponse: ', timeout=20)
                         except TimeoutOccurred:
                             response = "Timeout"
-            
+
+                    #Checks to see which input 
                     if response == "1":
                         if Functions.login(s):
                             isLoggedIn = True
@@ -335,6 +339,7 @@ class Main:
                     else:
                         print("\nError: Invalid Input")
 
+                #If not an engineer (different user type than engineer)
                 elif isLoggedIn and not isEngineer:
                     Menu.selectOptions()
                     response = input("\nResponse: ")
@@ -372,6 +377,7 @@ class Main:
                         print("\nError: Invalid Input")
 
                 else:
+                    #User type of engineer which can only be unlocked with MAC address using bluetooth search
                     Menu.engineerUI()
                     response = input("\nResponse: ")
 
