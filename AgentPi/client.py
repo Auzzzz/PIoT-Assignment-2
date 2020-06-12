@@ -8,8 +8,9 @@ import imutils
 import pickle
 import time
 import cv2
-import concurrent.futures
+from _thread import *
 import bluetooth
+from inputimeout import inputimeout, TimeoutOccurred
 
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
@@ -21,6 +22,7 @@ MY_MAC = "6C:72:E7:CE:C1:EE"
 class Menu:
     def printMenu():
         print("\nWelcome to Agent Pi Console View!")
+        print("\nThis menu refreshes every 20 seconds")
         print("1. Login with Password")
         print("2. Login with Facial Recognition")
         print("3. Exit")
@@ -30,6 +32,12 @@ class Menu:
         print("1. Unlock Car")
         print("2. Return Car")
         print("3. Log Out")
+
+    def engineerUI():
+        print("\nWelcome to the EngineerUI!")
+        print("What would you like to do?")
+        print("1. Repair Car")
+        print("2. Log Out")
 
 class Functions:
     def login(s):
@@ -280,18 +288,20 @@ class Functions:
         
         return foundUser
 
-    def searchBluetooth():
+    def searchBluetooth(found_devices):
         while True:
             nearby_devices = bluetooth.discover_devices()
 
             for x in nearby_devices:
                 if x == MY_MAC:
-                    print("Engineer detected")
-                    return True
+                    print("Engineer detected... logging in at next refresh")
+                    found_devices.append(x)
+                    return found_devices
                     
 
 
 class Main:
+
     def run():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Connecting to {}...".format(ADDRESS))
@@ -300,57 +310,86 @@ class Main:
 
             isLoggedIn = False
             hasUnlocked = False
+            isEngineer = False
+            isRepaired = False
+
+            found_devices = []
 
             #endless loop for menu until exit 
             while True:
                 if not isLoggedIn:
 
-                    #WHAT THE FUCK
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        x = executor.submit(Functions.searchBluetooth, )
-                        x_value = x.result()
-                        print(str(x_value))
+                    if len(found_devices) > 0:
+                        response = "Engineer Detected"
 
-                    Menu.printMenu()
-                    response = input("\nResponse: ")
+                    else:
+                        start_new_thread(Functions.searchBluetooth,(found_devices,))
+                        Menu.printMenu()
+                        try:
+                            response = inputimeout(prompt='\nResponse: ', timeout=20)
+                        except TimeoutOccurred:
+                            response = "Timeout"
+
+
             
                     if response == "1":
                         if Functions.login(s):
                             isLoggedIn = True
                         else:
                             isLoggedIn = False
+
                     elif response == "2":
                         userID = Functions.recogniseFace()
+
                         if userID != '':
                             if Functions.faceLogin(s, userID):
                                 isLoggedIn = True
+
                             else:
                                 print('\nFace unrecognised')
                                 isLoggedIn = False
+
                     elif response == "3":
                         print("\nShutting down...")
                         break
+
+                    elif response == "Engineer Detected":
+                        print("\nLogging in as Engineer")
+                        found_devices.clear()
+                        isLoggedIn = True
+                        isEngineer = True
+
+                    elif response == "Timeout":
+                        print("\nRefreshing console")
+                        response = None
+
                     else:
                         print("\nError: Invalid Input")
-                else:
+
+                elif isLoggedIn and not isEngineer:
                     Menu.selectOptions()
                     response = input("\nResponse: ")
 
                     if response == "1":
                         if hasUnlocked:
                             print('You have already unlocked a car')
+
                         else:
                             if Functions.unlockCar(s):
                                 hasUnlocked = True
+
                             else:
                                 hasUnlocked = False
 
                     elif response == "2":
                         if hasUnlocked:
+
                             if Functions.returnCar(s):
                                 hasUnlocked = False
+
                             else:
                                 hasUnlocked = True
+
                         else:
                             print('\nYou have not unlocked a car to return')
 
@@ -359,8 +398,27 @@ class Main:
                         s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
+
                     else:
                         print("\nError: Invalid Input")
+
+                else:
+                    Menu.engineerUI()
+                    response = input("\nResponse: ")
+
+                    if response == "1":
+                        if isRepaired:
+                            print("Car already repaired")
+
+                        else:
+                            print("Car repaired!")
+                            isRepaired = True
+
+                    elif response == "2":
+                        print("\nLogging out...")
+                        isLoggedIn = False
+                        isEngineer = False
+
 
             print("Disconnecting from server.")
         print("Done.")
