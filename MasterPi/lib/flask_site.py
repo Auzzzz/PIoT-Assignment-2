@@ -471,8 +471,23 @@ def adminCarIssueReport():
         r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
 
         #send pushbullet 
+        title = "Please check on car: " + carid
+        body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
+        pushbullet(title, body)
+
 
     return redirect('/admin/car')
+
+def pushbullet(title, body):
+ 
+    data_send = {"type": "note", "title": title, "body": body}
+    key = "o.4peHPvzY0AVCOqulAKhIGHRwvwSbh63R"
+    resp = requests.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data_send),
+                         headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+    if resp.status_code != 200:
+        print('Something wrong')
+    else:
+        print('complete sending')
 
 
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
