@@ -1,5 +1,5 @@
 from __future__ import print_function
-from flask import Flask, Blueprint, request, jsonify, render_template, session, redirect
+from flask import Flask, Blueprint, request, jsonify, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
@@ -7,11 +7,8 @@ import os, time, requests, json, random
 from datetime import datetime
 site = Blueprint("site", __name__)
 
-
-from datetime import timedelta
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
+#pushbullet
+import requests, json
 
 ### User ###
 # Client webpage.
@@ -45,7 +42,7 @@ def register():
         if password == confirmPass:
             #Add account into the DB
             payload = {"email":email, "name":name, "password":password, "username":username}
-            r = requests.post('http://127.0.0.1:5000/api/person', json=payload)
+            r = requests.post('http://127.0.0.1:5000/api/person/i', json=payload)
             msg = 'Congratz You have been registered......'
         else:
             msg = "Passwords do not match"
@@ -71,6 +68,7 @@ def login():
         else:
             #send user details of
             response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
+            print("RESPONCE",response)
             #make response into json format
             data = json.loads(response.text)
             #take token out of json and submit it for access to user info
@@ -85,6 +83,7 @@ def login():
             session['username'] = data['username']
             session['name'] = data['name']
             session['email'] = data['email']
+            session['userrole'] = data['users_roles_roleid']
             #forward the user to home page
             msg = "Successfully logged in redirecting in 3 secounds"
             return redirect('home')
@@ -115,6 +114,8 @@ def logout():
     session.pop('username', None)
     session.pop('name', None)
     session.pop('email', None)
+    session.pop('userrole', None)
+
     #move to login page
     return redirect('login')
 
@@ -159,7 +160,7 @@ def newcar():
     #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post requet for all inputs
+    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post for all inputs
         #Capture the form data
         colour = request.form['colour']
         seats = request.form['seats']
@@ -236,45 +237,12 @@ def bookingConfirm():
                 msg = 'Error.... Oh Well'
             else:
                 
-                SCOPES = "https://www.googleapis.com/auth/calendar"
-                store = file.Storage("MasterPi/lib/cal/token.json")
-                creds = store.get()
-                if(not creds or creds.invalid):
-                    flow = client.flow_from_clientsecrets('MasterPi/lib/cal/credentials.json', SCOPES)
-                    creds = tools.run_flow(flow, store)
-                service = build("calendar", "v3", http=creds.authorize(Http()))
-                
-                date = datetime.now()
-                tomorrow = (date + timedelta(days = 2)).strftime("%Y-%m-%d")
-                time_start = "{}T06:00:00+10:00".format(tomorrow)
-                time_end = "{}T07:00:00+10:00".format(tomorrow)
-                event = {
-                    "summary": "Booking for car",
-                    "location": "RMIT Building 14",
-                    "description": "testing",
-                    "start": {
-                        "dateTime": time_start,
-                        "timeZone": "Australia/Melbourne",
-                    },
-                    "end": {
-                        "dateTime": time_end,
-                        "timeZone": "Australia/Melbourne",
-                    },
-                }
-
-                event = service.events().insert(calendarId = "primary", body = event).execute()
-                print("Event created: {}".format(event.get("htmlLink")))
+                #Removed google cal API
 
                 #inset into db through api
                 payload = {"userid":userid, "bdate":bdate, "stime":stime, "etime":etime, "carid":carid, "bookingstatus":bookingstatus, "bookingcode":bookingcode}
                 r = requests.post('http://127.0.0.1:5000/api/car/booking', json=payload)
                 msg = 'Congratz Your booing has been registered..... your booking code is:' + str(bookingcode)
-            
-                
-
-
-            
-            # creates one hour event tomorrow 10 AM IST
             
 
     elif request.method == 'POST': #if no post request is made
@@ -319,3 +287,281 @@ def bookingcancel():
         return render_template('bookingcancel.html', msg = msg)
     else:
         return redirect('login')
+
+
+### Admin ###
+#Show all users to edit
+@site.route('/admin/user', methods = ['POST', 'GET'])
+def adminUser():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            #Get all users for the list
+            response = requests.get('http://127.0.0.1:5000/api/person')
+            #format the response in json
+            users = json.loads(response.text)
+
+            #get user role info
+            response = requests.get('http://127.0.0.1:5000/api/userroles')
+            #format the response in json
+            userroles = json.loads(response.text)
+
+            #Get all engineers to check if engineer was an engineer before
+            response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+            #format the response in json
+            engineer = json.loads(response.text)
+
+            return render_template('admin_users.html', users = users, userroles = userroles, engineer = engineer )
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+#Edit selected user
+@site.route('/admin/useredit', methods = ['POST', 'GET', 'PUT'])
+def adminUserEdit():
+    #Get all engineers to check if engineer was an engineer before
+    response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+    #format the response in json
+    engineers = json.loads(response.text)
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            
+                #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'userid' in request.form and 'name' in request.form and 'email' in request.form and 'username' in request.form and 'roleid' in request.form: #Get contents of post data
+                userid = request.form['userid']
+                #Capture the form data
+                name = request.form['name']
+                email = request.form['email']
+                username = request.form['username']
+                roleid = request.form['roleid']
+                if roleid == '2':
+                    for each in engineers:
+                        if each["userid"] == userid:
+                            msg = ''
+                        else:
+                            #create them in the engineer table
+                            print("make")
+                            mac_address = "Null"
+                            pushbullet_api = "Null"
+                            payload = {"userid":userid, "mac_address":mac_address, "pushbullet_api":pushbullet_api}
+                            r = requests.post('http://127.0.0.1:5000/api/users/engineer', json=payload)
+
+                payload = {"name":name, "email":email, "username":username, "roleid":roleid}
+                r = requests.put('http://127.0.0.1:5000/api/person/%s' % (userid,) , json=payload)
+
+            return redirect('/admin/user')
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+#delete selected user
+@site.route('/admin/user/delete', methods = ['POST', 'GET', 'DELETE'])
+def adminUserDelete():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'userid' in request.form:
+                userid = request.form['userid']
+
+                response = requests.delete('http://127.0.0.1:5000/api/person/%s' % (userid,))
+                if response.ok:
+                    msg = 'successful'
+                else:
+                    msg = 'errored'
+            return redirect(url_for('site.adminUser'))
+
+@site.route('/admin/user/engineer', methods = ['POST', 'GET'])
+def adminUserEngineer():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'mac' in request.form and 'push' in request.form:
+                #update engineers
+                userid = request.form['userid']
+                mac_address = request.form['mac']
+                pushbullet_api = request.form['push']
+                
+                payload = {"mac_address":mac_address, "pushbullet_api":pushbullet_api}
+                r = requests.put('http://127.0.0.1:5000/api/users/engineer/%s' % (userid), json=payload)
+
+            return redirect(url_for('site.adminUser'))
+
+#Show all users to edit
+@site.route('/admin/car', methods = ['POST', 'GET'])
+def adminCar():
+    msg = ''
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            #Get all users for the list
+            response = requests.get('http://127.0.0.1:5000/api/car')
+            #format the response in json
+            cars = json.loads(response.text)
+
+            #Get car make for list
+            response = requests.get('http://127.0.0.1:5000/api/car/make')
+            #format the response in json
+            carmake = json.loads(response.text)
+            
+            #Get car type for list
+            response = requests.get('http://127.0.0.1:5000/api/car/type')
+            #format the response in json
+            cartype = json.loads(response.text)
+
+            return render_template('admin_cars.html', cars = cars, carmake = carmake, cartype = cartype, msg = msg)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+#delete selected car
+@site.route('/admin/car/delete', methods = ['POST', 'DELETE'])
+def adminCarDelete():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'carid' in request.form:
+                carid = request.form['carid']
+
+                response = requests.delete('http://127.0.0.1:5000/api/car/del/%s' % (carid,))
+                if response.ok:
+                    msg = 'successful'
+                else:
+                    msg = 'errored'
+            return redirect(url_for('site.adminCar'))
+
+#Edit selected car
+@site.route('/admin/caredit', methods = ['POST', 'GET', 'PUT'])
+def adminCarEdit():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'carid' in request.form and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'car_make_makeid' in request.form and 'car_type_typeid' in request.form: #Get contents of post data
+                carid = request.form['carid']
+                #Capture the form data
+                colour = request.form['colour']
+                seats = request.form['seats']
+                location = request.form['location']
+                cph = request.form['cph']
+                car_make_makeid = request.form['car_make_makeid']
+                car_type_typeid = request.form['car_type_typeid']
+
+                payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":car_make_makeid, "car_type_typeid":car_type_typeid}
+                r = requests.put('http://127.0.0.1:5000/api/car/%s' % (carid,) , json=payload)
+            
+            return render_template('admin_cars.html')
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+
+@site.route('/admin/car/issue', methods = ['POST', 'GET', 'PUT'])
+def adminCarIssue():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
+                carid = request.form['carid']
+                #Capture the form data
+            else:
+                return redirect('/admin/car')
+
+            #Pass through all avaliable maint users
+            users_roles_roleid = 2 # usertype for maint workers is 2
+            p = {'users_roles_roleid':users_roles_roleid}
+            response = requests.post('http://127.0.0.1:5000/api/users', json=p)
+            maint = json.loads(response.text)
+
+            return render_template('admin_cars_report.html', carid = carid, maint = maint)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+@site.route('/admin/car/issue/R', methods = ['POST', 'GET'])
+def adminCarIssueReport():
+ #Checks to see if user is logged in
+    if request.method == 'POST' and 'carid' in request.form and 'notes' in request.form and 'maint' in request.form: #Get contents of post data
+        carid = request.form['carid']
+        notes = request.form['notes']
+        assigned_to = int(request.form['maint'])
+        #get engineer pushbullet details
+        #Get all engineers to check if engineer was an engineer before
+        response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+        #format the response in json
+        engineers = json.loads(response.text)
+
+        
+        for each in engineers:
+            if each["userid"] == assigned_to:
+                #send pushbullet 
+                key = each['pushbullet_api']
+                title = "Please check on car: " + str(carid)
+                body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
+                pushbullet(title, body, key, assigned_to)
+
+                #add to DB
+                payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
+                r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
+
+            
+                return redirect('/admin/car')
+    else:
+        print("no")
+
+    return render_template('admin_cars_report.html')
+
+def pushbullet(title, body, key, assigned_to):
+    #from pushbullet api docs
+    data_send = {"type": "note", "title": title, "body": body}
+    resp = requests.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data_send),
+                         headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+    if resp.status_code != 200:
+        msg = 'Something went wrong'
+    else:
+        msg = 'Notifction send to %s' % (assigned_to)
+
+
+@site.route('/test', methods = ['POST', 'GET', 'PUT'])
+def test():
+
+        carid = 1234
+        notes = "HELLO"
+        assigned_to = 71
+        payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
+        r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
+
+        #get engineer pushbullet details
+        #Get all engineers to check if engineer was an engineer before
+        response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+        #format the response in json
+        engineers = json.loads(response.text)
+        
+        for each in engineers:
+            if each["userid"] == assigned_to:
+                #send pushbullet 
+                key = each['pushbullet_api']
+                title = "Please check on car: " + str(carid)
+                body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
+                pushbullet(title, body, key, assigned_to)
+
+        return render_template('test.html')

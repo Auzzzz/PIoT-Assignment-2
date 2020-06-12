@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    {% for each in users: %}
+    <br><hr>
+    <table>
+        <form action="{{ url_for('site.adminUserEdit') }}" method="post" autocomplete="off">
+            <tr>
+                <td></td>
+                <td>User Info</td>
+                <td>Change User Info</td>
+            </tr>
+            <tr>
+                <td>User ID</td>
+                <td>{{each.userid}}</td>
+                <td><input readonly name="userid" value="{{ each.userid }}"></td>
+            </tr>
+            <tr>
+                <td>User Name</td>
+                <td>{{each.name}}</td>
+                <td><input name="name" value="{{ each.name }}"></td>
+            </tr>
+            <tr>
+                <td>User Email</td>
+                <td>{{each.email}}</td>
+                <td><input name="email" value="{{ each.email }}"></td>
+            </tr>
+            <tr>
+                <td>User Username</td>
+                <td>{{each.username}}</td>
+                <td><input name="username" value="{{ each.username }}"></td>
+            </tr>
+            <tr>
+                <td>User Role</td>
+                <td>
+                    {% for ur in userroles: %}
+                        {% if ur.roleid == each.users_roles_roleid %}
+                            <p>{{ ur.rolename }}</p>
+                            <td><input name="roleid" value="{{ ur.roleid }}"></td>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Edit User {{each.userid}}"></td>
+            </tr>
+        </form>
+        <form action="{{ url_for('site.adminUserEngineer') }}" method="post" autocomplete="off">
+            {% for engineer in engineer: %}
+                {% if engineer.userid == each.userid %}
+                    <tr>
+                        <td><br> Mac Address </td>
+                        <td><input name="mac" value="{{ engineer.mac_address }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Pushbullet Key</td>
+                        <td><input name="push" value="{{ engineer.pushbullet_api }}"></td>
+                    </tr>
+                    <tr>
+                        <input hidden name='userid' value="{{each.userid}}">
+                        <td><input type="submit" value="Edit Engineer {{each.userid}}"></button></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </form>
+        <form action="{{ url_for('site.adminUserDelete') }}" method="post" autocomplete="off">
+            <input hidden name='userid' value="{{each.userid}}">
+            <td><br><input type="submit" value="Delete User {{each.userid}}"></td>
+        </form>
+    </table>
+    {% endfor %}
+
+{% endblock %}

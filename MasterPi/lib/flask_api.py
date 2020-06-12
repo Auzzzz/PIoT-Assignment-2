@@ -23,6 +23,7 @@ class Person(db.Model):
     username = db.Column(db.VARCHAR(50))
     email = db.Column(db.VARCHAR(320))
     password = db.Column(db.VARCHAR(200))
+    users_roles_roleid = db.Column(db.Integer, db.ForeignKey('users_roles.roleid'))
 
     #generate the auth token for login
     def generate_auth_token(self, expiration=600):
@@ -64,19 +65,61 @@ class Person(db.Model):
         user = Person.query.get(data['userid'])
         return user
 
-    def __init__(self, name, username, email, password):
+    def __init__(self, name, username, email, password, users_roles_roleid):
         self.name = name
         self.username = username
         self.email = email
         self.password = password
+        self.users_roles_roleid = users_roles_roleid
 
 class PersonSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("userid", "name", "username", "email", "password")
+        fields = ("userid", "name", "username", "email", "password", "users_roles_roleid")
 
 personSchema = PersonSchema()
 personsSchema = PersonSchema(many = True)
+
+
+#User Role
+class UserRoles(db.Model):
+    __tablename__ ="users_roles"
+    roleid = db.Column(db.Integer, primary_key = True)
+    rolename = db.Column(db.VARCHAR(20))
+    roledesc = db.Column(db.VARCHAR(100))
+
+    def __init__(self, rolename, roledesc):
+        self.rolename = rolename
+        self.roledesc = roledesc
+
+class UserRolesSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("roleid", "rolename", "roledesc")
+
+userrolesSchema = UserRolesSchema()
+userrolessSchema = UserRolesSchema(many = True)
+
+#User Role
+class Engineer(db.Model):
+    __tablename__ ="engineers"
+    userid = db.Column(db.Integer, primary_key = True)
+    mac_address = db.Column(db.Text)
+    pushbullet_api = db.Column(db.Text)
+
+    def __init__(self, userid,  mac_address, pushbullet_api):
+        self.userid = userid
+        self.mac_address = mac_address
+        self.pushbullet_api = pushbullet_api
+
+class EngineerSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("userid", "mac_address", "pushbullet_api")
+
+engineerSchema = EngineerSchema()
+engineersSchema = EngineerSchema(many = True)
+
 
 # Endpoint to show all people. #ADMIN
 @api.route("/api/person", methods = ["GET"])
@@ -88,7 +131,6 @@ def getPeople():
     """
     people = Person.query.all()
     result = personsSchema.dump(people)
-    print(result)
     return jsonify(result)
 
 # Endpoint to get person by id. #ADMIN
@@ -129,9 +171,10 @@ def addPerson():
     username = request.json["username"]
     email = request.json["email"]
     password = request.json["password"]
+    users_roles_roleid = 1
 
     password = sha256_crypt.hash(password)
-    newPerson = Person(name = name, username = username, email = email, password = password)
+    newPerson = Person(name = name, username = username, email = email, password = password, users_roles_roleid = users_roles_roleid)
 
     db.session.add(newPerson)
     db.session.commit()
@@ -142,15 +185,21 @@ def addPerson():
 @api.route("/api/person/<id>", methods = ["PUT"])
 def personUpdate(id):
     """API Route for updating the details of a specific person
-
     :param id: ID of targetted person
     :return: Returns person if successful
-
     """
+    #get updated user info
     person = Person.query.get(id)
     name = request.json["name"]
-
-    person.Name = name
+    email = request.json["email"]
+    username = request.json["username"]
+    users_roles_roleid = request.json["roleid"]
+    
+    #set userinfo to the given user
+    person.name = name
+    person.email = email
+    person.username = username
+    person.users_roles_roleid = users_roles_roleid
 
     db.session.commit()
 
@@ -213,9 +262,88 @@ def get_resource():
     :return: Returns user details in JSON format
 
     """
-    return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name})
-    
+    return jsonify({'userid':g.user.userid, 'username':g.user.username, 'email':g.user.email, 'name':g.user.name, 'users_roles_roleid':g.user.users_roles_roleid})
 
+#endpoint for user job roles
+@api.route('/api/userroles')
+def userroles():
+    userroles = UserRoles.query.all()
+    result = userrolessSchema.dump(userroles)
+    return jsonify(result)
+
+
+#endpoint to return user info based off roles
+@api.route('/api/users', methods = ['POST'])
+def user():
+    users_roles_roleid = request.json['users_roles_roleid']
+
+    users = Person.query.filter_by(users_roles_roleid = users_roles_roleid )
+    result = personsSchema.dump(users)
+    return jsonify(result)
+
+#endpoint to check engineer info
+@api.route('/api/users/engineer', methods = ['GET'])
+def engineer():
+    """API Route for seeing all engineers
+
+    :return: Returns all engineers in JSON format
+
+    """
+    engineers = Engineer.query.all()
+    result = engineersSchema.dump(engineers)
+    return jsonify(result)
+
+#endpoint to add engineer to engineer table
+@api.route("/api/users/engineer", methods = ["POST"])
+def addEngineer():
+    """API Route for adding an engineer
+
+    :return: Returns new engineer in JSON format
+
+    """
+    userid = request.json["userid"]
+    mac_address = request.json["mac_address"]
+    pushbullet_api = request.json["pushbullet_api"]
+    
+    newEngineer = Engineer(userid = userid, mac_address = mac_address, pushbullet_api = pushbullet_api)
+
+    db.session.add(newEngineer)
+    db.session.commit()
+
+    return engineerSchema.jsonify(newEngineer)
+
+@api.route("/api/users/engineer/<id>", methods = ["PUT"])
+def engineerUpdate(id):
+    """API Route for updating the details of a specific engineer
+    :param id: ID of targetted engineer
+    :return: Returns engineer if successful
+    """
+    #get updated cae info
+    engineer = Engineer.query.get(id)
+    mac_address = request.json["mac_address"]
+    pushbullet_api = request.json["pushbullet_api"]
+
+    #set car info to the given car
+    engineer.mac_address = mac_address
+    engineer.pushbullet_api = pushbullet_api
+
+    db.session.commit()
+
+    return engineerSchema.jsonify(engineer)
+
+#endpoint to check engineer info
+@api.route('/api/users/engineer/check/<id>', methods = ['GET'])
+def engineerMAC(id):
+    """API Route for checking all engineers against mac address
+
+    :return: Returns engineer details in JSON format
+
+    """
+    mac = Engineer.query.filter_by(mac_address = id)
+    result = engineersSchema.dump(mac)
+    return jsonify(result)
+
+    
 
 ### Cars ###
 #Car
@@ -240,7 +368,7 @@ def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typei
 class CarSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("carid", "colour", "location", "cph", "car_make_makeid", "car_type_typeid" )
+        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid" )
 
 carSchema = CarSchema()
 carsSchema = CarSchema(many = True)
@@ -278,6 +406,28 @@ class CarTypeSchema(ma.Schema):
 
 cartypeSchema = CarTypeSchema()
 cartypesSchema = CarTypeSchema(many = True)
+
+#car issues
+class CarIssues(db.Model):
+    __tablename__ = "car_issues"
+    issueid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
+    notes = db.Column(db.Text)
+    issue_status = db.Column(db.Integer)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.userid'))
+
+    def __init__(self, carid, notes, issue_status, assigned_to ):
+            self.carid = carid
+            self.notes = notes
+            self.issue_status = issue_status
+            self.assigned_to = assigned_to
+
+class CarIssuesSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("issueid", "carid", "notes", "issue_status", "assigned_to" )
+carissuesSchema = CarSchema()
+carissuessSchema = CarSchema(many = True)
 
 #Booking
 class Booking(db.Model):
@@ -367,6 +517,50 @@ def addCar():
 
     return personSchema.jsonify(newCar)
     
+# Endpoint to update car details.
+@api.route("/api/car/<id>", methods = ["PUT"])
+def carUpdate(id):
+    """API Route for updating the details of a specific person
+    :param id: ID of targetted person
+    :return: Returns person if successful
+    """
+    #get updated cae info
+    car = Car.query.get(id)
+    colour = request.json["colour"]
+    seats = request.json["seats"]
+    location = request.json["location"]
+    cph = request.json["cph"]
+    car_make_makeid = request.json["car_make_makeid"]
+    car_type_typeid = request.json["car_type_typeid"]
+
+    #set car info to the given car
+    car.colour = colour
+    car.seats = seats
+    car.location = location
+    car.cph = cph
+    car.car_make_makeid = car_make_makeid
+    car.car_type_typeid = car_type_typeid
+
+    db.session.commit()
+
+    return carSchema.jsonify(car)
+
+# Endpoint to delete a car.
+@api.route("/api/car/del/<id>", methods = ["DELETE"])
+def carDelete(id):
+    """API Route for deleting a car
+
+    :param id: ID of targetted car
+    :return: Returns car if successful
+
+    """
+    car = Car.query.get(id)
+    db.session.delete(car)
+    db.session.commit()
+
+    return carSchema.jsonify(car)
+
+
     # Endpoint to create new booking.
 @api.route("/api/car/booking", methods = ["POST"])
 def addCarBooking():
@@ -482,4 +676,25 @@ def checkavailability():
     bc = Booking.query.filter_by(carid = carid)
     result = bookingsSchema.dump(bc)
     return jsonify(result)
+
+#Broken Car
+@api.route("/api/car/issue", methods = ["POST"])
+def addCarIssue():
+    """API Route for creating a new booking
+
+    :return: Returns new booking in JSON format
+
+    """
+    carid = request.json["carid"]
+    notes = request.json["notes"]
+    issue_status = 1
+    assigned_to = request.json["assigned_to"]
+    
+    newCarIssue = CarIssues(carid = carid, notes = notes, issue_status = issue_status, assigned_to = assigned_to)
+    print(newCarIssue)
+    db.session.add(newCarIssue)
+    db.session.commit()
+
+    return carissuesSchema.jsonify(newCarIssue)
+
 

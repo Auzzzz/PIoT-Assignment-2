@@ -6,41 +6,20 @@
 		<title>{% block title %}{% endblock %}</title>
     </head>
         <div>
-			<h1>Your Car App - ThE mOsT tRuStEd</h1>
+			<h1>Your Car App</h1>
             <a href="{{ url_for('site.home') }}">Home</a>
 			<a href="{{ url_for('site.profile') }}">Profile</a>
 			<a href="{{ url_for('site.searchcar')}}">Booking</a>
 			<a href="{{ url_for('site.logout') }}">Logout</a>
-		</div>
+          </div>
+          {% if session['userrole'] == 4: %}
+               <div>
+					<a href="{{ url_for('site.adminUser') }}">Edit Users</a>
+					<a href="{{ url_for('site.adminCar') }}">Edit Cars</a>
+               </div>
+          {% endif %}
 		<div>
 			{% block content %}{% endblock %}
 		</div>
 	</body>
 </html>
-
-<script>
-	$(document).ready(function(){  
-           $('#search').keyup(function(){  
-                search_table($(this).val());  
-           });  
-           function search_table(value){  
-                $('#cars tr').each(function(){  
-                     var found = 'false';  
-                     $(this).each(function(){  
-                          if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)  
-                          {  
-                               found = 'true';  
-                          }  
-                     });  
-                     if(found == 'true')  
-                     {  
-                          $(this).show();  
-                     }  
-                     else  
-                     {  
-                          $(this).hide();  
-                     }  
-                });  
-           }  
-      });  
-</script>
