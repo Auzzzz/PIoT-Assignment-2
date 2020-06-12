@@ -8,11 +8,15 @@ import imutils
 import pickle
 import time
 import cv2
+import concurrent.futures
+import bluetooth
 
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
 PORT = 5001        # The port used by the server.
 ADDRESS = (HOST, PORT)
+
+MY_MAC = "6C:72:E7:CE:C1:EE"
 
 class Menu:
     def printMenu():
@@ -276,6 +280,16 @@ class Functions:
         
         return foundUser
 
+    def searchBluetooth():
+        while True:
+            nearby_devices = bluetooth.discover_devices()
+
+            for x in nearby_devices:
+                if x == MY_MAC:
+                    print("Engineer detected")
+                    return True
+                    
+
 
 class Main:
     def run():
@@ -290,6 +304,13 @@ class Main:
             #endless loop for menu until exit 
             while True:
                 if not isLoggedIn:
+
+                    #WHAT THE FUCK
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        x = executor.submit(Functions.searchBluetooth, )
+                        x_value = x.result()
+                        print(str(x_value))
+
                     Menu.printMenu()
                     response = input("\nResponse: ")
             
