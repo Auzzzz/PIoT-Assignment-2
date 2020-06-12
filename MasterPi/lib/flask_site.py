@@ -329,6 +329,13 @@ def adminUserEdit():
                 email = request.form['email']
                 username = request.form['username']
                 roleid = request.form['roleid']
+                print(roleid)
+                if roleid == '2':
+                    print("HI")
+                    mac_address = "Null"
+                    pushbullet_api = "Null"
+                    payload = {"userid":userid, "mac_address":mac_address, "pushbullet_api":pushbullet_api}
+                    r = requests.post('http://127.0.0.1:5000/api/users/engineer', json=payload)
 
                 payload = {"name":name, "email":email, "username":username, "roleid":roleid}
                 r = requests.put('http://127.0.0.1:5000/api/person/%s' % (userid,) , json=payload)
@@ -448,7 +455,7 @@ def adminCarIssue():
                 return redirect('/admin/car')
 
             #Pass through all avaliable maint users
-            users_roles_roleid = 4 # usertype for maint workers is 2
+            users_roles_roleid = 2 # usertype for maint workers is 2
             p = {'users_roles_roleid':users_roles_roleid}
             response = requests.post('http://127.0.0.1:5000/api/users', json=p)
             maint = json.loads(response.text)
@@ -479,19 +486,24 @@ def adminCarIssueReport():
     return redirect('/admin/car')
 
 def pushbullet(title, body):
- 
+    #from pushbullet api docs
     data_send = {"type": "note", "title": title, "body": body}
     key = "o.4peHPvzY0AVCOqulAKhIGHRwvwSbh63R"
     resp = requests.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data_send),
                          headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
     if resp.status_code != 200:
-        print('Something wrong')
+        msg = 'Something went wrong'
     else:
-        print('complete sending')
+        msg = 'Notifction send to %s' % (assigned_to)
 
 
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
 
-    
+    userid = "71"
+    mac_address = "testing1234981"
+    pushbullet_api = "omgtestomg"
+    payload = {"mac_address":mac_address, "pushbullet_api":pushbullet_api}
+    r = requests.put('http://127.0.0.1:5000/api/users/engineer/%s' % (userid), json=payload)
+
     return render_template('test.html')

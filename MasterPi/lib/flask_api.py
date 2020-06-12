@@ -100,6 +100,27 @@ class UserRolesSchema(ma.Schema):
 userrolesSchema = UserRolesSchema()
 userrolessSchema = UserRolesSchema(many = True)
 
+#User Role
+class Engineer(db.Model):
+    __tablename__ ="engineers"
+    userid = db.Column(db.Integer, primary_key = True)
+    mac_address = db.Column(db.Text)
+    pushbullet_api = db.Column(db.Text)
+
+    def __init__(self, userid,  mac_address, pushbullet_api):
+        self.userid = userid
+        self.mac_address = mac_address
+        self.pushbullet_api = pushbullet_api
+
+class EngineerSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("userid", "mac_address", "pushbullet_api")
+
+engineerSchema = EngineerSchema()
+engineersSchema = EngineerSchema(many = True)
+
+
 # Endpoint to show all people. #ADMIN
 @api.route("/api/person", methods = ["GET"])
 def getPeople():
@@ -260,7 +281,55 @@ def user():
     result = personsSchema.dump(users)
     return jsonify(result)
 
+#endpoint to check engineer info
+@api.route('/api/users/engineer', methods = ['GET'])
+def engineer():
+    """API Route for seeing all engineers
 
+    :return: Returns all engineers in JSON format
+
+    """
+    engineers = Engineer.query.all()
+    result = engineersSchema.dump(engineers)
+    return jsonify(result)
+
+#endpoint to add engineer to engineer table
+@api.route("/api/users/engineer", methods = ["POST"])
+def addEngineer():
+    """API Route for adding an engineer
+
+    :return: Returns new engineer in JSON format
+
+    """
+    userid = request.json["userid"]
+    mac_address = request.json["mac_address"]
+    pushbullet_api = request.json["pushbullet_api"]
+    
+    newEngineer = Engineer(userid = userid, mac_address = mac_address, pushbullet_api = pushbullet_api)
+
+    db.session.add(newEngineer)
+    db.session.commit()
+
+    return engineerSchema.jsonify(newEngineer)
+
+@api.route("/api/users/engineer/<id>", methods = ["PUT"])
+def engineerUpdate(id):
+    """API Route for updating the details of a specific engineer
+    :param id: ID of targetted engineer
+    :return: Returns engineer if successful
+    """
+    #get updated cae info
+    engineer = Engineer.query.get(id)
+    mac_address = request.json["mac_address"]
+    pushbullet_api = request.json["pushbullet_api"]
+
+    #set car info to the given car
+    engineer.mac_address = mac_address
+    engineer.pushbullet_api = pushbullet_api
+
+    db.session.commit()
+
+    return engineerSchema.jsonify(engineer)
 
 ### Cars ###
 #Car
