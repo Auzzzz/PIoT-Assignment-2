@@ -14,6 +14,8 @@ HOST = "127.0.0.1" # The server's hostname or IP address.
 PORT = 5001        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
+MY_MAC = "6C:72:E7:CE:C1:EE"
+
 class Menu:
     def printMenu():
         print("\nWelcome to Agent Pi Console View!")
@@ -276,6 +278,16 @@ class Functions:
         
         return foundUser
 
+    def searchBluetooth(found_devices):
+        while True:
+            nearby_devices = bluetooth.discover_devices()
+
+            for x in nearby_devices:
+                if x == MY_MAC:
+                    print("Engineer detected... logging in at next refresh")
+                    found_devices.append(x)
+                    return found_devices
+
 
 class Main:
     def run():
@@ -286,12 +298,23 @@ class Main:
 
             isLoggedIn = False
             hasUnlocked = False
+            isEngineer = False
+            isRepaired = False
 
             #endless loop for menu until exit 
             while True:
                 if not isLoggedIn:
-                    Menu.printMenu()
-                    response = input("\nResponse: ")
+
+                    if len(found_devices) > 0:
+                        response = "Engineer Detected"
+
+                    else:
+                        start_new_thread(Functions.searchBluetooth,(found_devices,))
+                        Menu.printMenu()
+                        try:
+                            response = inputimeout(prompt='\nResponse: ', timeout=20)
+                        except TimeoutOccurred:
+                            response = "Timeout"
             
                     if response == "1":
                         if Functions.login(s):
@@ -311,25 +334,31 @@ class Main:
                         break
                     else:
                         print("\nError: Invalid Input")
-                else:
+
+                elif isLoggedIn and not isEngineer:
                     Menu.selectOptions()
                     response = input("\nResponse: ")
 
                     if response == "1":
                         if hasUnlocked:
                             print('You have already unlocked a car')
+
                         else:
                             if Functions.unlockCar(s):
                                 hasUnlocked = True
+
                             else:
                                 hasUnlocked = False
 
                     elif response == "2":
                         if hasUnlocked:
+
                             if Functions.returnCar(s):
                                 hasUnlocked = False
+
                             else:
                                 hasUnlocked = True
+
                         else:
                             print('\nYou have not unlocked a car to return')
 
@@ -338,8 +367,27 @@ class Main:
                         s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
+
                     else:
                         print("\nError: Invalid Input")
+
+                else:
+                    Menu.engineerUI()
+                    response = input("\nResponse: ")
+
+                    if response == "1":
+                        if isRepaired:
+                            print("Car already repaired")
+
+                        else:
+                            print("Car repaired!")
+                            isRepaired = True
+
+                    elif response == "2":
+                        print("\nLogging out...")
+                        isLoggedIn = False
+                        isEngineer = False
+
 
             print("Disconnecting from server.")
         print("Done.")
