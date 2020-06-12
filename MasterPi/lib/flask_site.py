@@ -160,7 +160,7 @@ def newcar():
     #error message
     msg = ''
     #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post requet for all inputs
+    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post for all inputs
         #Capture the form data
         colour = request.form['colour']
         seats = request.form['seats']
@@ -500,26 +500,39 @@ def adminCarIssue():
 @site.route('/admin/car/issue/R', methods = ['POST', 'GET'])
 def adminCarIssueReport():
  #Checks to see if user is logged in
-    if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
-           
+    if request.method == 'POST' and 'carid' in request.form and 'notes' in request.form and 'maint' in request.form: #Get contents of post data
         carid = request.form['carid']
         notes = request.form['notes']
-        assigned_to = request.form['maintID']
-        payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
-        r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
+        assigned_to = int(request.form['maint'])
+        #get engineer pushbullet details
+        #Get all engineers to check if engineer was an engineer before
+        response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+        #format the response in json
+        engineers = json.loads(response.text)
 
-        #send pushbullet 
-        title = "Please check on car: " + carid
-        body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
-        pushbullet(title, body)
+        
+        for each in engineers:
+            if each["userid"] == assigned_to:
+                #send pushbullet 
+                key = each['pushbullet_api']
+                title = "Please check on car: " + str(carid)
+                body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
+                pushbullet(title, body, key, assigned_to)
 
+                #add to DB
+                payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
+                r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
 
-    return redirect('/admin/car')
+            
+                return redirect('/admin/car')
+    else:
+        print("no")
 
-def pushbullet(title, body):
+    return render_template('admin_cars_report.html')
+
+def pushbullet(title, body, key, assigned_to):
     #from pushbullet api docs
     data_send = {"type": "note", "title": title, "body": body}
-    key = "o.4peHPvzY0AVCOqulAKhIGHRwvwSbh63R"
     resp = requests.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data_send),
                          headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
     if resp.status_code != 200:
@@ -531,10 +544,24 @@ def pushbullet(title, body):
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
 
-    userid = "71"
-    mac_address = "testing1234981"
-    pushbullet_api = "omgtestomg"
-    payload = {"mac_address":mac_address, "pushbullet_api":pushbullet_api}
-    r = requests.put('http://127.0.0.1:5000/api/users/engineer/%s' % (userid), json=payload)
+        carid = 1234
+        notes = "HELLO"
+        assigned_to = 71
+        payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
+        r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
 
-    return render_template('test.html')
+        #get engineer pushbullet details
+        #Get all engineers to check if engineer was an engineer before
+        response = requests.get('http://127.0.0.1:5000/api/users/engineer')
+        #format the response in json
+        engineers = json.loads(response.text)
+        
+        for each in engineers:
+            if each["userid"] == assigned_to:
+                #send pushbullet 
+                key = each['pushbullet_api']
+                title = "Please check on car: " + str(carid)
+                body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
+                pushbullet(title, body, key, assigned_to)
+
+        return render_template('test.html')

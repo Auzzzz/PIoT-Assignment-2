@@ -10,7 +10,7 @@
     <input hidden name='carid' value="{{carid}}">
     <textarea name="notes" rows="10" cols="30" placeholder="Form a comprehensively detailed report for an amazing mechanic to take a look at  "></textarea>
 
-    <select id = "maintID" name = "maintID">
+    <select id = "maint" name = "maint">
         <option selected disabled>Choose here</option>
           {% for each in maint %}
             <option value='{{each.userid}}'>{{each.userid }} | {{ each.username}}</option>

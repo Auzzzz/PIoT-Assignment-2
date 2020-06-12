@@ -52,12 +52,10 @@
                 {% if engineer.userid == each.userid %}
                     <tr>
                         <td><br> Mac Address </td>
-                        <td>{{ engineer.mac_address }}</td>
                         <td><input name="mac" value="{{ engineer.mac_address }}"></td>
                     </tr>
                     <tr>
                         <td>Pushbullet Key</td>
-                        <td>{{ engineer.pushbullet_api }}</td>
                         <td><input name="push" value="{{ engineer.pushbullet_api }}"></td>
                     </tr>
                     <tr>
