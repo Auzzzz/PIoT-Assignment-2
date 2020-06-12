@@ -331,6 +331,20 @@ def engineerUpdate(id):
 
     return engineerSchema.jsonify(engineer)
 
+#endpoint to check engineer info
+@api.route('/api/users/engineer/check/<id>', methods = ['GET'])
+def engineerMAC(id):
+    """API Route for checking all engineers against mac address
+
+    :return: Returns engineer details in JSON format
+
+    """
+    mac = Engineer.query.filter_by(mac_address = id)
+    result = engineersSchema.dump(mac)
+    return jsonify(result)
+
+    
+
 ### Cars ###
 #Car
 class Car(db.Model):
