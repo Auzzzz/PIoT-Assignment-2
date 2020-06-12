@@ -3,11 +3,10 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-
     {% for each in users: %}
     <br><hr>
-    <form action="{{ url_for('site.adminUserEdit') }}" method="post" autocomplete="off">
-        <table>
+    <table>
+        <form action="{{ url_for('site.adminUserEdit') }}" method="post" autocomplete="off">
             <tr>
                 <td></td>
                 <td>User Info</td>
@@ -47,8 +46,12 @@
             <tr>
                 <td><input type="submit" value="Edit User {{each.userid}}"></td>
             </tr>
-        </table>
         </form>
+        <form action="{{ url_for('site.adminUserDelete') }}" method="post" autocomplete="off">
+            <input hidden name='userid' value="{{each.userid}}"
+            <td><input type="submit" value="Delete User {{each.userid}}"></td>
+        </form>
+    </table>
     {% endfor %}
 
 {% endblock %}

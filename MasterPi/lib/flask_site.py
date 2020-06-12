@@ -1,5 +1,5 @@
 from __future__ import print_function
-from flask import Flask, Blueprint, request, jsonify, render_template, session, redirect
+from flask import Flask, Blueprint, request, jsonify, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
@@ -7,11 +7,8 @@ import os, time, requests, json, random
 from datetime import datetime
 site = Blueprint("site", __name__)
 
-
-from datetime import timedelta
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
+#pushbullet
+import requests, json
 
 ### User ###
 # Client webpage.
@@ -323,7 +320,7 @@ def adminUserEdit():
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
-            msg = ''
+            
                 #checking to see if the user has pressed the submit button by looking at POST request
             if request.method == 'POST' and 'userid' in request.form and 'name' in request.form and 'email' in request.form and 'username' in request.form and 'roleid' in request.form: #Get contents of post data
                 userid = request.form['userid']
@@ -341,6 +338,24 @@ def adminUserEdit():
             return redirect('/profile')
     else:
         return redirect('login')
+
+#delete selected user
+@site.route('/admin/user/delete', methods = ['POST', 'GET', 'DELETE'])
+def adminUserDelete():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'userid' in request.form:
+                userid = request.form['userid']
+
+                response = requests.delete('http://127.0.0.1:5000/api/person/%s' % (userid,))
+                if response.ok:
+                    msg = 'successful'
+                else:
+                    msg = 'errored'
+            return redirect(url_for('site.adminUser'))
 
 #Show all users to edit
 @site.route('/admin/car', methods = ['POST', 'GET'])
@@ -371,6 +386,23 @@ def adminCar():
     else:
         return redirect('login')
 
+#delete selected car
+@site.route('/admin/car/delete', methods = ['POST', 'DELETE'])
+def adminCarDelete():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = "test"
+            if request.method == 'POST' and 'carid' in request.form:
+                carid = request.form['carid']
+
+                response = requests.delete('http://127.0.0.1:5000/api/car/del/%s' % (carid,))
+                if response.ok:
+                    msg = 'successful'
+                else:
+                    msg = 'errored'
+            return redirect(url_for('site.adminCar'))
 
 #Edit selected car
 @site.route('/admin/caredit', methods = ['POST', 'GET', 'PUT'])
@@ -429,34 +461,18 @@ def adminCarIssue():
 
 @site.route('/admin/car/issue/R', methods = ['POST', 'GET'])
 def adminCarIssueReport():
-    #Checks to see if user is logged in
-    if 'loggedin' in session:
-        #Checks to see if user is an admin or a imposter
-        if session['userrole'] == 4:     
-            print("Test1")       
-            msg = ''
-            #checking to see if the user has pressed the submit button by looking at POST request
+ #Checks to see if user is logged in
+    if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
+           
+        carid = request.form['carid']
+        notes = request.form['notes']
+        assigned_to = request.form['maintID']
+        payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
+        r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
 
-            print("Test2")
-            carid = request.form['carid']
-            report = request.form['report']
-            maintid = request.form['maintID']
+        #send pushbullet 
 
-            p = {'carid':carid,'notes':report, 'assigned_to':maintid}
-            response = requests.post('http://127.0.0.1:5000/api/car/issue', json=p)
-            print(response)
-            if response.ok:
-                msg = 'successful'
-            else:
-                msg = 'errored'
-            
-
-            
-            return render_template('admin_cars_report.html')
-        else:
-            return redirect('/profile')
-    else:
-        return redirect('login')
+    return redirect('/admin/car')
 
 
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])

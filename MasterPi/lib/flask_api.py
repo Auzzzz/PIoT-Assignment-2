@@ -461,6 +461,23 @@ def carUpdate(id):
     db.session.commit()
 
     return carSchema.jsonify(car)
+
+# Endpoint to delete a car.
+@api.route("/api/car/del/<id>", methods = ["DELETE"])
+def carDelete(id):
+    """API Route for deleting a car
+
+    :param id: ID of targetted car
+    :return: Returns car if successful
+
+    """
+    car = Car.query.get(id)
+    db.session.delete(car)
+    db.session.commit()
+
+    return carSchema.jsonify(car)
+
+
     # Endpoint to create new booking.
 @api.route("/api/car/booking", methods = ["POST"])
 def addCarBooking():
@@ -585,7 +602,6 @@ def addCarIssue():
     :return: Returns new booking in JSON format
 
     """
-    print("test")
     carid = request.json["carid"]
     notes = request.json["notes"]
     issue_status = 1
@@ -597,3 +613,5 @@ def addCarIssue():
     db.session.commit()
 
     return carissuesSchema.jsonify(newCarIssue)
+
+

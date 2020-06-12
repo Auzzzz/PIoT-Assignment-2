@@ -3,16 +3,14 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-        <p>{{ msg }}</p>
     {% for each in cars: %}
     <br><hr>
     <table>
         <form action="{{ url_for('site.adminCarEdit') }}" method="post" autocomplete="off">
-        
             <tr>
                 <td></td>
-                <td>Car Info</td>
-                <td>Change Car Info</td>
+                <td>User Info</td>
+                <td>Change User Info</td>
             </tr>
             <tr>
                 <td>Car ID</td>
@@ -20,7 +18,7 @@
                 <td><input readonly name="carid" value="{{ each.carid }}"></td>
             </tr>
             <tr>
-                <td>Car Colour</td>
+                <td>Colour Name</td>
                 <td>{{each.colour}}</td>
                 <td><input name="colour" value="{{ each.colour }}"></td>
             </tr>
@@ -30,7 +28,7 @@
                 <td><input name="seats" value="{{ each.seats }}"></td>
             </tr>
             <tr>
-                <td>User Set Location</td>
+                <td>Car Location</td>
                 <td>{{each.location}}</td>
                 <td><input name="location" value="{{ each.location }}"></td>
             </tr>
@@ -51,16 +49,17 @@
             </tr>
             <tr>
                 <td><input type="submit" value="Edit Car {{each.carid}}"></td>
+            </tr>
+        </form>
+        <form action="{{ url_for('site.adminCarDelete') }}" method="post" autocomplete="off">
+            <input hidden name='carid' value="{{each.carid}}">
+            <td><input type="submit" value="Delete Car {{each.carid}}"></td>
+        </form>
+        <form action="{{ url_for('site.adminCarIssue') }}" method="post">
+            <input name="carid" value="{{ each.carid }}" hidden>
+            <input type="submit" value="Report Issue to Mechanic">
         </form>
     </table>
-    <br>
-    <form action="{{ url_for('site.adminCarIssue') }}" method="post">
-        <input name="carid" value="{{ each.carid }}" hidden>
-        <input type="submit" value="Report Issue to Mechanic">
-    </form>
-    <form action="{{ url_for('site.adminCarDelete') }}" method="post" autocomplete="off">
-        <input type="submit" value="Delete Car {{each.carid}}">
-    </form>
     {% endfor %}
-        
+
 {% endblock %}
