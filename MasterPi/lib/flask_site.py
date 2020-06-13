@@ -6,9 +6,10 @@ from passlib.hash import sha256_crypt
 import os, time, requests, json, random
 from datetime import datetime
 site = Blueprint("site", __name__)
-
+key = "AIzaSyBis3gCOLtLD9GIVW-iQAeeGGUjUL4Qufg"
 #pushbullet
 import requests, json
+
 
 ### User ###
 # Client webpage.
@@ -148,38 +149,46 @@ def newcar():
 
     :return: Returns template for newcar.html
     """
-    #Get car make for list
-    response = requests.get('http://127.0.0.1:5000/api/car/make')
-    #format the response in json
-    carmake = json.loads(response.text)
-    
-    #Get car type for list
-    response = requests.get('http://127.0.0.1:5000/api/car/type')
-    #format the response in json
-    cartype = json.loads(response.text)
-    #error message
-    msg = ''
-    #checking to see if the user has pressed the submit button by looking at POST request
-    if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form: #checks post for all inputs
-        #Capture the form data
-        colour = request.form['colour']
-        seats = request.form['seats']
-        location = request.form['location']
-        cph = request.form['cph']
-        cmake = request.form['cmake']
-        ctype = request.form['ctype']
-        #Add account into the DB
-        if colour is None or seats is None or location is None or seats is None or cph is None or cmake is None or ctype is None:
-            msg = 'Error.... Oh Well'
-        else:
-            payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":cmake, "car_type_typeid":ctype}
-            r = requests.post('http://127.0.0.1:5000/api/car', json=payload)
-            msg = 'Congratz You have been registered......'
-    elif request.method == 'POST': #if no post request is made
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            #Get car make for list
+            response = requests.get('http://127.0.0.1:5000/api/car/make')
+            #format the response in json
+            carmake = json.loads(response.text)
+            
+            #Get car type for list
+            response = requests.get('http://127.0.0.1:5000/api/car/type')
+            #format the response in json
+            cartype = json.loads(response.text)
             #error message
-            msg = 'Fill the form out you ido*'
-    return render_template('newcar.html', carmake=carmake, cartype=cartype, msg=msg)
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'ctype' in request.form and 'cmake' in request.form and 'car_status' in request.form: #checks post for all inputs
+                #Capture the form data
+                colour = request.form['colour']
+                seats = request.form['seats']
+                location = request.form['location']
+                cph = request.form['cph']
+                cmake = request.form['cmake']
+                ctype = request.form['ctype']
+                car_status = request.form['car_status']
 
+                #Add account into the DB
+                if colour is None or seats is None or location is None or seats is None or cph is None or cmake is None or ctype is None:
+                    msg = 'Error.... Oh Well'
+                else:
+                    payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":cmake, "car_type_typeid":ctype, "car_status":car_status}
+                    r = requests.post('http://127.0.0.1:5000/api/car', json=payload)
+                    msg = 'Congratz You have been registered......'
+            elif request.method == 'POST': #if no post request is made
+                    #error message
+                    msg = 'Fill the form out you ido*'
+            return render_template('newcar.html', carmake=carmake, cartype=cartype, msg=msg)
+        else:
+            return redirect('profile')
+    else:
+        return redirect('login')
 
 @site.route('/newbooking', methods=['GET', 'POST'])
 def newbooking():
@@ -451,7 +460,7 @@ def adminCarEdit():
         if session['userrole'] == 4:
             msg = ''
             #checking to see if the user has pressed the submit button by looking at POST request
-            if request.method == 'POST' and 'carid' in request.form and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'car_make_makeid' in request.form and 'car_type_typeid' in request.form: #Get contents of post data
+            if request.method == 'POST' and 'carid' in request.form and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'car_make_makeid' in request.form and 'car_type_typeid' in request.form and 'car_status' in request.form: #Get contents of post data
                 carid = request.form['carid']
                 #Capture the form data
                 colour = request.form['colour']
@@ -460,8 +469,9 @@ def adminCarEdit():
                 cph = request.form['cph']
                 car_make_makeid = request.form['car_make_makeid']
                 car_type_typeid = request.form['car_type_typeid']
+                car_status = request.form['car_status']
 
-                payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":car_make_makeid, "car_type_typeid":car_type_typeid}
+                payload = {"colour":colour, "seats":seats, "location":location, "cph":cph, "car_make_makeid":car_make_makeid, "car_type_typeid":car_type_typeid, "car_status":car_status}
                 r = requests.put('http://127.0.0.1:5000/api/car/%s' % (carid,) , json=payload)
             
             return render_template('admin_cars.html')
@@ -525,8 +535,6 @@ def adminCarIssueReport():
 
             
                 return redirect('/admin/car')
-    else:
-        print("no")
 
     return render_template('admin_cars_report.html')
 
@@ -544,24 +552,33 @@ def pushbullet(title, body, key, assigned_to):
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
 
-        carid = 1234
-        notes = "HELLO"
-        assigned_to = 71
-        payload = {"carid":carid, "notes":notes, "assigned_to":assigned_to}
-        r = requests.post('http://127.0.0.1:5000/api/car/issue', json=payload)
+    issueid = 43
+    issue_status = 2
+    p = {'issue_status':issue_status}
+    response = requests.post('http://127.0.0.1:5000/api/car/issue/%s' % (issueid,), json=p)
 
-        #get engineer pushbullet details
-        #Get all engineers to check if engineer was an engineer before
-        response = requests.get('http://127.0.0.1:5000/api/users/engineer')
-        #format the response in json
-        engineers = json.loads(response.text)
-        
-        for each in engineers:
-            if each["userid"] == assigned_to:
-                #send pushbullet 
-                key = each['pushbullet_api']
-                title = "Please check on car: " + str(carid)
-                body = "Admin %s has added a new job to your job list. DETAILS: %s" % (session['userid'], notes)
-                pushbullet(title, body, key, assigned_to)
+    return render_template('test.html')
 
-        return render_template('test.html')
+@site.route('/engineer', methods = ['POST', 'GET'])
+def engineerJobs():
+    #Checks to see if user is logged in
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 2:
+            msg = ''
+           
+            #get userid
+            userid = session['userid']
+
+            #get all tasks
+            p = {'userid':userid}
+            response = requests.post('http://127.0.0.1:5000/api/car/issue/list', json=p)
+            jobs = json.loads(response.text)
+            print(jobs)
+           
+            return render_template('engineer_jobs.html')
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
