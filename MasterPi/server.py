@@ -179,12 +179,15 @@ class Functions:
         
         return engineerUserID
     
+    #Check if car needs repairs
     def checkCarIssues(s, carId, engineerId):
 
+        #get information from carId
         response = requests.get('http://127.0.0.1:5000/api/car/issue/car/list/{}'.format(carId))
         result = json.loads(response.text)
         msg = 'False'
 
+        #check if such car needs repair
         if str(result) != '[]':
             for r in result:
                 
@@ -192,17 +195,21 @@ class Functions:
                 issueStatus = r['issue_status']
                 issueId = r['issueid']
 
+                #if car targetted is found
                 if str(assignedTo) == str(engineerId):
-
+                    
+                    #repair the car
                     if str(issueStatus) == '1':
                         msg = 'True'
                         p = {'issue_status':2}
 
+                        #setting the issue status to 2 meaning already repaired
                         requests.post('http://127.0.0.1:5000/api/car/issue/web/status/{}'.format(str(issueId)), json = p)
 
+                    #means car already repaired
                     elif str(issueStatus) == '2':
                         msg = 'already repaired'
-
+        #send necessary information back to agent pi
         s.sendall(msg.encode())
 
 class Main:

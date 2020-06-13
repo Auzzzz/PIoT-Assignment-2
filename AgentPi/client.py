@@ -421,14 +421,15 @@ class Main:
 
                         if decodedData == 'True':
                             #repair the car
-
                             print('car is now repaired')
 
                         elif decodedData == 'already repaired':
-
+                            
+                            #If car is already repaired
                             print("Car has already been repaired")
 
                         else:
+                            #car is not found in issue list
                             print("No repair needed for this car")
 
                     elif response == "2":
