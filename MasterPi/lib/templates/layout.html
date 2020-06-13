@@ -3,7 +3,20 @@
 	<head>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />  
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
 		<title>{% block title %}{% endblock %}</title>
+		<script>
+			$(document).ready(function() {
+
+				$("#search").click(function() {
+				var searchReq = $.get("/sendRequest/" + $("#query").val());
+				searchReq.done(function(data) {
+					$("#url").attr("href", data.result);
+				});
+				});
+
+			});
+		</script>
     </head>
         <div>
 			<h1>Your Car App</h1>
@@ -11,7 +24,12 @@
 			<a href="{{ url_for('site.profile') }}">Profile</a>
 			<a href="{{ url_for('site.searchcar')}}">Booking</a>
 			<a href="{{ url_for('site.logout') }}">Logout</a>
-          </div>
+		  </div>
+		  {% if session['userrole'] == 2: %}
+               <div>
+					<a href="{{ url_for('site.engineerJobs') }}">Assigned Jobs</a>
+               </div>
+          {% endif %}
           {% if session['userrole'] == 4: %}
                <div>
 					<a href="{{ url_for('site.adminUser') }}">Edit Users</a>

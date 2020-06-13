@@ -356,19 +356,21 @@ class Car(db.Model):
     cph = db.Column(db.Integer)
     car_make_makeid = db.Column(db.Integer, db.ForeignKey('car_make.makeid'))
     car_type_typeid = db.Column(db.Integer, db.ForeignKey('car_type.typeid'))
+    car_status = db.Column(db.Integer)
 
-def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typeid ):
+def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typeid, car_status ):
         self.colour = colour
         self.seats = seats
         self.location = location
         self.cph = cph
         self.car_make_makeid = car_make_makeid
         self.car_type_typeid = car_type_typeid
+        self.car_status = car_status
 
 class CarSchema(ma.Schema):    
     class Meta:
         # Fields to expose.
-        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid" )
+        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid", "car_status" )
 
 carSchema = CarSchema()
 carsSchema = CarSchema(many = True)
@@ -426,6 +428,7 @@ class CarIssuesSchema(ma.Schema):
     class Meta:
         # Fields to expose.
         fields = ("issueid", "carid", "notes", "issue_status", "assigned_to" )
+        
 carissuesSchema = CarSchema()
 carissuessSchema = CarSchema(many = True)
 
@@ -509,8 +512,9 @@ def addCar():
     location = request.json["location"]
     car_make_makeid = request.json["car_make_makeid"]
     car_type_typeid = request.json["car_type_typeid"]
+    car_status = request.json['car_status']
 
-    newCar = Car(seats = seats, colour = colour, cph = cph, location = location, car_make_makeid = car_make_makeid, car_type_typeid = car_type_typeid)
+    newCar = Car(seats = seats, colour = colour, cph = cph, location = location, car_make_makeid = car_make_makeid, car_type_typeid = car_type_typeid, car_status = car_status)
 
     db.session.add(newCar)
     db.session.commit()
@@ -532,6 +536,8 @@ def carUpdate(id):
     cph = request.json["cph"]
     car_make_makeid = request.json["car_make_makeid"]
     car_type_typeid = request.json["car_type_typeid"]
+    car_status = request.json['car_status']
+    print(car_status)
 
     #set car info to the given car
     car.colour = colour
@@ -540,6 +546,7 @@ def carUpdate(id):
     car.cph = cph
     car.car_make_makeid = car_make_makeid
     car.car_type_typeid = car_type_typeid
+    car.car_status = car_status
 
     db.session.commit()
 
@@ -696,5 +703,41 @@ def addCarIssue():
     db.session.commit()
 
     return carissuesSchema.jsonify(newCarIssue)
+
+@api.route("/api/car/issue/<id>", methods = ['PUT', 'POST'])
+def updateCarIssueStatus(id):
+    """API Route for update a car issue status
+
+    :param id: ID of issue
+    :return: Returns car status in JSON format
+
+    """
+
+    #get updated user info
+    issue = CarIssues.query.get(id)
+    update = request.json["issue_status"]
+
+    #set userinfo to the given user
+    issue.issue_status = update
+
+    db.session.commit()
+
+    return personSchema.jsonify(issue)
+
+# Endpoint to get jobs by userid.
+@api.route("/api/car/issue/list", methods = ['POST','GET'])
+def engineerJobsList():
+    """API Route for getting jobs for enginners with user ID
+
+    :return: Returns job details in JSON format
+
+    """
+    userid = request.json["userid"]
+    jobs = CarIssues.query.filter_by(assigned_to=userid)
+    result = carissuessSchema.dump(jobs)
+    return jsonify(result)
+
+    
+
 
 
