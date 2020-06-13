@@ -375,7 +375,7 @@ def adminUserDelete():
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
-            msg = "test"
+            msg = ""
             if request.method == 'POST' and 'userid' in request.form:
                 userid = request.form['userid']
 
@@ -392,7 +392,7 @@ def adminUserEngineer():
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
-            msg = "test"
+            msg = ""
             if request.method == 'POST' and 'mac' in request.form and 'push' in request.form:
                 #update engineers
                 userid = request.form['userid']
@@ -440,7 +440,7 @@ def adminCarDelete():
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
-            msg = "test"
+            msg = ""
             if request.method == 'POST' and 'carid' in request.form:
                 carid = request.form['carid']
 
@@ -549,16 +549,6 @@ def pushbullet(title, body, key, assigned_to):
         msg = 'Notifction send to %s' % (assigned_to)
 
 
-@site.route('/test', methods = ['POST', 'GET', 'PUT'])
-def test():
-
-    issueid = 43
-    issue_status = 2
-    p = {'issue_status':issue_status}
-    response = requests.post('http://127.0.0.1:5000/api/car/issue/%s' % (issueid,), json=p)
-
-    return render_template('test.html')
-
 @site.route('/engineer', methods = ['POST', 'GET'])
 def engineerJobs():
     #Checks to see if user is logged in
@@ -573,12 +563,24 @@ def engineerJobs():
 
             #get all tasks
             p = {'userid':userid}
-            response = requests.post('http://127.0.0.1:5000/api/car/issue/list', json=p)
+            response = requests.post('http://127.0.0.1:5000/api/car/issue/list/%s' % (userid,), json=p)
             jobs = json.loads(response.text)
-            print(jobs)
            
-            return render_template('engineer_jobs.html')
+            return render_template('engineer_jobs.html', jobs = jobs)
         else:
             return redirect('/profile')
     else:
         return redirect('login')
+
+
+@site.route('/test', methods = ['POST', 'GET', 'PUT'])
+def test():
+
+    userid = 71
+    p = {'userid':userid}
+    response = requests.post('http://127.0.0.1:5000/api/car/issue/list/%s' % (userid,), json=p)
+    jobs = json.loads(response.text)
+    print(jobs)
+
+    return render_template('test.html')
+

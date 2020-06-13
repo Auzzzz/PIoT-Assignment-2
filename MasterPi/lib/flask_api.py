@@ -120,6 +120,123 @@ class EngineerSchema(ma.Schema):
 engineerSchema = EngineerSchema()
 engineersSchema = EngineerSchema(many = True)
 
+### Cars ###
+#Car
+class Car(db.Model):
+    __tablename__ = "cars"
+    carid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    colour = db.Column(db.VARCHAR(100))
+    seats = db.Column(db.Integer)
+    location = db.Column(db.VARCHAR(100))
+    cph = db.Column(db.Integer)
+    car_make_makeid = db.Column(db.Integer, db.ForeignKey('car_make.makeid'))
+    car_type_typeid = db.Column(db.Integer, db.ForeignKey('car_type.typeid'))
+    car_status = db.Column(db.Integer)
+
+def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typeid, car_status ):
+        self.colour = colour
+        self.seats = seats
+        self.location = location
+        self.cph = cph
+        self.car_make_makeid = car_make_makeid
+        self.car_type_typeid = car_type_typeid
+        self.car_status = car_status
+
+class CarSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid", "car_status" )
+
+carSchema = CarSchema()
+carsSchema = CarSchema(many = True)
+#Car Make
+class CarMake(db.Model):
+    __tablename__ ="car_make"
+    makeid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    make = db.Column(db.VARCHAR(100))
+
+    def __init__(self, make):
+        self.make = make
+
+class CarMakeSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("makeid", "make")
+
+carmakeSchema = CarMakeSchema()
+carmakesSchema = CarMakeSchema(many = True)
+
+
+#Car Type
+class CarType(db.Model):
+    __tablename__ ="car_type"
+    typeid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    type = db.Column(db.VARCHAR(100))
+
+    def __init__(self, type):
+        self.type = type
+
+class CarTypeSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("typeid", "type")
+
+cartypeSchema = CarTypeSchema()
+cartypesSchema = CarTypeSchema(many = True)
+
+
+#Booking
+class Booking(db.Model):
+    __tablename__ = "booking"
+    bookingid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    userid = db.Column(db.Integer, db.ForeignKey('users.userid'))
+    carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
+    bdate = db.Column(db.DATE)
+    stime = db.Column(db.TIME)
+    etime = db.Column(db.TIME)
+    bookingstatus = db.Column(db.Integer)
+    bookingcode = db.Column(db.Integer)
+
+def __init__(self, userid, carid, bdate, stime, etime, bookingstatus, bookingcode):
+        self.userid = userid
+        self.carid = carid
+        self.bdate = bdate
+        self.stime = stime
+        self.etime = etime
+        self.bookingstatus = bookingstatus
+        self.bookingcode = bookingcode
+
+class BookingSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("bookingid", "userid", "carid", "bdate", "stime", "etime", "bookingstatus", "bookingcode" )
+
+bookingSchema = BookingSchema()
+bookingsSchema = BookingSchema(many = True)
+
+#Car Issues 
+class Issue(db.Model):
+    __tablename__ ="car_issues"
+    issueid = db.Column(db.Integer, primary_key = True)
+    carid = db.Column(db.Integer)
+    notes = db.Column(db.Text)
+    issue_status = db.Column(db.Integer)
+    assigned_to = db.Column(db.Integer)
+
+    def __init__(self, carid,  notes, issue_status, assigned_to):
+        self.carid = carid
+        self.notes = notes
+        self.issue_status = issue_status
+        self.assigned_to = assigned_to
+
+class IssueSchema(ma.Schema):    
+    class Meta:
+        # Fields to expose.
+        fields = ("issueid", "carid", "notes", "issue_status", "assigned_to")
+
+issueSchema = IssueSchema()
+issuesSchema = IssueSchema(many = True)
+
 
 # Endpoint to show all people. #ADMIN
 @api.route("/api/person", methods = ["GET"])
@@ -343,123 +460,7 @@ def engineerMAC(id):
     result = engineersSchema.dump(mac)
     return jsonify(result)
 
-    
-
 ### Cars ###
-#Car
-class Car(db.Model):
-    __tablename__ = "cars"
-    carid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    colour = db.Column(db.VARCHAR(100))
-    seats = db.Column(db.Integer)
-    location = db.Column(db.VARCHAR(100))
-    cph = db.Column(db.Integer)
-    car_make_makeid = db.Column(db.Integer, db.ForeignKey('car_make.makeid'))
-    car_type_typeid = db.Column(db.Integer, db.ForeignKey('car_type.typeid'))
-    car_status = db.Column(db.Integer)
-
-def __init__(self, colour, seats, location, cph, car_make_makeid, car_type_typeid, car_status ):
-        self.colour = colour
-        self.seats = seats
-        self.location = location
-        self.cph = cph
-        self.car_make_makeid = car_make_makeid
-        self.car_type_typeid = car_type_typeid
-        self.car_status = car_status
-
-class CarSchema(ma.Schema):    
-    class Meta:
-        # Fields to expose.
-        fields = ("carid", "colour", "location", "seats", "cph", "car_make_makeid", "car_type_typeid", "car_status" )
-
-carSchema = CarSchema()
-carsSchema = CarSchema(many = True)
-#Car Make
-class CarMake(db.Model):
-    __tablename__ ="car_make"
-    makeid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    make = db.Column(db.VARCHAR(100))
-
-    def __init__(self, make):
-        self.make = make
-
-class CarMakeSchema(ma.Schema):    
-    class Meta:
-        # Fields to expose.
-        fields = ("makeid", "make")
-
-carmakeSchema = CarMakeSchema()
-carmakesSchema = CarMakeSchema(many = True)
-
-
-#Car Type
-class CarType(db.Model):
-    __tablename__ ="car_type"
-    typeid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    type = db.Column(db.VARCHAR(100))
-
-    def __init__(self, type):
-        self.type = type
-
-class CarTypeSchema(ma.Schema):    
-    class Meta:
-        # Fields to expose.
-        fields = ("typeid", "type")
-
-cartypeSchema = CarTypeSchema()
-cartypesSchema = CarTypeSchema(many = True)
-
-#car issues
-class CarIssues(db.Model):
-    __tablename__ = "car_issues"
-    issueid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
-    notes = db.Column(db.Text)
-    issue_status = db.Column(db.Integer)
-    assigned_to = db.Column(db.Integer, db.ForeignKey('users.userid'))
-
-    def __init__(self, carid, notes, issue_status, assigned_to ):
-            self.carid = carid
-            self.notes = notes
-            self.issue_status = issue_status
-            self.assigned_to = assigned_to
-
-class CarIssuesSchema(ma.Schema):    
-    class Meta:
-        # Fields to expose.
-        fields = ("issueid", "carid", "notes", "issue_status", "assigned_to" )
-        
-carissuesSchema = CarSchema()
-carissuessSchema = CarSchema(many = True)
-
-#Booking
-class Booking(db.Model):
-    __tablename__ = "booking"
-    bookingid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    userid = db.Column(db.Integer, db.ForeignKey('users.userid'))
-    carid = db.Column(db.Integer, db.ForeignKey('cars.carid'))
-    bdate = db.Column(db.DATE)
-    stime = db.Column(db.TIME)
-    etime = db.Column(db.TIME)
-    bookingstatus = db.Column(db.Integer)
-    bookingcode = db.Column(db.Integer)
-
-def __init__(self, userid, carid, bdate, stime, etime, bookingstatus, bookingcode):
-        self.userid = userid
-        self.carid = carid
-        self.bdate = bdate
-        self.stime = stime
-        self.etime = etime
-        self.bookingstatus = bookingstatus
-        self.bookingcode = bookingcode
-
-class BookingSchema(ma.Schema):    
-    class Meta:
-        # Fields to expose.
-        fields = ("bookingid", "userid", "carid", "bdate", "stime", "etime", "bookingstatus", "bookingcode" )
-
-bookingSchema = BookingSchema()
-bookingsSchema = BookingSchema(many = True)
 
 # Get all cars
 @api.route("/api/car", methods = ["GET"])
@@ -724,18 +725,46 @@ def updateCarIssueStatus(id):
 
     return personSchema.jsonify(issue)
 
-# Endpoint to get jobs by userid.
-@api.route("/api/car/issue/list", methods = ['POST','GET'])
+# Endpoint to show all people. #ADMIN
+@api.route("/api/car/issue/list", methods = ["GET"])
 def engineerJobsList():
-    """API Route for getting jobs for enginners with user ID
+    """Gets all jobs for enginners
+
+    :return: returns all jobs in JSON format
+   
+    """
+    people = Issue.query.all()
+    result = issuesSchema.dump(people)
+    return jsonify(result)
+
+    # Endpoint to get jobs by userid.
+@api.route("/api/car/issue/list/current", methods = ['POST','GET'])
+def engineerJobsListCurrent():
+    """API Route for getting jobs for enginners with open issues
 
     :return: Returns job details in JSON format
 
     """
-    userid = request.json["userid"]
-    jobs = CarIssues.query.filter_by(assigned_to=userid)
-    result = carissuessSchema.dump(jobs)
+    #userid = request.json["userid"]
+    jobs = Issue.query.filter_by(issue_status= 1)
+    result = issuesSchema.dump(jobs)
     return jsonify(result)
+
+@api.route("/api/car/issue/list/<id>", methods = ['POST','GET'])
+def engineerJobsListUser(id):
+    """API Route for getting all jobs for enginner wit id
+
+    :param id: ID of enginner
+    :return: Returns job details in JSON format
+
+    """
+    userid = request.json["userid"]
+    jobs = Issue.query.filter_by(assigned_to= userid)
+    result = issuesSchema.dump(jobs)
+    return jsonify(result)
+
+
+
 
     
 

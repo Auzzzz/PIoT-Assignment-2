@@ -4,6 +4,66 @@
 
 {% block content %}
 
-<p> Hi</p>
+<div>
+    <hr>
+    <p> Current Issues</p>
+    <hr>
+    {% for each in jobs: %}
+        {% if each['issue_status'] == 1: %}
+        <hr>
+            <form action="{{ url_for('site.bookingcancel') }}" method="post" autocomplete="off"></form>
+            <table>
+                <tr>
+                    <td>Issue id: </td>
+                    <td>{{ each.issueid }}</td>
+                </tr>
+                <tr>
+                    <td>Car Id: </td>
+                    <td>{{ each.carid}}</td>
+                </tr>
+                <tr>
+                    <td>Notes </td>
+                    <td>{{ each.notes}}</td>
+                </tr>
+                <tr>
+                    <td>issue Status: </td>
+                    <td>{{ each.issue_status}}</td>
+                </tr>
+
+                <input hidden name ="bookingid" id="bookingid" value ='{{ each.bookingid }}'>
+                <input type="submit" value="Update Issue {{ each.issueid }}">
+            </form>
+            </table>
+        {% endif %}
+            <br>
+    {% endfor %}
+    <hr>
+    <p>Completed Jobs</p>
+    <hr>
+    {% for each in jobs: %}
+        {% if each['issue_status'] == 2: %}
+            <table>
+                <tr>
+                    <td>Issue id: </td>
+                    <td>{{ each.issueid }}</td>
+                </tr>
+                <tr>
+                    <td>Car Id: </td>
+                    <td>{{ each.carid}}</td>
+                </tr>
+                <tr>
+                    <td>Notes </td>
+                    <td>{{ each.notes}}</td>
+                </tr>
+                <tr>
+                    <td>issue Status: </td>
+                    <td>{{ each.issue_status}}</td>
+                </tr>
+            </table>
+        {% endif %}
+    <br>
+    {% endfor %}
+
+</div>
 
 {% endblock %}
