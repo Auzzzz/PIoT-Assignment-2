@@ -9,9 +9,13 @@ import pickle
 import time
 import cv2
 
+from _thread import *
+import bluetooth
+from inputimeout import inputimeout, TimeoutOccurred
+
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5001        # The port used by the server.
+PORT = 5004        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 MY_MAC = "6C:72:E7:CE:C1:EE"
@@ -28,6 +32,13 @@ class Menu:
         print("1. Unlock Car")
         print("2. Return Car")
         print("3. Log Out")
+    
+    
+    def engineerUI():
+        print("\nWelcome to the EngineerUI!")
+        print("What would you like to do?")
+        print("1. Repair Car")
+        print("2. Log Out")
 
 class Functions:
     def login(s):
@@ -278,12 +289,19 @@ class Functions:
         
         return foundUser
 
-    def searchBluetooth(found_devices):
+    def searchBluetooth(s, found_devices):
         while True:
             nearby_devices = bluetooth.discover_devices()
 
             for x in nearby_devices:
-                if x == MY_MAC:
+                #Send message to master pi to check
+                msg = 'bluetooth:' + x
+                s.sendall(msg.encode())
+                data = s.recv(2048)
+                decodedData = data.decode()
+
+                #If found in database
+                if decodedData == 'True':
                     print("Engineer detected... logging in at next refresh")
                     found_devices.append(x)
                     return found_devices
@@ -301,6 +319,8 @@ class Main:
             isEngineer = False
             isRepaired = False
 
+            found_devices = []
+
             #endless loop for menu until exit 
             while True:
                 if not isLoggedIn:
@@ -310,7 +330,7 @@ class Main:
 
                     else:
                         #New thread to work on searching mac address with bluetooth
-                        start_new_thread(Functions.searchBluetooth,(found_devices,))
+                        start_new_thread(Functions.searchBluetooth,(s,found_devices,))
 
                         Menu.printMenu()
                         try:
@@ -336,6 +356,17 @@ class Main:
                     elif response == "3":
                         print("\nShutting down...")
                         break
+
+                    elif response == "Engineer Detected":
+                        print("\nLogging in as Engineer")
+                        found_devices.clear()
+                        isLoggedIn = True
+                        isEngineer = True
+                    
+                    elif response == "Timeout":
+                        print("\nRefreshing console")
+                        response = None
+
                     else:
                         print("\nError: Invalid Input")
 

@@ -10,7 +10,7 @@ from datetime import date
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
-PORT = 5001 # Port to listen on (non-privileged ports are > 1023).
+PORT = 5004 # Port to listen on (non-privileged ports are > 1023).
 ADDRESS = (HOST, PORT)
 
 
@@ -158,7 +158,22 @@ class Functions:
         s.sendall(msg.encode())
 
         return outcome
+    
+    #To check for MAC address
+    def checkMacAddress(s, mac_address):
 
+        #Get results from api
+        response = requests.get('http://127.0.0.1:5000/api/users/engineer/check/{}'.format(mac_address))
+        msg = ''
+        result = json.loads(response.text)
+
+        #if results are found
+        if str(result) != '[]':
+            msg = 'True'
+        else:
+            msg = 'False'
+        
+        s.sendall(msg.encode())
 
 class Main:
     def addClient(conn, addr):
@@ -201,7 +216,10 @@ class Main:
                     sessionBookingID = ''
                     sessionBookingDetails = ''
                     sessionUserID = ''
-                
+                elif instruct == 'bluetooth':
+                    #search for MAC adress with input
+                    Functions.checkMacAddress(conn, info)
+
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
 
