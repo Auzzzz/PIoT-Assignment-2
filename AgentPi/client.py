@@ -8,10 +8,10 @@ import imutils
 import pickle
 import time
 import cv2
-
 from _thread import *
 import bluetooth
 from inputimeout import inputimeout, TimeoutOccurred
+from pyzbar import pyzbar
 
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
@@ -23,9 +23,11 @@ MY_MAC = "6C:72:E7:CE:C1:EE"
 class Menu:
     def printMenu():
         print("\nWelcome to Agent Pi Console View!")
+        print("Console refreshes every 20 seconds")
         print("1. Login with Password")
         print("2. Login with Facial Recognition")
-        print("3. Exit")
+        print("3. Engineer Login with QR Code")
+        print("4. Exit")
 
     def selectOptions():
         print("\nPlease select from these Options")
@@ -306,6 +308,56 @@ class Functions:
                     found_devices.append(x)
                     return found_devices
 
+    def detectQR(s):
+        print("[INFO] starting video stream...")
+        print("\nPlease show your QR code")
+
+        vs = VideoStream(src = 0).start()
+        found = False
+        barcodeData = ''
+        QR_Successful = False
+        qr_counter = 0
+
+        while found == False:
+            qr_counter += 1
+            
+
+            # grab the frame from the threaded video stream and resize it to
+	        # have a maximum width of 400 pixels
+            frame = vs.read()
+            frame = imutils.resize(frame, width=400)
+
+            # find the barcodes in the frame and decode each of the barcodes
+            barcodes = pyzbar.decode(frame)
+
+            # loop over the detected barcodes
+            for barcode in barcodes:
+                # the barcode data is a bytes object so we convert it to a string
+                barcodeData = barcode.data.decode('utf-8')
+                barcodeType = barcode.type
+                found = True
+
+            if qr_counter == 250:
+                found = True
+        
+        if barcodeData != '':
+            msg = 'mac:' + barcodeData
+            s.sendall(msg.encode())
+
+            data = s.recv(2048)
+            decodedData = data.decode()
+
+            if decodedData == 'True':
+                print('\nQR Code Accepted!')
+                QR_Successful = True
+            else:
+                print('\nInvalid QR Code')
+                QR_Successful = False
+        else:
+            print('\nTimeout: No QR Code detected')
+            QR_Successful = False
+
+        return QR_Successful
 
 class Main:
     def run():
@@ -317,6 +369,7 @@ class Main:
             isLoggedIn = False
             hasUnlocked = False
             isEngineer = False
+            start_searching = True
 
             found_devices = []
 
@@ -326,15 +379,18 @@ class Main:
 
                     if len(found_devices) > 0:
                         response = "Engineer Detected"
+                        start_searching = False
 
                     else:
-                        #New thread to work on searching mac address with bluetooth
-                        start_new_thread(Functions.searchBluetooth,(s,found_devices,))
-
+                        if start_searching:
+                            #New thread to work on searching mac address with bluetooth
+                            start_new_thread(Functions.searchBluetooth,(s,found_devices,))
+                        
                         Menu.printMenu()
                         try:
                             #Prompt for input with a certain time limit of 20 seconds
                             response = inputimeout(prompt='\nResponse: ', timeout=20)
+                            start_searching = False
                         except TimeoutOccurred:
                             response = "Timeout"
 
@@ -353,6 +409,15 @@ class Main:
                                 print('\nFace unrecognised')
                                 isLoggedIn = False
                     elif response == "3":
+                        if Functions.detectQR(s):
+                            isLoggedIn = True
+                            isEngineer = True
+                        else:
+                            isLoggedIn = False
+                            isEngineer = False
+                            start_searching = True
+
+                    elif response == "4":
                         print("\nShutting down...")
                         break
 
@@ -402,6 +467,7 @@ class Main:
                         s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
+                        start_searching = True
 
                     else:
                         print("\nError: Invalid Input")
@@ -438,6 +504,9 @@ class Main:
                         print("\nLogging out...")
                         isLoggedIn = False
                         isEngineer = False
+                        start_searching = True
+                    else:
+                        print("\nError: Invalid Input")
 
 
             print("Disconnecting from server.")

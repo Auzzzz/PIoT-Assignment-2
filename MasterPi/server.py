@@ -212,6 +212,7 @@ class Functions:
         #send necessary information back to agent pi
         s.sendall(msg.encode())
 
+
 class Main:
     def addClient(conn, addr):
         with conn:
@@ -259,6 +260,9 @@ class Main:
 
                 elif instruct == 'repair':
                     Functions.checkCarIssues(conn, info, sessionUserID)
+
+                elif instruct == 'mac':
+                    sessionUserID = Functions.checkMacAddress(conn, info, sessionUserID)
 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()

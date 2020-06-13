@@ -6,10 +6,12 @@ from flask_marshmallow import Marshmallow
 import os, requests, json
 from MasterPi.lib.flask_api import api, db
 from MasterPi.lib.flask_site import site
-
+from flask import Flask
+from flask_googlemaps import GoogleMaps
 
 app = Flask(__name__, template_folder='MasterPi/lib/templates')
 basedir = os.path.abspath(os.path.dirname(__file__))
+GoogleMaps(app)
 
 # Update HOST and PASSWORD appropriately.
 HOST = "34.87.245.145"

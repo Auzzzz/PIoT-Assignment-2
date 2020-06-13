@@ -6,10 +6,10 @@ from passlib.hash import sha256_crypt
 import os, time, requests, json, random
 from datetime import datetime
 site = Blueprint("site", __name__)
-key = "AIzaSyBis3gCOLtLD9GIVW-iQAeeGGUjUL4Qufg"
-#pushbullet
-import requests, json
 
+#pushbullet
+from flask_googlemaps import GoogleMaps
+from flask_googlemaps import Map
 
 ### User ###
 # Client webpage.
@@ -598,15 +598,36 @@ def engineerCarIssueUpdate():
     else:
         return redirect('login')
 
-
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
 
-    userid = 71
-    p = {'userid':userid}
-    response = requests.post('http://127.0.0.1:5000/api/car/issue/list/%s' % (userid,), json=p)
-    jobs = json.loads(response.text)
-    print(jobs)
+    
+    key = 'AIzaSyCXZcLU17gaHLQB41T7-zMMM6t2zg1rdh8'
 
-    return render_template('test.html')
+    location = "14 Cedric St Ivanhoe East"
+    location = location.replace(' ','+')
 
+    URL = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (location, key)
+
+    # sending get request and saving the response as response object 
+    r = requests.get(url = URL) 
+    data = json.loads(r.text)
+
+    latitude = data['results'][0]['geometry']['location']['lat']
+    longitude = data['results'][0]['geometry']['location']['lng']
+
+    # creating a map in the view
+    mymap = Map(
+    identifier="view-side",
+    lat=37.4419,
+    lng=-122.1419,
+    markers=[(37.4419, -122.1419)]
+    )
+    sndmap = Map(
+    identifier="sndmap",
+    lat=37.4419,
+    lng=-122.1419,
+    markers={'http://maps.google.com/mapfiles/ms/icons/green-dot.png':[(37.4419, -122.1419)],
+    'http://maps.google.com/mapfiles/ms/icons/blue-dot.png':[(37.4300, -122.1400)]}
+    )
+    return render_template('test.html', latitude = latitude, longitude = longitude)
