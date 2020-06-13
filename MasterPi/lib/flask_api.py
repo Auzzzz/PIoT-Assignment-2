@@ -716,6 +716,7 @@ def updateCarIssueStatus(id):
 
     #get updated user info
     issue = CarIssues.query.get(id)
+    notes = request.json['notes']
     update = request.json["issue_status"]
 
     #set userinfo to the given user
@@ -762,6 +763,20 @@ def engineerJobsListUser(id):
     jobs = Issue.query.filter_by(assigned_to= userid)
     result = issuesSchema.dump(jobs)
     return jsonify(result)
+
+@api.route("/api/car/issue/car/list/<id>", methods = ['POST','GET'])
+def engineerJobsListCar(id):
+    """API Route for getting all jobs for car with id
+
+    :param id: ID of car
+    :return: Returns job details in JSON format
+
+    """
+    jobs = Issue.query.filter_by(carid= id)
+    result = issuesSchema.dump(jobs)
+    return jsonify(result)
+
+
 
 
 
