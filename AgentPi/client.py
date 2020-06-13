@@ -421,6 +421,8 @@ class Main:
                             isRepaired = True
 
                     elif response == "2":
+                        msg = 'logout:random'
+                        s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
                         isEngineer = False

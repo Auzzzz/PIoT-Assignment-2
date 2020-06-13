@@ -160,7 +160,7 @@ class Functions:
         return outcome
     
     #To check for MAC address
-    def checkMacAddress(s, mac_address):
+    def checkMacAddress(s, mac_address, engineerUserID):
 
         #Get results from api
         response = requests.get('http://127.0.0.1:5000/api/users/engineer/check/{}'.format(mac_address))
@@ -169,11 +169,16 @@ class Functions:
 
         #if results are found
         if str(result) != '[]':
+            engineerData = result[0]
+            engineerUserID = engineerData['userid']
             msg = 'True'
         else:
             msg = 'False'
         
         s.sendall(msg.encode())
+        
+        return engineerUserID
+
 
 class Main:
     def addClient(conn, addr):
@@ -218,7 +223,7 @@ class Main:
                     sessionUserID = ''
                 elif instruct == 'bluetooth':
                     #search for MAC adress with input
-                    Functions.checkMacAddress(conn, info)
+                    sessionUser = Functions.checkMacAddress(conn, info, sessionUserID)
 
             print("Disconnecting from client " + str(addr) + "...")
             conn.close()
