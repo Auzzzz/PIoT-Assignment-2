@@ -660,6 +660,8 @@ def bookingUpdate():
 
     return bookingSchema.jsonify(booking)
 
+
+
 # Endpoint to get booking by userid.
 @api.route("/api/booking/list", methods = ['POST','GET'])
 def userbookinglist():
@@ -705,7 +707,29 @@ def addCarIssue():
 
     return carissuesSchema.jsonify(newCarIssue)
 
-@api.route("/api/car/issue/<id>", methods = ['PUT', 'POST'])
+@api.route("/api/car/issue/web/<id>", methods = ['PUT', 'POST'])
+def updateCarIssueWebStatus(id):
+    """API Route for update a car issue status
+
+    :param id: ID of issue
+    :return: Returns car status in JSON format
+
+    """
+
+    #get updated user info
+    issue = Issue.query.get(id)
+    notes = request.json['notes']
+    update = request.json["issue_status"]
+
+    #set userinfo to the given user
+    issue.issue_status = update
+    issue.notes = notes
+
+    db.session.commit()
+
+    return personSchema.jsonify(issue)
+
+@api.route("/api/car/issue/web/<id>", methods = ['PUT', 'POST'])
 def updateCarIssueStatus(id):
     """API Route for update a car issue status
 
@@ -715,8 +739,7 @@ def updateCarIssueStatus(id):
     """
 
     #get updated user info
-    issue = CarIssues.query.get(id)
-    notes = request.json['notes']
+    issue = Issue.query.get(id)
     update = request.json["issue_status"]
 
     #set userinfo to the given user

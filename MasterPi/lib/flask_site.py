@@ -573,6 +573,32 @@ def engineerJobs():
         return redirect('login')
 
 
+#Edit selected issue
+@site.route('/engineer/issue/edit', methods = ['POST', 'GET', 'PUT'])
+def engineerCarIssueUpdate():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an engneer or a imposter
+        if session['userrole'] == 2:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'issueid' in request.form and 'carid' in request.form and 'notes' in request.form and 'issue_status' in request.form: #Get contents of post data
+                issueid = request.form['issueid']
+                #Capture the form data
+                notes = request.form['notes']
+                issue_status = request.form['issue_status']
+
+                payload = {"notes":notes, "issue_status":issue_status}
+                r = requests.put('http://127.0.0.1:5000/api/car/issue/web/%s' % (issueid,) , json=payload)
+                
+
+            return redirect('/engineer')
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
+
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
 
