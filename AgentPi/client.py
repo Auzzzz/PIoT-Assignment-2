@@ -291,11 +291,15 @@ class Functions:
         
         return foundUser
 
-    def searchBluetooth(s, found_devices):
+    def searchBluetooth(s, found_devices, startSearching):
         while True:
             nearby_devices = bluetooth.discover_devices()
 
             for x in nearby_devices:
+
+                if startSearching == False:
+                    return
+
                 #Send message to master pi to check
                 msg = 'bluetooth:' + x
                 s.sendall(msg.encode())
@@ -308,6 +312,7 @@ class Functions:
                     found_devices.append(x)
                     return found_devices
 
+    #check for qr codes
     def detectQR(s):
         print("[INFO] starting video stream...")
         print("\nPlease show your QR code")
@@ -337,6 +342,7 @@ class Functions:
                 barcodeType = barcode.type
                 found = True
 
+            #loop breaker
             if qr_counter == 250:
                 found = True
         
@@ -369,7 +375,7 @@ class Main:
             isLoggedIn = False
             hasUnlocked = False
             isEngineer = False
-            start_searching = True
+            start_searching = False
 
             found_devices = []
 
@@ -381,13 +387,16 @@ class Main:
                         response = "Engineer Detected"
 
                     else:
-                        if start_searching:
-                            #New thread to work on searching mac address with bluetooth
-                            start_new_thread(Functions.searchBluetooth,(s,found_devices,))
+                        start_searching = True
+
+                        #New thread to work on searching mac address with bluetooth
+                        x = start_new_thread(Functions.searchBluetooth,(s,found_devices,start_searching))
                         Menu.printMenu()
                         try:
                             #Prompt for input with a certain time limit of 20 seconds
                             response = inputimeout(prompt='\nResponse: ', timeout=20)
+                            start_searching = False
+                            
                         except TimeoutOccurred:
                             response = "Timeout"
 
@@ -412,7 +421,6 @@ class Main:
                         else:
                             isLoggedIn = False
                             isEngineer = False
-                            start_searching = True
 
                     elif response == "4":
                         print("\nShutting down...")
@@ -433,7 +441,7 @@ class Main:
 
                 #If not an engineer (different user type than engineer)
                 elif isLoggedIn and not isEngineer:
-                    start_searching = False
+                    
                     Menu.selectOptions()
                     response = input("\nResponse: ")
 
@@ -465,13 +473,13 @@ class Main:
                         s.sendall(msg.encode())
                         print("\nLogging out...")
                         isLoggedIn = False
-                        start_searching = True
+                        
 
                     else:
                         print("\nError: Invalid Input")
 
                 else:
-                    start_searching = False
+                    
                     #User type of engineer which can only be unlocked with MAC address using bluetooth search
                     Menu.engineerUI()
                     response = input("\nResponse: ")
