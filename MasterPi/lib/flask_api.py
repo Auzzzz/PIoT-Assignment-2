@@ -729,7 +729,7 @@ def updateCarIssueWebStatus(id):
 
     return personSchema.jsonify(issue)
 
-@api.route("/api/car/issue/web/<id>", methods = ['PUT', 'POST'])
+@api.route("/api/car/issue/web/status/<id>", methods = ['PUT', 'POST'])
 def updateCarIssueStatus(id):
     """API Route for update a car issue status
 

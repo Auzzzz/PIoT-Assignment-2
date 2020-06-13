@@ -15,7 +15,7 @@ from inputimeout import inputimeout, TimeoutOccurred
 
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5004        # The port used by the server.
+PORT = 5007        # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 MY_MAC = "6C:72:E7:CE:C1:EE"
@@ -317,7 +317,6 @@ class Main:
             isLoggedIn = False
             hasUnlocked = False
             isEngineer = False
-            isRepaired = False
 
             found_devices = []
 
@@ -413,12 +412,24 @@ class Main:
                     response = input("\nResponse: ")
 
                     if response == "1":
-                        if isRepaired:
-                            print("Car already repaired")
+                        carId = input("Confirm Car ID: ")
+
+                        msg = 'repair:' + carId
+                        s.sendall(msg.encode())
+                        data = s.recv(2048)
+                        decodedData = data.decode()
+
+                        if decodedData == 'True':
+                            #repair the car
+
+                            print('car is now repaired')
+
+                        elif decodedData == 'already repaired':
+
+                            print("Car has already been repaired")
 
                         else:
-                            print("Car repaired!")
-                            isRepaired = True
+                            print("No repair needed for this car")
 
                     elif response == "2":
                         msg = 'logout:random'
