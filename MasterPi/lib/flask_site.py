@@ -608,10 +608,13 @@ def test():
     
     key = 'AIzaSyCXZcLU17gaHLQB41T7-zMMM6t2zg1rdh8'
 
-    location = "30 aughtie drive south melbourne"
-    location = location.replace(' ','+')
+    office = "30 collins street melbourne"
+    carlocation = "Stirling, SA, Australia"
 
-    URL = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (location, key)
+    office = office.replace(' ','+')
+    carlocation = carlocation.replace(' ','+')
+
+    URL = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (carlocation, key)
 
     # sending get request and saving the response as response object 
     r = requests.get(url = URL) 
@@ -620,18 +623,26 @@ def test():
     latitude = data['results'][0]['geometry']['location']['lat']
     longitude = data['results'][0]['geometry']['location']['lng']
 
-    start = "Bridgewater, Sa, Australia"
-    finish = "Stirling, SA, Australia"
-
-    url = 'http://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s' % (start, finish)
+    url = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s' % (office, carlocation, key)
 
     r = requests.get(url = url)
     data = json.loads(r.text)
-    print(data)
+    #print(data)
+    
+    i = 0
+    html_instructions = []
 
-    for i in range (0, len (data['routes'])):
-        j = data['routes'] 
-        print(j)
+    totalduration = data['routes'][0]['legs'][0]['duration']['text']
+    while i < len(data['routes'][0]['legs'][0]['steps']):
+        #get length of list to inset at end
+        html_instructions.insert(i ,data['routes'][0]['legs'][0]['steps'][i]['html_instructions'])
+        i += 1
+    
+    i = 0
+    for each in html_instructions:
+        print(html_instructions[i])
+        i += 1
+
 
     # creating a map in the view
-    return render_template('test.html', latitude = latitude, longitude = longitude)
+    return render_template('test.html', latitude = latitude, longitude = longitude, html_instructions = html_instructions, totalduration = totalduration)
