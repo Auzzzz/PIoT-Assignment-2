@@ -35,6 +35,116 @@
   <div class="section" id="module-flask_site">
 <span id="flask-site-module"></span><h1>flask_site module<a class="headerlink" href="#module-flask_site" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
+<dt id="flask_site.adminCar">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for getting all car information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for admin_cars.html, or redirects if wrong</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminCarBookings">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCarBookings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCarBookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display all bookings for a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns redirection to admin/car, profile or login, or tempalte for admin_car_bookings.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminCarDelete">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCarDelete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCarDelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for deleting cars</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns redirection to site.adminCar</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminCarEdit">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCarEdit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCarEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for editing car details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for admin_cars.txt or redirects if wrong</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminCarIssue">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCarIssue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCarIssue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for checking issues with cars</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for admin_cars_report.html, or redirects if wrong</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminCarIssueReport">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminCarIssueReport</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminCarIssueReport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for viewing report for issue</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for admin_cars_report.html or redirects to admin/car</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminUser">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminUser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Web page for admin account</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for admin_users.html or redirects if wrong</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminUserDelete">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminUserDelete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminUserDelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for deleting users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Redirects to site.adminUser</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminUserEdit">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminUserEdit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminUserEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for editing user details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Redirects to admin/user, or profile, or login</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.adminUserEngineer">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">adminUserEngineer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.adminUserEngineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Website route for inputting engineer data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns redirection to site.adminUser</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="flask_site.bookingConfirm">
 <code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">bookingConfirm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.bookingConfirm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confirms booking of a car</p>
@@ -52,6 +162,53 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Returns template for bookingcancel.html</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.engineerCarIssueUpdate">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">engineerCarIssueUpdate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.engineerCarIssueUpdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes status of issue when engineer inputs it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns redirection to engineer, or profile, or login</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.engineerCarlocation">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">engineerCarlocation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.engineerCarlocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays car location on google maps, with directions from homebase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template to engineer_location.html, or redirects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.engineerJobs">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">engineerJobs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.engineerJobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists all jobs for a specific engineer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns template for engineer_jobs.html, or redirects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.getCarIDToSearch">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">getCarIDToSearch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.getCarIDToSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets carID for searching using the voice recognition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns found CarID (whatever was said to the microphone)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>String</p>
 </dd>
 </dl>
 </dd></dl>
@@ -134,6 +291,27 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="flask_site.pushbullet">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">pushbullet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">body</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">assigned_to</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.pushbullet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses pushbullet API to notify engineer using the pushbullet app when an admin logs an issue with a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>String</em>) – Title of the issue</p></li>
+<li><p><strong>body</strong> (<em>String</em>) – Body of the message</p></li>
+<li><p><strong>key</strong> (<em>String</em>) – API Key</p></li>
+<li><p><strong>assigned_to</strong> (<em>String</em>) – Assigned Engineer</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.recognize_speech_from_mic">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">recognize_speech_from_mic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recognizer</span></em>, <em class="sig-param"><span class="n">microphone</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.recognize_speech_from_mic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="flask_site.register">
 <code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Web page for registering an account</p>
@@ -154,6 +332,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="flask_site.test">
+<code class="sig-prename descclassname">flask_site.</code><code class="sig-name descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_site.test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 

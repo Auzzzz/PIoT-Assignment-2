@@ -112,6 +112,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="flask_api.Car.car_status">
+<code class="sig-name descname">car_status</code><a class="headerlink" href="#flask_api.Car.car_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="flask_api.Car.car_type_typeid">
 <code class="sig-name descname">car_type_typeid</code><a class="headerlink" href="#flask_api.Car.car_type_typeid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -191,7 +196,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt id="flask_api.CarSchema.Meta.fields">
-<code class="sig-name descname">fields</code><em class="property"> = ('carid', 'colour', 'location', 'cph', 'car_make_makeid', 'car_type_typeid')</em><a class="headerlink" href="#flask_api.CarSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fields</code><em class="property"> = ('carid', 'colour', 'location', 'seats', 'cph', 'car_make_makeid', 'car_type_typeid', 'car_status')</em><a class="headerlink" href="#flask_api.CarSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -242,8 +247,104 @@
 </dd></dl>
 
 <dl class="py class">
+<dt id="flask_api.Engineer">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">Engineer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">userid</span></em>, <em class="sig-param"><span class="n">mac_address</span></em>, <em class="sig-param"><span class="n">pushbullet_api</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.Engineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.Engineer.mac_address">
+<code class="sig-name descname">mac_address</code><a class="headerlink" href="#flask_api.Engineer.mac_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Engineer.pushbullet_api">
+<code class="sig-name descname">pushbullet_api</code><a class="headerlink" href="#flask_api.Engineer.pushbullet_api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Engineer.userid">
+<code class="sig-name descname">userid</code><a class="headerlink" href="#flask_api.Engineer.userid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flask_api.EngineerSchema">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">EngineerSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">many</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">dump_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">partial</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>bool<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">unknown</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.EngineerSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_marshmallow.schema.Schema</span></code></p>
+<dl class="py class">
+<dt id="flask_api.EngineerSchema.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#flask_api.EngineerSchema.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.EngineerSchema.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('userid', 'mac_address', 'pushbullet_api')</em><a class="headerlink" href="#flask_api.EngineerSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.EngineerSchema.opts">
+<code class="sig-name descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#flask_api.EngineerSchema.opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flask_api.Issue">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">Issue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">carid</span></em>, <em class="sig-param"><span class="n">notes</span></em>, <em class="sig-param"><span class="n">issue_status</span></em>, <em class="sig-param"><span class="n">assigned_to</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.Issue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.Issue.assigned_to">
+<code class="sig-name descname">assigned_to</code><a class="headerlink" href="#flask_api.Issue.assigned_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Issue.carid">
+<code class="sig-name descname">carid</code><a class="headerlink" href="#flask_api.Issue.carid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Issue.issue_status">
+<code class="sig-name descname">issue_status</code><a class="headerlink" href="#flask_api.Issue.issue_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Issue.issueid">
+<code class="sig-name descname">issueid</code><a class="headerlink" href="#flask_api.Issue.issueid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Issue.notes">
+<code class="sig-name descname">notes</code><a class="headerlink" href="#flask_api.Issue.notes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flask_api.IssueSchema">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">IssueSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">many</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">dump_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">partial</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>bool<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">unknown</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.IssueSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_marshmallow.schema.Schema</span></code></p>
+<dl class="py class">
+<dt id="flask_api.IssueSchema.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#flask_api.IssueSchema.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.IssueSchema.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('issueid', 'carid', 'notes', 'issue_status', 'assigned_to')</em><a class="headerlink" href="#flask_api.IssueSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.IssueSchema.opts">
+<code class="sig-name descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#flask_api.IssueSchema.opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="flask_api.Person">
-<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">Person</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.Person" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">Person</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">users_roles_roleid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.Person" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
 <dl class="py attribute">
 <dt id="flask_api.Person.email">
@@ -282,6 +383,11 @@
 <dl class="py attribute">
 <dt id="flask_api.Person.username">
 <code class="sig-name descname">username</code><a class="headerlink" href="#flask_api.Person.username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.Person.users_roles_roleid">
+<code class="sig-name descname">users_roles_roleid</code><a class="headerlink" href="#flask_api.Person.users_roles_roleid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -324,7 +430,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt id="flask_api.PersonSchema.Meta.fields">
-<code class="sig-name descname">fields</code><em class="property"> = ('userid', 'name', 'username', 'email', 'password')</em><a class="headerlink" href="#flask_api.PersonSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fields</code><em class="property"> = ('userid', 'name', 'username', 'email', 'password', 'users_roles_roleid')</em><a class="headerlink" href="#flask_api.PersonSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -332,6 +438,49 @@
 <dl class="py attribute">
 <dt id="flask_api.PersonSchema.opts">
 <code class="sig-name descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#flask_api.PersonSchema.opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flask_api.UserRoles">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">UserRoles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rolename</span></em>, <em class="sig-param"><span class="n">roledesc</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.UserRoles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.UserRoles.roledesc">
+<code class="sig-name descname">roledesc</code><a class="headerlink" href="#flask_api.UserRoles.roledesc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.UserRoles.roleid">
+<code class="sig-name descname">roleid</code><a class="headerlink" href="#flask_api.UserRoles.roleid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.UserRoles.rolename">
+<code class="sig-name descname">rolename</code><a class="headerlink" href="#flask_api.UserRoles.rolename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="flask_api.UserRolesSchema">
+<em class="property">class </em><code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">UserRolesSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">many</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">dump_only</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">partial</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>bool<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Set<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">unknown</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.UserRolesSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_marshmallow.schema.Schema</span></code></p>
+<dl class="py class">
+<dt id="flask_api.UserRolesSchema.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#flask_api.UserRolesSchema.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="flask_api.UserRolesSchema.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('roleid', 'rolename', 'roledesc')</em><a class="headerlink" href="#flask_api.UserRolesSchema.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="flask_api.UserRolesSchema.opts">
+<code class="sig-name descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#flask_api.UserRolesSchema.opts" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -354,6 +503,28 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Returns new booking in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.addCarIssue">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">addCarIssue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.addCarIssue" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for creating a new booking</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns new booking in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.addEngineer">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">addEngineer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.addEngineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for adding an engineer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns new engineer in JSON format</p>
 </dd>
 </dl>
 </dd></dl>
@@ -392,6 +563,36 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="flask_api.carDelete">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">carDelete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.carDelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for deleting a car</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> – ID of targetted car</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns car if successful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.carUpdate">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">carUpdate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.carUpdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for updating the details of a specific person
+:param id: ID of targetted person
+:return: Returns person if successful</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.carUpdateLocation">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">carUpdateLocation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.carUpdateLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for updating the details of a specific car location
+:param id: ID of car 
+:return: Returns car if successful</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="flask_api.checkavailability">
 <code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">checkavailability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.checkavailability" title="Permalink to this definition">¶</a></dt>
 <dd><p>API Route for checking car availability</p>
@@ -411,6 +612,86 @@
 <dd class="field-odd"><p>Returns booking details in JSON format</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineer">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for seeing all engineers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns all engineers in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerJobsList">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerJobsList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerJobsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all jobs for enginners</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>returns all jobs in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerJobsListCar">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerJobsListCar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerJobsListCar" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for getting all jobs for car with id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> – ID of car</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns job details in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerJobsListCurrent">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerJobsListCurrent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerJobsListCurrent" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for getting jobs for enginners with open issues</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns job details in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerJobsListUser">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerJobsListUser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerJobsListUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for getting all jobs for enginner wit id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> – ID of enginner</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns job details in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerMAC">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerMAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerMAC" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for checking all engineers against mac address</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns engineer details in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.engineerUpdate">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">engineerUpdate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.engineerUpdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for updating the details of a specific engineer
+:param id: ID of targetted engineer
+:return: Returns engineer if successful</p>
 </dd></dl>
 
 <dl class="py function">
@@ -436,6 +717,22 @@
 <dd class="field-odd"><p>Returns all cars</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.getCarBookings">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">getCarBookings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.getCarBookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for getting individual cars bookings
+:param id: ID of car
+:return: Returns all bookings ever</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.getCarID">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">getCarID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.getCarID" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for getting individual cars
+:param id: ID of car
+:return: Returns all cars</p>
 </dd></dl>
 
 <dl class="py function">
@@ -535,16 +832,43 @@
 <dl class="py function">
 <dt id="flask_api.personUpdate">
 <code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">personUpdate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.personUpdate" title="Permalink to this definition">¶</a></dt>
-<dd><p>API Route for updating the details of a specific person</p>
+<dd><p>API Route for updating the details of a specific person
+:param id: ID of targetted person
+:return: Returns person if successful</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.updateCarIssueStatus">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">updateCarIssueStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.updateCarIssueStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for update a car issue status</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>id</strong> – ID of targetted person</p>
+<dd class="field-odd"><p><strong>id</strong> – ID of issue</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Returns person if successful</p>
+<dd class="field-even"><p>Returns car status in JSON format</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.updateCarIssueWebStatus">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">updateCarIssueWebStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.updateCarIssueWebStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Route for update a car issue status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> – ID of issue</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns car status in JSON format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.user">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="flask_api.userbookinglist">
@@ -556,6 +880,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="flask_api.userroles">
+<code class="sig-prename descclassname">flask_api.</code><code class="sig-name descname">userroles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flask_api.userroles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="flask_api.verify_password">

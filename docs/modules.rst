@@ -4,6 +4,7 @@ MasterPi
 .. toctree::
    :maxdepth: 4
 
+   A3Unittest_PartA
    UnitTest_PartA
    UnitTest_PartB
    UnitTest_PartB2
@@ -18,9 +19,8 @@ MasterPi/lib
    flask_api
    flask_site
 
-
 AgentPi
-=======
+========
 
 .. toctree::
    :maxdepth: 4
@@ -28,4 +28,11 @@ AgentPi
    client
    UnitTest1_PartC
    UnitTest2_PartC
-   
+   A3_UnitTest1_PartC
+   A3_UnitTest2_PartC
+   A3UnitTest_PartB_Bluetooth
+
+
+
+
+

@@ -11,7 +11,7 @@ import random
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
-PORT = 5007 # Port to listen on (non-privileged ports are > 1023).
+PORT = 5001 # Port to listen on (non-privileged ports are > 1023).
 ADDRESS = (HOST, PORT)
 
 
@@ -170,7 +170,14 @@ class Functions:
     
     #To check for MAC address
     def checkMacAddress(s, mac_address, engineerUserID):
+        """Check if MAC address is valid and exist in our database
 
+        :param s: socket
+        :param mac_address: address of mac for bluetooth
+        :param engineerUserID: id of current engineer logged in
+        :returns: engineerID for login
+        :rtype: String
+        """
         #Get results from api
         response = requests.get('http://127.0.0.1:5000/api/users/engineer/check/{}'.format(mac_address))
         msg = ''
@@ -190,6 +197,7 @@ class Functions:
     
     #Check if car needs repairs
     def checkCarIssues(s, carId, engineerId):
+
 
         #get information from carId
         response = requests.get('http://127.0.0.1:5000/api/car/issue/car/list/{}'.format(carId))

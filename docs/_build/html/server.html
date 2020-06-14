@@ -39,6 +39,37 @@
 <em class="property">class </em><code class="sig-prename descclassname">server.</code><code class="sig-name descname">Functions</code><a class="headerlink" href="#server.Functions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt id="server.Functions.checkCarIssues">
+<code class="sig-name descname">checkCarIssues</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">carId</span></em>, <em class="sig-param"><span class="n">engineerId</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.checkCarIssues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="server.Functions.checkMacAddress">
+<code class="sig-name descname">checkMacAddress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mac_address</span></em>, <em class="sig-param"><span class="n">engineerUserID</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.checkMacAddress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if MAC address is valid and exist in our database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> – socket</p></li>
+<li><p><strong>mac_address</strong> – address of mac for bluetooth</p></li>
+<li><p><strong>engineerUserID</strong> – id of current engineer logged in</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>engineerID for login</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="server.Functions.getRandomAddress">
+<code class="sig-name descname">getRandomAddress</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.getRandomAddress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="server.Functions.login">
 <code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.Functions.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to log in to the api which will the send back message to AP to signal whether it is a successful login or not.</p>
@@ -148,6 +179,7 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">MasterPi</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="A3Unittest_PartA.html">A3Unittest_PartA module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UnitTest_PartA.html">UnitTest_PartA module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UnitTest_PartB.html">UnitTest_PartB module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UnitTest_PartB2.html">UnitTest_PartB2 module</a></li>

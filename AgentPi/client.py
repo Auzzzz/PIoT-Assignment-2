@@ -15,7 +15,7 @@ from pyzbar import pyzbar
 
 
 HOST = "127.0.0.1" # The server's hostname or IP address.
-PORT = 5007        # The port used by the server.
+PORT = 5001      # The port used by the server.
 ADDRESS = (HOST, PORT)
 
 MY_MAC = "6C:72:E7:CE:C1:EE"
@@ -292,6 +292,13 @@ class Functions:
         return foundUser
 
     def searchBluetooth(s, found_devices, startSearching):
+        """Function to check if any MAC address is scanned and matches any in the database
+
+        :param s: socket
+        :param found_devices: array of MAC address  
+        :return: MAC address that is found and matches
+        :rtype: String
+        """
         while True:
             nearby_devices = bluetooth.discover_devices()
 
@@ -314,6 +321,12 @@ class Functions:
 
     #check for qr codes
     def detectQR(s):
+        """Function to check if any qr code matches any in the database of engineers
+
+        :param s: socket
+        :return: True if found, else False
+        :rtype: Boolean
+        """
         print("[INFO] starting video stream...")
         print("\nPlease show your QR code")
 
@@ -324,7 +337,9 @@ class Functions:
         qr_counter = 0
 
         while found == False:
+
             qr_counter += 1
+
             
 
             # grab the frame from the threaded video stream and resize it to
@@ -346,6 +361,10 @@ class Functions:
             if qr_counter == 250:
                 found = True
         
+        #clean up
+        vs.stop()
+
+
         if barcodeData != '':
             msg = 'mac:' + barcodeData
             s.sendall(msg.encode())
@@ -494,7 +513,11 @@ class Main:
 
                         if decodedData == 'True':
                             #repair the car
-                            print('car is now repaired')
+                            print('\nRepairing car', end=' ')
+                            time.sleep(1)
+                            print('...')
+                            time.sleep(2)
+                            print('\nRepair Successful!')
 
                         elif decodedData == 'already repaired':
                             

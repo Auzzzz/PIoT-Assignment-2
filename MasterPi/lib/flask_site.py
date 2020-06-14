@@ -5,15 +5,17 @@ from flask_marshmallow import Marshmallow
 from passlib.hash import sha256_crypt
 import os, time, requests, json, random
 from datetime import datetime
+import speech_recognition as sr
 site = Blueprint("site", __name__)
 
 #pushbullet
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 
-import json, urllib
-import urllib.request
+
 import googlemaps
+import speech_recognition as sr
+import subprocess
 
 ### User ###
 # Client webpage.
@@ -305,6 +307,10 @@ def bookingcancel():
 #Show all users to edit
 @site.route('/admin/user', methods = ['POST', 'GET'])
 def adminUser():
+    """Web page for admin account
+
+    :return: Returns template for admin_users.html or redirects if wrong
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -333,6 +339,10 @@ def adminUser():
 #Edit selected user
 @site.route('/admin/useredit', methods = ['POST', 'GET', 'PUT'])
 def adminUserEdit():
+    """Website route for editing user details
+
+    :return: Redirects to admin/user, or profile, or login
+    """
     #Get all engineers to check if engineer was an engineer before
     response = requests.get('http://127.0.0.1:5000/api/users/engineer')
     #format the response in json
@@ -374,6 +384,10 @@ def adminUserEdit():
 #delete selected user
 @site.route('/admin/user/delete', methods = ['POST', 'GET', 'DELETE'])
 def adminUserDelete():
+    """Website route for deleting users
+
+    :return: Redirects to site.adminUser
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -391,6 +405,10 @@ def adminUserDelete():
 
 @site.route('/admin/user/engineer', methods = ['POST', 'GET'])
 def adminUserEngineer():
+    """Website route for inputting engineer data
+
+    :return: Returns redirection to site.adminUser
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -410,6 +428,10 @@ def adminUserEngineer():
 #Show all users to edit
 @site.route('/admin/car', methods = ['POST', 'GET'])
 def adminCar():
+    """Website route for getting all car information
+
+    :return: Returns template for admin_cars.html, or redirects if wrong
+    """
     msg = ''
     #Checks to see if user is logged in
     if 'loggedin' in session:
@@ -439,6 +461,10 @@ def adminCar():
 #delete selected car
 @site.route('/admin/car/delete', methods = ['POST', 'DELETE'])
 def adminCarDelete():
+    """Website route for deleting cars
+
+    :return: Returns redirection to site.adminCar
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -457,11 +483,16 @@ def adminCarDelete():
 #Edit selected car
 @site.route('/admin/caredit', methods = ['POST', 'GET', 'PUT'])
 def adminCarEdit():
+    """Website route for editing car details
+
+    :return: Returns template for admin_cars.txt or redirects if wrong
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
         if session['userrole'] == 4:
             msg = ''
+
             #checking to see if the user has pressed the submit button by looking at POST request
             if request.method == 'POST' and 'carid' in request.form and 'colour' in request.form and 'seats' in request.form and 'location' in request.form and 'cph' in request.form and 'car_make_makeid' in request.form and 'car_type_typeid' in request.form and 'car_status' in request.form: #Get contents of post data
                 carid = request.form['carid']
@@ -484,8 +515,98 @@ def adminCarEdit():
         return redirect('login')
 
 
+def getCarIDToSearch():
+    """Gets carID for searching using the voice recognition
+
+    :return: Returns found CarID (whatever was said to the microphone)
+    :rtype: String
+    """
+    
+    if request.method == 'POST':
+    
+        # To test searching without the microphone uncomment this line of code
+        # return input("Enter the first name to search for: ")
+        MIC_NAME = "Microsoft® LifeCam HD-3000: USB Audio (hw:1,0)"
+
+        # Set the device ID of the mic that we specifically want to use to avoid ambiguity
+        for i, microphone_name in enumerate(sr.Microphone()):
+            if(microphone_name == MIC_NAME):
+                device_id = i
+                break
+
+        # obtain audio from the microphone
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            # clear console of errors
+            subprocess.run("clear")
+
+            # wait for a second to let the recognizer adjust the
+            # energy threshold based on the surrounding noise level
+            r.adjust_for_ambient_noise(source)
+
+            print("Car ID Expected")
+            try:
+                audio = r.listen(source, timeout = 1.5)
+            except sr.WaitTimeoutError:
+                return None
+
+        # recognize speech using Google Speech Recognition
+        carID = None
+        try:
+            # for testing purposes, we're just using the default API key
+            # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+            # instead of `r.recognize_google(audio)`
+            carID = r.recognize_google(audio)
+        except(sr.UnknownValueError, sr.RequestError):
+            pass
+        finally:
+            return carID
+            print(carid)
+
+
+def recognize_speech_from_mic(recognizer, microphone):
+    # check that recognizer and microphone arguments are appropriate type
+    if not isinstance(recognizer, sr.Recognizer):
+        raise TypeError("`recognizer` must be `Recognizer` instance")
+
+    if not isinstance(microphone, sr.Microphone):
+        raise TypeError("`microphone` must be `Microphone` instance")
+
+    # adjust the recognizer sensitivity to ambient noise and record audio
+    # from the microphone
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+
+    # set up the response object
+    response = {
+        "success": True,
+        "error": None,
+        "transcription": None
+    }
+
+    # try recognizing the speech in the recording
+    # if a RequestError or UnknownValueError exception is caught,
+    #     update the response object accordingly
+    try:
+        response["transcription"] = recognizer.recognize_google(audio)
+    except sr.RequestError:
+        # API was unreachable or unresponsive
+        response["success"] = False
+        response["error"] = "API unavailable"
+    except sr.UnknownValueError:
+        # speech was unintelligible
+        response["error"] = "Unable to recognize speech"
+
+    return response
+
+
 @site.route('/admin/car/issue', methods = ['POST', 'GET', 'PUT'])
 def adminCarIssue():
+    """Website route for checking issues with cars
+
+    :return: Returns template for admin_cars_report.html, or redirects if wrong
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -512,6 +633,10 @@ def adminCarIssue():
 
 @site.route('/admin/car/issue/R', methods = ['POST', 'GET'])
 def adminCarIssueReport():
+    """Website route for viewing report for issue
+
+    :return: Returns template for admin_cars_report.html or redirects to admin/car
+    """
  #Checks to see if user is logged in
     if request.method == 'POST' and 'carid' in request.form and 'notes' in request.form and 'maint' in request.form: #Get contents of post data
         carid = request.form['carid']
@@ -542,6 +667,17 @@ def adminCarIssueReport():
     return render_template('admin_cars_report.html')
 
 def pushbullet(title, body, key, assigned_to):
+    """Uses pushbullet API to notify engineer using the pushbullet app when an admin logs an issue with a car
+
+    :param title: Title of the issue
+    :type title: String
+    :param body: Body of the message
+    :type body: String
+    :param key: API Key
+    :type key: String
+    :param assigned_to: Assigned Engineer
+    :type assigned_to: String
+    """
     #from pushbullet api docs
     data_send = {"type": "note", "title": title, "body": body}
     resp = requests.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data_send),
@@ -553,6 +689,10 @@ def pushbullet(title, body, key, assigned_to):
 
 @site.route('/admin/car/bookings', methods = ['POST', 'GET'])
 def adminCarBookings():
+    """Display all bookings for a car
+
+    :return: Returns redirection to admin/car, profile or login, or tempalte for admin_car_bookings.html
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -575,9 +715,13 @@ def adminCarBookings():
             return redirect('/profile')
     else:
         return redirect('login')
+
 @site.route('/engineer', methods = ['POST', 'GET'])
 def engineerJobs():
-    #Checks to see if user is logged in
+    """Lists all jobs for a specific engineer
+
+    :return: Returns template for engineer_jobs.html, or redirects
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an admin or a imposter
@@ -602,6 +746,10 @@ def engineerJobs():
 #Edit selected issue
 @site.route('/engineer/issue/edit', methods = ['POST', 'GET', 'PUT'])
 def engineerCarIssueUpdate():
+    """Changes status of issue when engineer inputs it
+
+    :return: Returns redirection to engineer, or profile, or login
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an engneer or a imposter
@@ -627,6 +775,10 @@ def engineerCarIssueUpdate():
 #get location of car
 @site.route('/engineer/carlocation', methods = ['POST', 'GET', 'PUT'])
 def engineerCarlocation():
+    """Displays car location on google maps, with directions from homebase
+
+    :return: Returns template to engineer_location.html, or redirects
+    """
     #Checks to see if user is logged in
     if 'loggedin' in session:
         #Checks to see if user is an engneer or a imposter
@@ -672,30 +824,45 @@ def engineerCarlocation():
                     i += 1
 
                 # creating a map in the view
-            return render_template('test.html', latitude = latitude, longitude = longitude, html_instructions = html_instructions, totalduration = totalduration)
+            return render_template('engineer_location.html', latitude = latitude, longitude = longitude, html_instructions = html_instructions, totalduration = totalduration)
 
         else:
             return redirect('/profile')
     else:
         return redirect('login')
 
+
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
+    # set the list of words, maxnumber of guesses, and prompt limit
+    WORDS = ["apple", "banana", "grape", "orange", "mango", "lemon"]
+    NUM_GUESSES = 1
+    PROMPT_LIMIT = 1
 
-    
-    fakeaddress = ["77 Glen William Rd","13 Gaggin Street",
-                    "16 McDowall Street",
-                    "54 Henry Street",
-                    "4 Meyer Road",
-                    "99 Jacabina Court",
-                    "38 Hill Street",
-                    "11 Mills Street",
-                    "44 Grey Street",
-                    "4 Highland Ave, Balwyn",
-                    "85 Davenport Street",
-                    "2 Norton Street"]
-    print(random.choice(fakeaddress))
+    # create recognizer and mic instances
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone()
 
+    for i in range(1):
+        for j in range(1):
+            print('Guess Speak!')
+            ts = recognize_speech_from_mic(recognizer, microphone)
+            if ts["transcription"]:
+                break
+            if not ts["success"]:
+                break
+            print("I didn't catch that. What did you say?\n")
 
-    # creating a map in the view
+        # if there was an error, stop the game
+        if ts["error"]:
+            print("ERROR: {}".format(ts["error"]))
+            break
+
+        # show the user the transcription
+        print("You said: {}".format(ts["transcription"]))
+
+        # determine if guess is correct and if any attempts remain
+        word = ts["transcription"].lower()
+        print("AAA",aaa)
+        break
     return render_template('test.html')

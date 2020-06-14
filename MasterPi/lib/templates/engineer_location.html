@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+
+{{googlemap("my_awesome_map", latitude, longitude, markers=[(latitude, longitude), ])}}
+
+    <h3> Directions to Car</h3>
+    {% for each in html_instructions %}
+        <p>{{ each }}</p>
+    {% endfor %}
+{% endblock %}
