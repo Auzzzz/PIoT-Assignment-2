@@ -73,7 +73,6 @@ def login():
         else:
             #send user details of
             response = requests.get('http://127.0.0.1:5000/api/token', auth=(username, password))
-            print("RESPONCE",response)
             #make response into json format
             data = json.loads(response.text)
             #take token out of json and submit it for access to user info
@@ -602,47 +601,78 @@ def engineerCarIssueUpdate():
     else:
         return redirect('login')
 
+#get location of car
+@site.route('/engineer/carlocation', methods = ['POST', 'GET', 'PUT'])
+def engineerCarlocation():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an engneer or a imposter
+        if session['userrole'] == 2:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
+                    
+                #Capture the form data
+                carid = request.form['carid']
+                #Get cars
+                response = requests.get('http://127.0.0.1:5000/api/car/i/%s' % (carid))
+                #format the response in json
+                car = json.loads(response.text)
+                #gcloud key
+                key = 'AIzaSyCXZcLU17gaHLQB41T7-zMMM6t2zg1rdh8'
+                #office location set to a defult location
+                office = "300 collins street melbourne"
+                #get the car location from the db
+                carlocation = car[0]['location']
+                #remove spaces and add + for google url requirments
+                office = office.replace(' ','+')
+                carlocation = carlocation.replace(' ','+')
+                #api end point
+                URL = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (carlocation, key)
+                # sending get request and saving the response as response object 
+                r = requests.get(url = URL) 
+                data = json.loads(r.text)
+                #Lat and Long for the map to display
+                latitude = data['results'][0]['geometry']['location']['lat']
+                longitude = data['results'][0]['geometry']['location']['lng']
+                
+                #api endpint for the directions
+                url = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s' % (office, carlocation, key)
+                r = requests.get(url = url)
+                data = json.loads(r.text)                
+                i = 0
+                html_instructions = []
+                totalduration = data['routes'][0]['legs'][0]['duration']['text']
+                while i < len(data['routes'][0]['legs'][0]['steps']):
+                    #get length of list to inset at end
+                    html_instructions.insert(i ,data['routes'][0]['legs'][0]['steps'][i]['html_instructions'])
+                    i += 1
+
+                # creating a map in the view
+            return render_template('test.html', latitude = latitude, longitude = longitude, html_instructions = html_instructions, totalduration = totalduration)
+
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
+
 @site.route('/test', methods = ['POST', 'GET', 'PUT'])
 def test():
-    #modified from https://pypi.org/project/flask-googlemaps/
+
     
-    key = 'AIzaSyCXZcLU17gaHLQB41T7-zMMM6t2zg1rdh8'
-
-    office = "30 collins street melbourne"
-    carlocation = "Stirling, SA, Australia"
-
-    office = office.replace(' ','+')
-    carlocation = carlocation.replace(' ','+')
-
-    URL = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (carlocation, key)
-
-    # sending get request and saving the response as response object 
-    r = requests.get(url = URL) 
-    data = json.loads(r.text)
-
-    latitude = data['results'][0]['geometry']['location']['lat']
-    longitude = data['results'][0]['geometry']['location']['lng']
-
-    url = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s' % (office, carlocation, key)
-
-    r = requests.get(url = url)
-    data = json.loads(r.text)
-    #print(data)
-    
-    i = 0
-    html_instructions = []
-
-    totalduration = data['routes'][0]['legs'][0]['duration']['text']
-    while i < len(data['routes'][0]['legs'][0]['steps']):
-        #get length of list to inset at end
-        html_instructions.insert(i ,data['routes'][0]['legs'][0]['steps'][i]['html_instructions'])
-        i += 1
-    
-    i = 0
-    for each in html_instructions:
-        print(html_instructions[i])
-        i += 1
+    fakeaddress = ["77 Glen William Rd","13 Gaggin Street",
+                    "16 McDowall Street",
+                    "54 Henry Street",
+                    "4 Meyer Road",
+                    "99 Jacabina Court",
+                    "38 Hill Street",
+                    "11 Mills Street",
+                    "44 Grey Street",
+                    "4 Highland Ave, Balwyn",
+                    "85 Davenport Street",
+                    "2 Norton Street"]
+    print(random.choice(fakeaddress))
 
 
     # creating a map in the view
-    return render_template('test.html', latitude = latitude, longitude = longitude, html_instructions = html_instructions, totalduration = totalduration)
+    return render_template('test.html')

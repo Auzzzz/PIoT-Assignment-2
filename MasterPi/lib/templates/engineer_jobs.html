@@ -38,8 +38,12 @@
                         <tr>
                             <td><input type="submit" value="Edit Car {{each.carid}}"></td>
                         </tr>
-
                 </form>
+                <form action="{{ url_for('site.engineerCarlocation') }}" method="post" autocomplete="off">
+                    <input hidden name="carid" value="{{ each.carid }}">
+                    <td><input type="submit" value="View Car {{each.carid}} Location & Directions"></td>
+                </form>
+
             </table>
         {% elif each['issue_status'] == 2: %}
         <p> Completed Job</p>

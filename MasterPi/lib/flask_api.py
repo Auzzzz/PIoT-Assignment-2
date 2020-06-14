@@ -474,6 +474,18 @@ def getCar():
     result = carsSchema.dump(car)
     return jsonify(result)
 
+# Get individual cars
+@api.route("/api/car/i/<id>", methods = ["GET", 'POST'])
+def getCarID(id):
+    """API Route for getting individual cars
+    :param id: ID of car
+    :return: Returns all cars
+
+    """
+    car = Car.query.filter_by(carid = id)
+    result = carsSchema.dump(car)
+    return jsonify(result)
+
 # Get all car makes
 @api.route("/api/car/make", methods = ["GET"])
 def getMake():
@@ -798,6 +810,25 @@ def engineerJobsListCar(id):
     jobs = Issue.query.filter_by(carid= id)
     result = issuesSchema.dump(jobs)
     return jsonify(result)
+
+
+# Endpoint to update car details.
+@api.route("/api/car/location/<id>", methods = ["PUT", 'GET'])
+def carUpdateLocation(id):
+    """API Route for updating the details of a specific car location
+    :param id: ID of car 
+    :return: Returns car if successful
+    """
+    #get updated cae info
+    car = Car.query.get(id)
+    location = request.json["location"]
+
+    #set car info to the given car
+    car.location = location
+    
+    db.session.commit()
+
+    return carSchema.jsonify(car)
 
 
 
