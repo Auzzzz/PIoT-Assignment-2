@@ -831,6 +831,19 @@ def carUpdateLocation(id):
     return carSchema.jsonify(car)
 
 
+# Get individual car bookings
+@api.route("/api/car/b/<id>", methods = ["GET", 'POST'])
+def getCarBookings(id):
+    """API Route for getting individual cars bookings
+    :param id: ID of car
+    :return: Returns all bookings ever
+
+    """
+    booking = Booking.query.filter_by(carid = id)
+    result = bookingsSchema.dump(booking)
+    return jsonify(result)
+
+
 
 
 

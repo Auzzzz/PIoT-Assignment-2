@@ -7,6 +7,7 @@ from flask_marshmallow import Marshmallow
 import os, requests, json
 from datetime import datetime
 from datetime import date
+import random
 
 HOST = ""    # Empty string means to listen on all IP's on the machine, also works with IPv6.
              # Note "0.0.0.0" also works but only with IPv4.
@@ -148,6 +149,14 @@ class Functions:
         msg = ''
         outcome = False
 
+        result = json.loads(response.text)
+        car_id = result['carid']
+
+        random_address = Functions.getRandomAddress()
+        
+        p = {'location':random_address}
+        requests.get('http://127.0.0.1:5000/api/car/location/{}'.format(car_id), json=p)
+
         if response.ok:
             msg = 'Car Returned'
             outcome = True
@@ -211,6 +220,25 @@ class Functions:
                         msg = 'already repaired'
         #send necessary information back to agent pi
         s.sendall(msg.encode())
+
+
+    def getRandomAddress():
+        fake_address =  ["77 Glen William Rd",
+                        "13 Gaggin Street",
+                        "16 McDowall Street",
+                        "54 Henry Street",
+                        "99 Jacabina Court",
+                        "44 Grey Street",
+                        "4 Highland Ave, Balwyn",
+                        "111 Bogong Ave, Glen Waverley",
+                        "68 Alawoona St, Redbank Plains",
+                        "74 Holman Rd, Alma",
+                        "3 Green St, Windsor",
+                        "126 Bennett Rd, Londonderry",
+                        "57 Creswell Ave, Charlestown",
+                        "159 Fellows Rd, Point Lonsdale"]
+
+        return random.choice(fake_address)
 
 
 class Main:

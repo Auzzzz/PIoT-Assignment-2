@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+    {% for each in bookings: %}
+        <br><hr>
+        <table>
+            <tr>
+                <td>Booking Date: </td>
+                <td>{{ each.bdate }}</td>
+            </tr>
+            <tr>
+                <td>Booked Car: </td>
+                <td>{{ each.carid}}</td>
+            </tr>
+            <tr>
+                <td>Start Time: </td>
+                <td>{{ each.stime}}</td>
+            </tr>
+            <tr>
+                <td>End Time: </td>
+                <td>{{ each.etime}}</td>
+            </tr>
+            <tr>
+                <td>Booking Unlock Code:  </td>
+                <td>{{ each.bookingcode }}</td>
+            </tr>
+            <tr>
+                <td>User who booked:  </td>
+                <td>{{ each.userid }}</td>
+            </tr>
+        </table>
+
+
+    {% endfor %}
+{% endblock %}

@@ -551,7 +551,30 @@ def pushbullet(title, body, key, assigned_to):
     else:
         msg = 'Notifction send to %s' % (assigned_to)
 
+@site.route('/admin/car/bookings', methods = ['POST', 'GET'])
+def adminCarBookings():
+    #Checks to see if user is logged in
+    if 'loggedin' in session:
+        #Checks to see if user is an admin or a imposter
+        if session['userrole'] == 4:
+            msg = ''
+            #checking to see if the user has pressed the submit button by looking at POST request
+            if request.method == 'POST' and 'carid' in request.form: #Get contents of post data
+                carid = request.form['carid']
+                #Capture the form data
+            else:
+                return redirect('/admin/car')
 
+            #Capture the form data
+            response = requests.get('http://127.0.0.1:5000/api/car/b/%s' % (carid))
+            #format the response in json
+            bookings = json.loads(response.text)
+
+            return render_template('admin_car_bookings.html', carid = carid, bookings = bookings)
+        else:
+            return redirect('/profile')
+    else:
+        return redirect('login')
 @site.route('/engineer', methods = ['POST', 'GET'])
 def engineerJobs():
     #Checks to see if user is logged in
@@ -564,7 +587,7 @@ def engineerJobs():
             #get userid
             userid = session['userid']
 
-            #get all tasks
+            #get all tasks.
             p = {'userid':userid}
             response = requests.post('http://127.0.0.1:5000/api/car/issue/list/%s' % (userid,), json=p)
             jobs = json.loads(response.text)

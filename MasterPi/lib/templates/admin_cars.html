@@ -64,6 +64,10 @@
             <input name="carid" value="{{ each.carid }}" hidden>
             <input type="submit" value="Report Issue to Mechanic">
         </form>
+        <form action="{{ url_for('site.adminCarBookings') }}" method="post">
+            <input name="carid" value="{{ each.carid }}" hidden>
+            <input type="submit" value="View ALL bookings">
+        </form>
     </table>
     {% endfor %}
 
