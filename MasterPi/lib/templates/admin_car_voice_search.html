@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+test1234
+
+        <table>
+            <form action="{{ url_for('site.adminCarEdit') }}" method="post" autocomplete="off">
+                <tr>
+                    <td></td>
+                    <td>User Info</td>
+                    <td>Change User Info</td>
+                </tr>
+                <tr>
+                    <td>Car ID</td>
+                    <td>{{car[0]['carid']}}</td>
+                    <td><input readonly name="carid" value="{{car[0]['carid']}}"></td>
+                </tr>
+                <tr>
+                    <td>Colour Name</td>
+                    <td>{{car[0]['colour']}}</td>
+                    <td><input name="colour" value="{{car[0]['colour']}}"></td>
+                </tr>
+                <tr>
+                    <td>No. of Seats</td>
+                    <td>{{car[0]['seats']}}</td>
+                    <td><input name="seats" value="{{car[0]['seats']}}"></td>
+                </tr>
+                <tr>
+                    <td>Car Location</td>
+                    <td>{{car[0]['location']}}</td>
+                    <td><input name="location" value="{{car[0]['location']}}"></td>
+                </tr>
+                <tr>
+                    <td>Cost Per Hour</td>
+                    <td>{{car[0]['cph']}}</td>
+                    <td><input name="cph" value="{{car[0]['cph']}}"></td>
+                </tr>
+                <tr>
+                    <td>Car Make</td>
+                    <td> <p>{{car[0]['car_make_makeid']}}</p></td>                 
+                    <td><input name="car_make_makeid" value="{{car[0]['car_make_makeid']}}"></td>
+                </tr>
+                <tr>
+                    <td>Car Type</td>
+                    <td> <p>{{car[0]['car_type_typeid']}}</p></td>                 
+                    <td><input name="car_type_typeid" value="{{car[0]['car_type_typeid']}}"></td>
+                </tr>
+                <tr>
+                    <td>Car Status</td>
+                    <td> <p>{{car[0]['car_status']}}</p></td>                 
+                    <td><input name="car_status" value="{{car[0]['car_status']}}"></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Edit Car {{car[0]['carid']}}"></td>
+                </tr>
+            </form>
+            <form action="{{ url_for('site.adminCarDelete') }}" method="post" autocomplete="off">
+                <input hidden name='carid' value="{{car[0]['carid']}}">
+                <td><input type="submit" value="Delete Car {{car[0]['carid']}}"></td>
+            </form>
+            <form action="{{ url_for('site.adminCarIssue') }}" method="post">
+                <input name="carid" value="{{car[0]['carid']}}" hidden>
+                <input type="submit" value="Report Issue to Mechanic">
+            </form>
+            <form action="{{ url_for('site.adminCarBookings') }}" method="post">
+                <input name="carid" value="{{car[0]['carid']}}" hidden>
+                <input type="submit" value="View ALL bookings">
+            </form>
+        </table>
+
+{% endblock %}

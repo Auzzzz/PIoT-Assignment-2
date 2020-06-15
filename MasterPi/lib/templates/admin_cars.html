@@ -3,6 +3,9 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
+    <form action="{{ url_for('site.adminCarSearch') }}" method="post" autocomplete="off">
+        <td><input type="submit" value="Search for a car ID using voice "></td>
+    </form>
     {% for each in cars: %}
     <br><hr>
     <table>

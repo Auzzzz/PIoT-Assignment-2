@@ -16,6 +16,7 @@ from flask_googlemaps import Map
 import googlemaps
 import speech_recognition as sr
 import subprocess
+import re
 
 ### User ###
 # Client webpage.
@@ -521,47 +522,43 @@ def getCarIDToSearch():
     :return: Returns found CarID (whatever was said to the microphone)
     :rtype: String
     """
-    
-    if request.method == 'POST':
-    
-        # To test searching without the microphone uncomment this line of code
-        # return input("Enter the first name to search for: ")
-        MIC_NAME = "Microsoft® LifeCam HD-3000: USB Audio (hw:1,0)"
+       
+    # obtain audio from the microphone
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        # wait for a second to let the recognizer adjust the
+        # energy threshold based on the surrounding noise level
+        r.adjust_for_ambient_noise(source)
 
-        # Set the device ID of the mic that we specifically want to use to avoid ambiguity
-        for i, microphone_name in enumerate(sr.Microphone()):
-            if(microphone_name == MIC_NAME):
-                device_id = i
-                break
-
-        # obtain audio from the microphone
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            # clear console of errors
-            subprocess.run("clear")
-
-            # wait for a second to let the recognizer adjust the
-            # energy threshold based on the surrounding noise level
-            r.adjust_for_ambient_noise(source)
-
-            print("Car ID Expected")
-            try:
-                audio = r.listen(source, timeout = 1.5)
-            except sr.WaitTimeoutError:
-                return None
+        print("Car ID Expected")
+        try:
+            audio = r.listen(source, timeout = 1.5)
+        except sr.WaitTimeoutError:
+            return None
 
         # recognize speech using Google Speech Recognition
-        carID = None
+        # set up the response object
+        response = {
+            "success": True,
+            "error": None,
+            "transcription": None
+        }
+
+        # try recognizing the speech in the recording
+        # if a RequestError or UnknownValueError exception is caught,
+        #     update the response object accordingly
         try:
-            # for testing purposes, we're just using the default API key
-            # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-            # instead of `r.recognize_google(audio)`
-            carID = r.recognize_google(audio)
-        except(sr.UnknownValueError, sr.RequestError):
-            pass
-        finally:
-            return carID
-            print(carid)
+            response["transcription"] = r.recognize_google(audio)
+        except sr.RequestError:
+            # API was unreachable or unresponsive
+            response["success"] = False
+            response["error"] = "API unavailable"
+        except sr.UnknownValueError:
+            # speech was unintelligible
+            response["error"] = "Unable to recognize speech"
+
+        return response
+
 
 
 def recognize_speech_from_mic(recognizer, microphone):
@@ -576,7 +573,7 @@ def recognize_speech_from_mic(recognizer, microphone):
     # from the microphone
     with microphone as source:
         recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
+        audio = recognizer.listen(source, timeout = 2)
 
     # set up the response object
     response = {
@@ -832,37 +829,35 @@ def engineerCarlocation():
         return redirect('login')
 
 
-@site.route('/test', methods = ['POST', 'GET', 'PUT'])
-def test():
-    # set the list of words, maxnumber of guesses, and prompt limit
-    WORDS = ["apple", "banana", "grape", "orange", "mango", "lemon"]
-    NUM_GUESSES = 1
-    PROMPT_LIMIT = 1
+@site.route('/admin/carsearch', methods = ['POST', 'GET', 'PUT'])
+def adminCarSearch():
+        if 'loggedin' in session:
+            #Checks to see if user is an admin or a imposter
+            if session['userrole'] == 4:
+        
+                if request.method == 'POST':        
 
-    # create recognizer and mic instances
-    recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
-
-    for i in range(1):
-        for j in range(1):
-            print('Guess Speak!')
-            ts = recognize_speech_from_mic(recognizer, microphone)
-            if ts["transcription"]:
-                break
-            if not ts["success"]:
-                break
-            print("I didn't catch that. What did you say?\n")
-
-        # if there was an error, stop the game
-        if ts["error"]:
-            print("ERROR: {}".format(ts["error"]))
-            break
-
-        # show the user the transcription
-        print("You said: {}".format(ts["transcription"]))
-
-        # determine if guess is correct and if any attempts remain
-        word = ts["transcription"].lower()
-        print("AAA",aaa)
-        break
-    return render_template('test.html')
+                    response = getCarIDToSearch()
+                    if response['error'] == True:
+                        print("error")
+                    else:
+                        print(response)
+                        car = response['transcription']
+                        print(response['transcription'])
+                        check = re.findall("\d+", car)
+                        if not check:
+                            print("no numbers")
+                        else:
+                            #Get cars for list
+                            response = requests.get('http://127.0.0.1:5000/api/car/i/%s' % (car))
+                            #format the response in json
+                            icar = json.loads(response.text)
+                            print(icar)
+                            
+                            return render_template('admin_car_voice_search.html', car = icar)
+                else:
+                     return redirect('/profile')
+            else:
+                return redirect('/profile')
+        else:
+            return redirect('login')
