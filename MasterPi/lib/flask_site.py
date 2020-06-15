@@ -861,3 +861,16 @@ def adminCarSearch():
                 return redirect('/profile')
         else:
             return redirect('login')
+
+
+@site.route('/admin/dash', methods = ['POST', 'GET', 'PUT'])
+def adminDash():
+        if 'loggedin' in session:
+            #Checks to see if user is an admin or a imposter
+            if session['userrole'] == 4:
+
+                return render_template('admin_dash.html')
+            else:
+                return redirect('/profile')
+        else:
+            return redirect('login')

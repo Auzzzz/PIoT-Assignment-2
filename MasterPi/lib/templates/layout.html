@@ -20,9 +20,9 @@
     </head>
         <div>
 			<h1>Your Car App</h1>
-            <a href="{{ url_for('site.home') }}">Home</a>
-			<a href="{{ url_for('site.profile') }}">Profile</a>
-			<a href="{{ url_for('site.searchcar')}}">Booking</a>
+            <a href="{{ url_for('site.home') }}">Home |</a>
+			<a href="{{ url_for('site.profile') }}">Profile |</a>
+			<a href="{{ url_for('site.searchcar')}}">Booking |</a>
 			<a href="{{ url_for('site.logout') }}">Logout</a>
 		  </div>
 		  {% if session['userrole'] == 2: %}
@@ -32,8 +32,9 @@
           {% endif %}
           {% if session['userrole'] == 4: %}
                <div>
-					<a href="{{ url_for('site.adminUser') }}">Edit Users</a>
-					<a href="{{ url_for('site.adminCar') }}">Edit Cars</a>
+					<a href="{{ url_for('site.adminUser') }}">Edit Users |</a>
+					<a href="{{ url_for('site.adminCar') }}">Edit Cars |</a>
+					<a href="{{ url_for('site.adminDash') }}">Admin Dashboard </a>
                </div>
           {% endif %}
 		<div>
