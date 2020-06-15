@@ -1,8 +1,8 @@
-# PIoT-Assignment-2
+# PIoT-Assignment-3
 
 
 # Introduction
-This GitHub Repository includes the submission of Chris Kelly, Rodrigo Miguel Rojas, and Winston for Assignment 2 of the course; Programming Internet of Things. 
+This GitHub Repository includes the submission of Chris Kelly, Rodrigo Miguel Rojas, and Winston for Assignment 3 of the course; Programming Internet of Things. 
 
 
 # Install
